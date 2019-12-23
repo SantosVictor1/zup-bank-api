@@ -2,6 +2,7 @@ package br.com.zup.bank.controller
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.model.User
 import br.com.zup.bank.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,7 +20,7 @@ class UserController {
     private lateinit var userService: UserService
 
     @PostMapping
-    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserResponseDTO> {
+    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<User> {
         val user = userService.setUser(userRequestDTO)
 
         return ResponseEntity(userService.createUser(user), HttpStatus.CREATED)

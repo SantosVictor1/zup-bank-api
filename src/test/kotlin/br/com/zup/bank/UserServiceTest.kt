@@ -9,6 +9,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.test.context.junit4.SpringRunner
+import java.lang.RuntimeException
 
 /**
  * Created by Victor Santos on 23/12/2019
@@ -21,7 +22,16 @@ class UserServiceTest {
     @Mock
     private lateinit var userRepository: UserRepository
 
-//    @Test
+    @Test
+    fun existsByCpfTest() {
+        val user = User(1, "Victor", "02160795607", "victor@gmail.com")
+
+        Mockito.`when`(userRepository.save(Mockito.eq(user))).thenThrow(RuntimeException())
+
+        userService.createUser(user)
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(user)
+    }
 
     @Test
     fun getAllTest() {

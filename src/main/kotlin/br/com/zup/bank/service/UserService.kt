@@ -19,11 +19,10 @@ class UserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun createUser(user: User): UserResponseDTO {
+    fun createUser(user: User): User {
         validateUser(user)
 
-        val userSaved = userRepository.save(user)
-        return UserResponseDTO(userSaved.id!!, userSaved.name!!, userSaved.cpf!!, userSaved.email!!)
+        return userRepository.save(user)
     }
 
     fun getAll(): List<User> {
