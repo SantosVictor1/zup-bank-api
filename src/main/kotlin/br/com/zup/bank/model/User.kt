@@ -10,7 +10,7 @@ import javax.validation.constraints.Size
  */
 @Entity
 @Table(name = "user")
-class User (
+data class User (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId")
