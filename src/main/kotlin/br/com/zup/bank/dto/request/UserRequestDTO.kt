@@ -7,7 +7,7 @@ import javax.validation.constraints.Size
 /**
  * Created by Victor Santos on 23/12/2019
  */
-data class UserRequest(
+data class UserRequestDTO(
     @NotBlank(message = "Nome obrigatório")
     @Size(min = 3, max = 80)
     val name: String,

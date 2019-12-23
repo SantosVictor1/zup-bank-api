@@ -21,6 +21,8 @@ class UserServiceTest {
     @Mock
     private lateinit var userRepository: UserRepository
 
+//    @Test
+
     @Test
     fun getAllTest() {
         var userList: MutableList<User> = mutableListOf<User>()

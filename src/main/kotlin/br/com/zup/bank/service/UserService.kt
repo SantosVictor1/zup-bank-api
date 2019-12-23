@@ -1,7 +1,7 @@
 package br.com.zup.bank.service
 
-import br.com.zup.bank.dto.request.UserRequest
-import br.com.zup.bank.dto.response.success.UserResponse
+import br.com.zup.bank.dto.request.UserRequestDTO
+import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.exception.BankException
@@ -19,25 +19,25 @@ class UserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun createUser(user: User): UserResponse {
+    fun createUser(user: User): UserResponseDTO {
         validateUser(user)
 
         val userSaved = userRepository.save(user)
-        return UserResponse(userSaved.id!!, userSaved.name!!, userSaved.cpf!!, userSaved.email!!)
+        return UserResponseDTO(userSaved.id!!, userSaved.name!!, userSaved.cpf!!, userSaved.email!!)
     }
 
     fun getAll(): List<User> {
         return userRepository.findAll()
     }
 
-    fun getById(id: Long): UserResponse {
+    fun getById(id: Long): UserResponseDTO {
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
             throw BankException(404, "Usuário não encontrado")
         }
 
-        return UserResponse(user.get().id!!, user.get().name!!, user.get().cpf!!, user.get().email!!)
+        return UserResponseDTO(user.get().id!!, user.get().name!!, user.get().cpf!!, user.get().email!!)
     }
 
     fun deleteById(id: Long) {
@@ -50,8 +50,8 @@ class UserService {
         userRepository.deleteById(id)
     }
 
-    fun setUser(userRequest: UserRequest): User {
-        return User(null, userRequest.name, userRequest.cpf, userRequest.email)
+    fun setUser(userRequestDTO: UserRequestDTO): User {
+        return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email)
     }
 
     private fun validateUser(user: User) {

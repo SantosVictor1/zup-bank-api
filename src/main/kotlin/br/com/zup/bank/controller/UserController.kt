@@ -1,7 +1,7 @@
 package br.com.zup.bank.controller
 
-import br.com.zup.bank.dto.request.UserRequest
-import br.com.zup.bank.dto.response.success.UserResponse
+import br.com.zup.bank.dto.request.UserRequestDTO
+import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,27 +19,27 @@ class UserController {
     private lateinit var userService: UserService
 
     @PostMapping
-    fun createUser(@RequestBody @Valid userRequest: UserRequest): ResponseEntity<UserResponse> {
-        val user = userService.setUser(userRequest)
+    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserResponseDTO> {
+        val user = userService.setUser(userRequestDTO)
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user))
+        return ResponseEntity(userService.createUser(user), HttpStatus.CREATED)
     }
 
     @GetMapping
-    fun getAll(): ResponseEntity<MutableList<UserResponse>> {
-        var userResponseList: MutableList<UserResponse> = mutableListOf<UserResponse>()
+    fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> {
+        var userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf<UserResponseDTO>()
         val response = userService.getAll()
 
         response.forEach { user ->
-            var userResponse = UserResponse(user.id!!, user.name!!, user.cpf!!, user.email!!)
-            userResponseList.add(userResponse)
+            var userResponse = UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!)
+            userResponseDTOList.add(userResponse)
         }
 
-        return ResponseEntity.ok().body(userResponseList)
+        return ResponseEntity.ok().body(userResponseDTOList)
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: Long): ResponseEntity<UserResponse> {
+    fun getById(@PathVariable id: Long): ResponseEntity<UserResponseDTO> {
         return ResponseEntity.ok().body(userService.getById(id))
     }
 

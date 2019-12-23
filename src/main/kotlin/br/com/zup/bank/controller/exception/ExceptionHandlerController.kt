@@ -1,4 +1,4 @@
-package br.com.zup.bank.controller
+package br.com.zup.bank.controller.exception
 
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.service.exception.BankException
