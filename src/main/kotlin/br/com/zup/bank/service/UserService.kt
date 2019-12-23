@@ -5,6 +5,7 @@ import br.com.zup.bank.dto.response.success.UserResponse
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.exception.BankException
+import br.com.zup.bank.util.CpfValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.regex.Matcher
@@ -73,7 +74,7 @@ class UserService {
             throw BankException(400, "Nome deve ter entre 3 e 80 caracteres")
         }
 
-        if (user.cpf.isNullOrEmpty() || user.cpf?.length != 11) {
+        if (user.cpf.isNullOrEmpty() || !CpfValidator.validateCpf(user.cpf!!)) {
             throw BankException(400, "CPF inválido")
         }
 
