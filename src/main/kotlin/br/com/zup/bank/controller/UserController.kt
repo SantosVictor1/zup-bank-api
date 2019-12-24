@@ -1,12 +1,16 @@
 package br.com.zup.bank.controller
 
 import br.com.zup.bank.dto.request.UserRequestDTO
+import br.com.zup.bank.dto.response.error.ErrorResponse
+import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -20,7 +24,16 @@ class UserController {
     private lateinit var userService: UserService
 
     @PostMapping
-    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<User> {
+    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO, result: BindingResult): ResponseEntity<Any> {
+        if (result.hasErrors()) {
+            var errors = mutableListOf<ErrorSupport>()
+            result.allErrors.forEach {
+                errors.add(ErrorSupport(it.defaultMessage.toString()))
+            }
+            val errorResponse = ErrorResponse(400, errors)
+            return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
+        }
+
         val user = userService.setUser(userRequestDTO)
 
         return ResponseEntity(userService.createUser(user), HttpStatus.CREATED)

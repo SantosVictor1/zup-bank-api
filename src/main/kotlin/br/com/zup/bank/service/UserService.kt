@@ -20,7 +20,7 @@ class UserService {
     private lateinit var userRepository: UserRepository
 
     fun createUser(user: User): User {
-        validateUser(user)
+        validateFields(user)
 
         return userRepository.save(user)
     }
@@ -53,36 +53,13 @@ class UserService {
         return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email)
     }
 
-    private fun validateUser(user: User) {
-        var pattern: Pattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$")
-        var matcher: Matcher = pattern.matcher(user.email)
-
+    private fun validateFields(user: User) {
         if (existsByCpf(user.cpf!!)) {
             throw BankException(400, "CPF já cadastrado")
         }
 
         if (existsByEmail(user.email!!)) {
             throw BankException(400, "Email já cadastrado")
-        }
-
-        if (user.name.isNullOrEmpty()) {
-            throw BankException(400, "Nome obrigatório")
-        }
-
-        if (user.name?.length!! < 3 || user.name?.length!! > 80) {
-            throw BankException(400, "Nome deve ter entre 3 e 80 caracteres")
-        }
-
-        if (user.cpf.isNullOrEmpty() || !CpfValidator.validateCpf(user.cpf!!)) {
-            throw BankException(400, "CPF inválido")
-        }
-
-        if (user.email.isNullOrEmpty()) {
-            throw BankException(400, "Email obrigatório")
-        }
-
-        if (!matcher.matches()) {
-            throw BankException(400, "Email inválido")
         }
     }
 

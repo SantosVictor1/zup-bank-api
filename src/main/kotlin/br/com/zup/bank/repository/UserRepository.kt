@@ -9,6 +9,20 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
+
+    /**
+     * Método responsável por verificar se o cpf já existe
+     *
+     * @param  cpf  CPF para verificar duplicidade
+     * @return true se já existir o CPF
+     */
     fun existsByCpf(cpf: String?): Boolean
+
+    /**
+     * Método responsável por verificar se o email já existe
+     *
+     * @param  email  Email para verificar duplicidade
+     * @return true se já existir o CPF
+     */
     fun existsByEmail(email: String?): Boolean
 }

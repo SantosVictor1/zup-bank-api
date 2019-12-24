@@ -17,7 +17,7 @@ data class User (
     var id: Long? = null,
 
     @NotBlank(message = "Nome obrigatório")
-    @Size(min = 3, max = 80)
+    @Size(min = 3)
     @Column(name = "name")
     var name: String? = null,
 
