@@ -30,8 +30,8 @@ class UserController {
             result.allErrors.forEach {
                 errors.add(ErrorSupport(it.defaultMessage.toString()))
             }
-            val errorResponse = ErrorResponse(400, errors)
-            return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
+
+            return ResponseEntity(ErrorResponse(400, errors), HttpStatus.BAD_REQUEST)
         }
 
         val user = userService.setUser(userRequestDTO)
