@@ -3,7 +3,7 @@ package br.com.zup.bank
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.UserService
-import br.com.zup.bank.service.exception.BankException
+import br.com.zup.bank.exception.BankException
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

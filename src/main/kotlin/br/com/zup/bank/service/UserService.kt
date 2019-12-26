@@ -4,7 +4,7 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
-import br.com.zup.bank.service.exception.BankException
+import br.com.zup.bank.exception.BankException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

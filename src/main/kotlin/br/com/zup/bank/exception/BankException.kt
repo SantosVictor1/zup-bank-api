@@ -1,4 +1,4 @@
-package br.com.zup.bank.service.exception
+package br.com.zup.bank.exception
 
 /**
  * Created by Victor Santos on 23/12/2019

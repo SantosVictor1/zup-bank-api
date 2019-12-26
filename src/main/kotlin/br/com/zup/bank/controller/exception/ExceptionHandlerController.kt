@@ -2,7 +2,7 @@ package br.com.zup.bank.controller.exception
 
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
-import br.com.zup.bank.service.exception.BankException
+import br.com.zup.bank.exception.BankException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
