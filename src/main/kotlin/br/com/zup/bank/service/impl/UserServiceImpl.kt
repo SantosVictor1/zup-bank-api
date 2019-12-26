@@ -1,10 +1,11 @@
-package br.com.zup.bank.service
+package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.service.IUserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -12,21 +13,21 @@ import org.springframework.stereotype.Service
  * Created by Victor Santos on 23/12/2019
  */
 @Service
-class UserService {
+class UserServiceImpl : IUserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    fun createUser(user: User): User {
+    override fun createUser(user: User): User {
         validateFields(user)
 
         return userRepository.save(user)
     }
 
-    fun getAll(): List<User> {
+    override fun getAll(): List<User> {
         return userRepository.findAll()
     }
 
-    fun getById(id: Long): UserResponseDTO {
+    override fun getById(id: Long): UserResponseDTO {
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
@@ -36,7 +37,7 @@ class UserService {
         return UserResponseDTO(user.get().id!!, user.get().name!!, user.get().cpf!!, user.get().email!!)
     }
 
-    fun deleteById(id: Long) {
+    override fun deleteById(id: Long) {
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
@@ -46,7 +47,7 @@ class UserService {
         userRepository.deleteById(id)
     }
 
-    fun findByCpf(cpf: String): User {
+    override fun findByCpf(cpf: String): User {
         val user = userRepository.findByCpf(cpf)
         if (!user.isPresent) {
             throw BankException(404, "Usuário não encontrado")
@@ -55,7 +56,7 @@ class UserService {
         return user.get()
     }
 
-    fun setUser(userRequestDTO: UserRequestDTO): User {
+    override fun setUser(userRequestDTO: UserRequestDTO): User {
         return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email)
     }
 

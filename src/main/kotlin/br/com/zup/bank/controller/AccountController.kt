@@ -5,8 +5,10 @@ import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
-import br.com.zup.bank.service.AccountService
-import br.com.zup.bank.service.UserService
+import br.com.zup.bank.service.IAccountService
+import br.com.zup.bank.service.IUserService
+import br.com.zup.bank.service.impl.AccountService
+import br.com.zup.bank.service.impl.UserServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,9 +24,9 @@ import javax.validation.Valid
 class AccountController {
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: IUserService
     @Autowired
-    private lateinit var accountService: AccountService
+    private lateinit var accountService: IAccountService
 
     @PostMapping
     fun newAccount(

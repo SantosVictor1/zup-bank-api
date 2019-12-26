@@ -3,7 +3,7 @@ package br.com.zup.bank
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
-import br.com.zup.bank.service.AccountService
+import br.com.zup.bank.service.impl.AccountService
 import br.com.zup.bank.exception.BankException
 import org.junit.Before
 import org.junit.Test

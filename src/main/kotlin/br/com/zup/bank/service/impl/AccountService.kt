@@ -1,4 +1,4 @@
-package br.com.zup.bank.service
+package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
@@ -6,6 +6,7 @@ import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.service.IAccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Service
  * Created by Victor Santos on 26/12/2019
  */
 @Service
-class AccountService {
+class AccountService : IAccountService {
     @Autowired
     private lateinit var accountRepository: AccountRepository
 
-    fun createAccount(user: User): AccountResponseDTO {
+    override fun createAccount(user: User): AccountResponseDTO {
         findAccountByUser(user.cpf!!)
 
         val accountNumber = createAccountNumber()
@@ -27,11 +28,11 @@ class AccountService {
         return AccountResponseDTO(acc.id, acc.limit, acc.balance, acc.accountNumber, user)
     }
 
-    fun getAll(): MutableList<Account> {
+    override fun getAll(): MutableList<Account> {
         return accountRepository.findAll()
     }
 
-    fun getById(id: Long): Account {
+    override fun getById(id: Long): Account {
         val account = accountRepository.findById(id)
 
         if (!account.isPresent) {
@@ -41,7 +42,7 @@ class AccountService {
         return account.get()
     }
 
-    fun getByCpf(cpf: String): Account {
+    override fun getByCpf(cpf: String): Account {
         val account = accountRepository.findByUserCpf(cpf)
 
         if (!account.isPresent) {

@@ -4,7 +4,8 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.service.UserService
+import br.com.zup.bank.service.IUserService
+import br.com.zup.bank.service.impl.UserServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,7 +20,7 @@ import javax.validation.Valid
 @RequestMapping("/api/users")
 class UserController {
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: IUserService
 
     @PostMapping
     fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO, result: BindingResult): ResponseEntity<Any> {

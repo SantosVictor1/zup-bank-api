@@ -2,7 +2,7 @@ package br.com.zup.bank
 
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
-import br.com.zup.bank.service.UserService
+import br.com.zup.bank.service.impl.UserServiceImpl
 import br.com.zup.bank.exception.BankException
 import org.junit.Before
 import org.junit.Test
@@ -19,7 +19,7 @@ import java.util.*
 @RunWith(SpringRunner::class)
 class UserServiceTest {
     @InjectMocks
-    private lateinit var userService: UserService
+    private lateinit var userService: UserServiceImpl
     @Mock
     private lateinit var userRepository: UserRepository
     private lateinit var user: User
