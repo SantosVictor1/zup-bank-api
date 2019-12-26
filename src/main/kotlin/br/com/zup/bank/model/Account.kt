@@ -6,7 +6,7 @@ import javax.persistence.*
  * Created by Victor Santos on 26/12/2019
  */
 @Entity
-@Table(name = "userAccount")
+@Table(name = "account")
 data class Account (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +14,10 @@ data class Account (
     var id: Long? = null,
 
     @Column(name = "balance", nullable = false)
-    var balance: String? = null,
+    var balance: Double? = 0.0,
 
     @Column(name = "accLimit", nullable = false)
-    var limit: String? = null,
+    var limit: Double? = 1000.0,
 
     @OneToOne()
     @JoinColumn(nullable = false)

@@ -6,6 +6,7 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.exception.BankException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 
 /**
@@ -44,6 +45,15 @@ class UserService {
         }
 
         userRepository.deleteById(id)
+    }
+
+    fun findByCpf(cpf: String): User {
+        val user = userRepository.findByCpf(cpf)
+        if (!user.isPresent) {
+            throw BankException(404, "Usuário não encontrado")
+        }
+
+        return user.get()
     }
 
     fun setUser(userRequestDTO: UserRequestDTO): User {

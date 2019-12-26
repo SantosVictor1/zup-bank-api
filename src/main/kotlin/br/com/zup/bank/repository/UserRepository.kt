@@ -3,6 +3,7 @@ package br.com.zup.bank.repository
 import br.com.zup.bank.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.util.*
 
 /**
  * Created by Victor Santos on 23/12/2019
@@ -25,4 +26,12 @@ interface UserRepository : JpaRepository<User, Long> {
      * @return true se já existir o CPF
      */
     fun existsByEmail(email: String?): Boolean
+
+    /**
+     * Método responsável por procurar um usuário pelo CPF
+     *
+     * @param  cpf  CPF que será usado na busca
+     * @return User encontrado
+     */
+    fun findByCpf(cpf: String?): Optional<User>
 }
