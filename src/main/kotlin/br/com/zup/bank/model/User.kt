@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -16,19 +17,15 @@ data class User (
     @Column(name = "userId")
     var id: Long? = null,
 
-    @NotBlank(message = "Nome obrigatório")
-    @Size(min = 3)
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     var name: String? = null,
 
-    @NotBlank(message = "CPF obrigatório")
-    @Column(name = "cpf", unique = true)
+    @Column(name = "cpf", unique = true, nullable = false)
     var cpf: String? = null,
 
-    @NotBlank(message = "Email obrigatório")
-    @Email(message = "Email inválido")
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     var email: String? = null
+
 //
 //    @NotBlank(message = "Senha obrigatória")
 //    @Size(min = 10, message = "Senha deve ser maior que 10 caracteres")

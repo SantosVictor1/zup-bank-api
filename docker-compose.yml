@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: mysql:latest
+    image: mysql
     restart: always
     environment:
       MYSQL_DATABASE: 'zup_bank_db'
