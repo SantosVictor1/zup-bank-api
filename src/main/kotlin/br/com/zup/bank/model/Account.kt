@@ -19,6 +19,9 @@ data class Account (
     @Column(name = "accLimit", nullable = false)
     var limit: Double? = 1000.0,
 
+    @Column(name = "number", nullable = false, unique = true)
+    var accountNumber: String? = null,
+
     @OneToOne()
     @JoinColumn(nullable = false)
     var user: User? = null

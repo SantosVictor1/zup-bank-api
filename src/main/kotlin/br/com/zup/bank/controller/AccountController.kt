@@ -50,7 +50,8 @@ class AccountController {
         val accResponse = mutableListOf<AccountResponseDTO>()
 
         accounts.forEach {
-            accResponse.add(AccountResponseDTO(it.id, it.limit, it.balance, UserAccountResponseDTO(it.user?.name, it.user?.cpf)))
+            val user = UserAccountResponseDTO(it.user?.name, it.user?.cpf)
+            accResponse.add(AccountResponseDTO(it.id, it.limit, it.balance, it.accountNumber, user))
         }
         return ResponseEntity.ok(accResponse)
     }
@@ -59,7 +60,7 @@ class AccountController {
     fun getById(@PathVariable id: Long): ResponseEntity<AccountResponseDTO> {
         val account = accountService.getById(id)
         val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
-        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, userAccResponse)
+        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
 
         return ResponseEntity.ok(accResponse)
     }
@@ -68,7 +69,7 @@ class AccountController {
     fun getByUserCpf(@PathVariable cpf: String): ResponseEntity<AccountResponseDTO> {
         val account = accountService.getByCpf(cpf)
         val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
-        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, userAccResponse)
+        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
 
         return ResponseEntity.ok(accResponse)
     }

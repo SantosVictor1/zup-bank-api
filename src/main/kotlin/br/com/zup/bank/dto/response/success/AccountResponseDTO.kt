@@ -7,5 +7,6 @@ data class AccountResponseDTO (
     val id: Long?,
     val limit: Double?,
     val balance: Double?,
+    val accountNumber: String?,
     val user: UserAccountResponseDTO?
 )

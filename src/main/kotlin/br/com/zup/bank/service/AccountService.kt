@@ -20,10 +20,11 @@ class AccountService {
     fun createAccount(user: User): AccountResponseDTO {
         findAccountByUser(user.cpf!!)
 
-        val acc = accountRepository.save(Account(user = user))
+        val accountNumber = createAccountNumber()
+        val acc = accountRepository.save(Account(user = user, accountNumber = accountNumber))
         val user = UserAccountResponseDTO(acc.user?.name, acc.user?.cpf)
 
-        return AccountResponseDTO(acc.id, acc.limit, acc.balance, user)
+        return AccountResponseDTO(acc.id, acc.limit, acc.balance, acc.accountNumber, user)
     }
 
     fun getAll(): MutableList<Account> {
@@ -54,5 +55,17 @@ class AccountService {
         if (accountRepository.existsAccountByUserCpf(cpf)) {
             throw BankException(400, "Usuário já possui uma conta em seu nome")
         }
+    }
+
+    private fun createAccountNumber(): String {
+        val numbers = arrayOf("0","1","2","3","4","5","6","7","8","9")
+        var accNumber = ""
+
+        for (number in numbers) {
+            val j = (Math.random()*numbers.size).toInt()
+            accNumber += numbers[j]
+        }
+
+        return accNumber
     }
 }

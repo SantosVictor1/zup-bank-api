@@ -26,7 +26,7 @@ class AccountServiceTest {
 
     @Before
     fun setAccount() {
-        accResponse = AccountResponseDTO(1, 1000.0, 0.0, null)
+        accResponse = AccountResponseDTO(1, 1000.0, 0.0, "7278424688",null)
     }
 
     @Test(expected = BankException::class)
