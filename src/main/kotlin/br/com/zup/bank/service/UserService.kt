@@ -8,8 +8,6 @@ import br.com.zup.bank.service.exception.BankException
 import br.com.zup.bank.util.CpfValidator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 /**
  * Created by Victor Santos on 23/12/2019

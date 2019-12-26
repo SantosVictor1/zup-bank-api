@@ -4,10 +4,8 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.model.User
 import br.com.zup.bank.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.properties.bind.validation.ValidationErrors
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult

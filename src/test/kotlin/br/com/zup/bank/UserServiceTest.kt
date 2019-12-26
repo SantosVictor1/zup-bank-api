@@ -5,13 +5,11 @@ import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.UserService
 import br.com.zup.bank.service.exception.BankException
 import org.junit.Test
-import org.junit.jupiter.api.fail
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.test.context.junit4.SpringRunner
-import java.lang.RuntimeException
 
 /**
  * Created by Victor Santos on 23/12/2019
