@@ -32,22 +32,12 @@ class UserController {
             return ResponseEntity(ErrorResponse(400, errors), HttpStatus.BAD_REQUEST)
         }
 
-        val user = userService.setUser(userRequestDTO)
-
-        return ResponseEntity(userService.createUser(user), HttpStatus.CREATED)
+        return ResponseEntity(userService.createUser(userRequestDTO), HttpStatus.CREATED)
     }
 
     @GetMapping
     fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> {
-        var userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf<UserResponseDTO>()
-        val response = userService.getAll()
-
-        response.forEach { user ->
-            var userResponse = UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!)
-            userResponseDTOList.add(userResponse)
-        }
-
-        return ResponseEntity.ok().body(userResponseDTOList)
+        return ResponseEntity.ok().body(userService.getAll())
     }
 
     @GetMapping("/{id}")

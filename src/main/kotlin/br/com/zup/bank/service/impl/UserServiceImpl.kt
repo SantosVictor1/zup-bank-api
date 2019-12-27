@@ -17,14 +17,24 @@ class UserServiceImpl : IUserService {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    override fun createUser(user: User): User {
-        validateFields(user)
+    override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
+        validateFields(userRequestDTO)
 
-        return userRepository.save(user)
+        var user: User = setUser(userRequestDTO)
+        user = userRepository.save(user)
+
+        return getUserDTO(user)
     }
 
-    override fun getAll(): List<User> {
-        return userRepository.findAll()
+    override fun getAll(): MutableList<UserResponseDTO> {
+        var userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf<UserResponseDTO>()
+        val response = userRepository.findAll()
+
+        response.forEach {
+            userResponseDTOList.add(getUserDTO(it))
+        }
+
+        return userResponseDTOList
     }
 
     override fun getById(id: Long): UserResponseDTO {
@@ -34,7 +44,7 @@ class UserServiceImpl : IUserService {
             throw BankException(404, "Usuário não encontrado")
         }
 
-        return UserResponseDTO(user.get().id!!, user.get().name!!, user.get().cpf!!, user.get().email!!)
+        return getUserDTO(user.get())
     }
 
     override fun deleteById(id: Long) {
@@ -47,20 +57,11 @@ class UserServiceImpl : IUserService {
         userRepository.deleteById(id)
     }
 
-    override fun findByCpf(cpf: String): User {
-        val user = userRepository.findByCpf(cpf)
-        if (!user.isPresent) {
-            throw BankException(404, "Usuário não encontrado")
-        }
-
-        return user.get()
-    }
-
-    override fun setUser(userRequestDTO: UserRequestDTO): User {
+    private fun setUser(userRequestDTO: UserRequestDTO): User {
         return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email)
     }
 
-    private fun validateFields(user: User) {
+    private fun validateFields(user: UserRequestDTO) {
         if (existsByCpf(user.cpf!!)) {
             throw BankException(400, "CPF já cadastrado")
         }
@@ -76,5 +77,9 @@ class UserServiceImpl : IUserService {
 
     private fun existsByEmail(email: String): Boolean {
         return userRepository.existsByEmail(email)
+    }
+
+    private fun getUserDTO(user: User): UserResponseDTO {
+        return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!)
     }
 }

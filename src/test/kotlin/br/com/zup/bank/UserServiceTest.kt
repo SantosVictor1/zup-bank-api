@@ -1,5 +1,6 @@
 package br.com.zup.bank
 
+import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.UserServiceImpl
@@ -23,6 +24,7 @@ class UserServiceTest {
     @Mock
     private lateinit var userRepository: UserRepository
     private lateinit var user: User
+    private lateinit var userRequestDTO: UserRequestDTO
 
     @Before
     fun createUser() {
@@ -32,40 +34,45 @@ class UserServiceTest {
             cpf = "02160795607",
             email = "teste@gmail.com"
         )
+        userRequestDTO = UserRequestDTO()
+        userRequestDTO.cpf = "02160795607"
+        userRequestDTO.email = "teste@gmail.com"
+        userRequestDTO.name = "Victor"
+
     }
 
     @Test(expected = BankException::class)
     fun existsByCpfTest() {
-        Mockito.`when`(userRepository.existsByCpf(user.cpf)).thenReturn(true)
-        userService.createUser(user)
+        Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(true)
+        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(user.cpf)
+        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
     }
 
     @Test
     fun notExistsByCpfTest() {
-        Mockito.`when`(userRepository.existsByCpf(user.cpf)).thenReturn(false)
-        Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        userService.createUser(user)
+        Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(false)
+        Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
+        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(user.cpf)
+        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
     }
 
     @Test(expected = BankException::class)
     fun existsByEmailTest() {
-        Mockito.`when`(userRepository.existsByEmail(user.email)).thenReturn(true)
-        userService.createUser(user)
+        Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(true)
+        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(user.email)
+        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
     }
 
     @Test
     fun notExistsByEmailTest() {
-        Mockito.`when`(userRepository.existsByEmail(user.email)).thenReturn(false)
-        Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        userService.createUser(user)
+        Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(false)
+        Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
+        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(user.email)
+        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
     }
 
     @Test(expected = BankException::class)

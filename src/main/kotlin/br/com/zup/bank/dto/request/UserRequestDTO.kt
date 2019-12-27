@@ -11,15 +11,15 @@ import javax.validation.constraints.Size
 class UserRequestDTO {
     @NotBlank(message = "Nome obrigatório")
     @Size(min = 3, max = 80, message = "Nome deve ter entre 3 e 80 caracteres")
-    val name: String? = null
+    var name: String? = null
 
     @NotBlank(message = "CPF obrigatório")
     @CPF(message = "CPF inválido")
-    val cpf: String? = null
+    var cpf: String? = null
 
     @NotBlank(message = "Email obrigatório")
     @Email(message = "Email inválido")
-    val email: String? = null
+    var email: String? = null
 //
 //    @NotBlank(message = "Senha obrigatória")
 //    @Size(min = 8, message = "Senha deve ser maior que 8 caracteres")

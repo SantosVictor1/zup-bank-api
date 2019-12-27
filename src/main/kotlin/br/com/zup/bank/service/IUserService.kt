@@ -9,15 +9,11 @@ import br.com.zup.bank.model.User
  */
 interface IUserService {
 
-    fun createUser(user: User): User
+    fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO
 
-    fun getAll(): List<User>
+    fun getAll(): MutableList<UserResponseDTO>
 
     fun getById(id: Long): UserResponseDTO
 
     fun deleteById(id: Long)
-
-    fun findByCpf(cpf: String): User
-
-    fun setUser(userRequestDTO: UserRequestDTO): User
 }
