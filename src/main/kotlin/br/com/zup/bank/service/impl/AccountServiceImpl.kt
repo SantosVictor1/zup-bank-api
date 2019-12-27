@@ -1,11 +1,10 @@
 package br.com.zup.bank.service.impl
 
-import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
+import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
-import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.service.IAccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -14,18 +13,20 @@ import org.springframework.stereotype.Service
  * Created by Victor Santos on 26/12/2019
  */
 @Service
-class AccountService : IAccountService {
+class AccountServiceImpl : IAccountService {
     @Autowired
     private lateinit var accountRepository: AccountRepository
 
-    override fun createAccount(user: User): AccountResponseDTO {
+    override fun createAccount(user: User): Account {
+        lateinit var userDTO: UserAccountResponseDTO
+        lateinit var acc: Account
+
         findAccountByUser(user.cpf!!)
 
         val accountNumber = createAccountNumber()
-        val acc = accountRepository.save(Account(user = user, accountNumber = accountNumber))
-        val user = UserAccountResponseDTO(acc.user?.name, acc.user?.cpf)
+        acc = Account(accountNumber = accountNumber, user = user)
 
-        return AccountResponseDTO(acc.id, acc.limit, acc.balance, acc.accountNumber, user)
+        return accountRepository.save(acc)
     }
 
     override fun getAll(): MutableList<Account> {
