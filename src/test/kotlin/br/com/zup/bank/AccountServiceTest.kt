@@ -1,5 +1,6 @@
 package br.com.zup.bank
 
+import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
@@ -27,18 +28,21 @@ class AccountServiceTest {
     private lateinit var accResponse: AccountResponseDTO
     private lateinit var acc: Account
     private lateinit var user: User
+    private lateinit var accRequestDTO: AccountRequestDTO
 
     @Before
     fun setObjects() {
-        accResponse = AccountResponseDTO(1, 1000.0, 0.0, "0138424688",null)
+        accResponse = AccountResponseDTO(1000.0, 0.0, "0138424688",null)
         user = User(2, "Victor", "02160795607", "victor@gmail.com")
         acc = Account(1, 1000.0, 0.0, "7278424688", user)
+        accRequestDTO = AccountRequestDTO()
+        accRequestDTO.cpf = "02160795607"
     }
 
     @Test(expected = BankException::class)
     fun existAccountWithCpf() {
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(true)
-        accountService.createAccount(user)
+        accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
     }
@@ -49,7 +53,7 @@ class AccountServiceTest {
         Mockito.`when`(accountRepository.save(Mockito.any(Account::class.java))).thenReturn(acc)
         //ASK WHY TO USE MOCKITO.ANY
 
-        accountService.createAccount(user)
+        accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
     }

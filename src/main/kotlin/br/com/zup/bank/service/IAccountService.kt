@@ -1,23 +1,20 @@
 package br.com.zup.bank.service
 
+import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
-import br.com.zup.bank.model.Account
-import br.com.zup.bank.model.User
 
 /**
  * Created by Victor Santos on 26/12/2019
  */
 interface IAccountService {
 
-    fun createAccount(user: User): Account
+    fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO
 
-    fun getAll(): MutableList<Account>
+    fun getAll(): MutableList<AccountResponseDTO>
 
-    fun getById(id: Long): Account
+    fun getById(id: Long): AccountResponseDTO
 
-    fun getByCpf(cpf: String): Account
+    fun getByCpf(cpf: String): AccountResponseDTO
 
-    fun getByAccountNumber(accNumber: String): Account
-
-    fun getAccountDTO(account: Account): AccountResponseDTO
+    fun getByAccountNumber(accNumber: String): AccountResponseDTO
 }

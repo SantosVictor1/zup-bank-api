@@ -9,5 +9,5 @@ import javax.validation.constraints.NotBlank
 class AccountRequestDTO {
     @NotBlank(message = "CPF obrigatório")
     @CPF(message = "CPF inválido")
-    val cpf: String? = null
+    var cpf: String? = null
 }

@@ -1,11 +1,12 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
-import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
+import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,56 +18,71 @@ import org.springframework.stereotype.Service
 class AccountServiceImpl : IAccountService {
     @Autowired
     private lateinit var accountRepository: AccountRepository
+    @Autowired
+    private lateinit var userRepository: UserRepository
 
-    override fun createAccount(user: User): Account {
+    override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account
+        var user = userRepository.findByCpf(accountRequestDTO.cpf)
 
-        findAccountByUser(user.cpf!!)
+        if (!user.isPresent) {
+            throw BankException(400, "Usuário não encontrado")
+        }
+
+        findAccountByUser(user.get().cpf!!)
 
         val accountNumber = createAccountNumber()
-        acc = Account(accountNumber = accountNumber, user = user)
+        acc = Account(accountNumber = accountNumber, user = user.get())
+        acc = accountRepository.save(acc)
 
-        return accountRepository.save(acc)
+        return getAccountDTO(acc)
     }
 
-    override fun getAll(): MutableList<Account> {
-        return accountRepository.findAll()
+    override fun getAll(): MutableList<AccountResponseDTO> {
+        val accounts = accountRepository.findAll()
+        val accResponse = mutableListOf<AccountResponseDTO>()
+
+        accounts.forEach {
+            accResponse.add(getAccountDTO(it))
+        }
+
+        return accResponse
     }
 
-    override fun getById(id: Long): Account {
+    override fun getById(id: Long): AccountResponseDTO {
         val account = accountRepository.findById(id)
 
         if (!account.isPresent) {
             throw BankException(404, "Conta não encontrada")
         }
 
-        return account.get()
+        return getAccountDTO(account.get())
     }
 
-    override fun getByCpf(cpf: String): Account {
+    override fun getByCpf(cpf: String): AccountResponseDTO {
         val account = accountRepository.findByUserCpf(cpf)
 
         if (!account.isPresent) {
             throw BankException(404, "Conta não encontrada")
         }
 
-        return account.get()
+        return getAccountDTO(account.get())
     }
 
-    override fun getByAccountNumber(accNumber: String): Account {
+    override fun getByAccountNumber(accNumber: String): AccountResponseDTO {
         val account = accountRepository.findByAccountNumber(accNumber)
 
         if (!account.isPresent) {
             throw BankException(404, "Conta não encontrada")
         }
 
-        return account.get()
+        return getAccountDTO(account.get())
     }
 
-    override fun getAccountDTO(account: Account): AccountResponseDTO {
+    private fun getAccountDTO(account: Account): AccountResponseDTO {
         val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
 
-        return AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
+        return AccountResponseDTO(account.limit, account.balance, account.accountNumber, userAccResponse)
     }
 
     private fun findAccountByUser(cpf: String) {
