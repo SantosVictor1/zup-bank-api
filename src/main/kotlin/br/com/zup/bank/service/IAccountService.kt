@@ -1,5 +1,6 @@
 package br.com.zup.bank.service
 
+import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 
@@ -15,4 +16,8 @@ interface IAccountService {
     fun getById(id: Long): Account
 
     fun getByCpf(cpf: String): Account
+
+    fun getByAccountNumber(accNumber: String): Account
+
+    fun getAccountDTO(account: Account): AccountResponseDTO
 }

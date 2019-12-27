@@ -26,4 +26,12 @@ interface AccountRepository : JpaRepository<Account, Long> {
      * @return Optional
      */
     fun findByUserCpf(cpf: String): Optional<Account>
+
+    /**
+     * Método responsável por encontrar um conta baseado em seu número
+     *
+     * @param  accNumber  AccountNumber que será usado na busca
+     * @return Optional
+     */
+    fun findByAccountNumber(accNumber: String): Optional<Account>
 }

@@ -61,18 +61,21 @@ class AccountController {
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ResponseEntity<AccountResponseDTO> {
         val account = accountService.getById(id)
-        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
-        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
 
-        return ResponseEntity.ok(accResponse)
+        return ResponseEntity.ok(accountService.getAccountDTO(account))
     }
 
     @GetMapping("/cpf/{cpf}")
     fun getByUserCpf(@PathVariable cpf: String): ResponseEntity<AccountResponseDTO> {
         val account = accountService.getByCpf(cpf)
-        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
-        val accResponse = AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
 
-        return ResponseEntity.ok(accResponse)
+        return ResponseEntity.ok(accountService.getAccountDTO(account))
+    }
+
+    @GetMapping("/account/{accNumber}")
+    fun getByAccountNumber(@PathVariable accNumber: String): ResponseEntity<AccountResponseDTO> {
+        val account = accountService.getByAccountNumber(accNumber)
+
+        return ResponseEntity.ok(accountService.getAccountDTO(account))
     }
 }

@@ -1,5 +1,6 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
@@ -18,7 +19,6 @@ class AccountServiceImpl : IAccountService {
     private lateinit var accountRepository: AccountRepository
 
     override fun createAccount(user: User): Account {
-        lateinit var userDTO: UserAccountResponseDTO
         lateinit var acc: Account
 
         findAccountByUser(user.cpf!!)
@@ -51,6 +51,22 @@ class AccountServiceImpl : IAccountService {
         }
 
         return account.get()
+    }
+
+    override fun getByAccountNumber(accNumber: String): Account {
+        val account = accountRepository.findByAccountNumber(accNumber)
+
+        if (!account.isPresent) {
+            throw BankException(404, "Conta não encontrada")
+        }
+
+        return account.get()
+    }
+
+    override fun getAccountDTO(account: Account): AccountResponseDTO {
+        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
+
+        return AccountResponseDTO(account.id, account.limit, account.balance, account.accountNumber, userAccResponse)
     }
 
     private fun findAccountByUser(cpf: String) {
