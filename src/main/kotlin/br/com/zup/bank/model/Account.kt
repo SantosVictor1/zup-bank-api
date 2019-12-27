@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 /**
@@ -7,7 +8,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "account")
-data class Account (
+class Account (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "accountId")
@@ -22,7 +23,10 @@ data class Account (
     @Column(name = "number", unique = true)
     var accountNumber: String? = null,
 
-    @OneToOne()
-    @JoinColumn()
-    var user: User? = null
+    @OneToOne
+    @JoinColumn
+    var user: User? = null,
+
+    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL])
+    var activities: MutableList<Activity>? = null
 )
