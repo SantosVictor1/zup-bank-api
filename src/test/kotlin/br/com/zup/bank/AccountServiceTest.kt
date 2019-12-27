@@ -7,6 +7,7 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.service.impl.AccountServiceImpl
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
+import br.com.zup.bank.repository.UserRepository
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,6 +26,8 @@ class AccountServiceTest {
     private lateinit var accountService: AccountServiceImpl
     @Mock
     private lateinit var accountRepository: AccountRepository
+    @Mock
+    private lateinit var userRepository: UserRepository
     private lateinit var accResponse: AccountResponseDTO
     private lateinit var acc: Account
     private lateinit var user: User
@@ -40,8 +43,30 @@ class AccountServiceTest {
     }
 
     @Test(expected = BankException::class)
+    fun userDontExistsTest() {
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
+
+        accountService.createAccount(accRequestDTO)
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
+    }
+
+    @Test
+    fun userExistsTest() {
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
+        Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(false)
+        Mockito.`when`(accountRepository.save(Mockito.any(Account::class.java))).thenReturn(acc)
+
+        accountService.createAccount(accRequestDTO)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+    }
+
+    @Test(expected = BankException::class)
     fun existAccountWithCpf() {
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(true)
+
         accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
@@ -49,6 +74,7 @@ class AccountServiceTest {
 
     @Test
     fun notExistAccountWithCpf() {
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(false)
         Mockito.`when`(accountRepository.save(Mockito.any(Account::class.java))).thenReturn(acc)
         //ASK WHY TO USE MOCKITO.ANY
