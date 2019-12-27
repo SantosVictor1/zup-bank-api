@@ -1,6 +1,5 @@
 package br.com.zup.bank.service
 
-import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 
@@ -9,7 +8,7 @@ import br.com.zup.bank.model.User
  */
 interface IAccountService {
 
-    fun createAccount(user: User): AccountResponseDTO
+    fun createAccount(user: User): Account
 
     fun getAll(): MutableList<Account>
 

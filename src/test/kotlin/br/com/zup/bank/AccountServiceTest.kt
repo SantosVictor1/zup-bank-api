@@ -3,8 +3,9 @@ package br.com.zup.bank
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
-import br.com.zup.bank.service.impl.AccountService
+import br.com.zup.bank.service.impl.AccountServiceImpl
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.model.Account
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.test.context.junit4.SpringRunner
+import java.util.*
 
 /**
  * Created by Victor Santos on 26/12/2019
@@ -19,22 +21,81 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 class AccountServiceTest {
     @InjectMocks
-    private lateinit var accountService: AccountService
+    private lateinit var accountService: AccountServiceImpl
     @Mock
     private lateinit var accountRepository: AccountRepository
     private lateinit var accResponse: AccountResponseDTO
+    private lateinit var acc: Account
+    private lateinit var user: User
 
     @Before
-    fun setAccount() {
-        accResponse = AccountResponseDTO(1, 1000.0, 0.0, "7278424688",null)
+    fun setObjects() {
+        accResponse = AccountResponseDTO(1, 1000.0, 0.0, "0138424688",null)
+        user = User(2, "Victor", "02160795607", "victor@gmail.com")
+        acc = Account(1, 1000.0, 0.0, "7278424688", user)
     }
 
     @Test(expected = BankException::class)
     fun existAccountWithCpf() {
-        val user = User(1, "Noah", "65015739710", "nnoahguilhermepinto@publiout.com.br")
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(true)
         accountService.createAccount(user)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+    }
+
+    @Test
+    fun notExistAccountWithCpf() {
+        Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(false)
+        Mockito.`when`(accountRepository.save(Mockito.any(Account::class.java))).thenReturn(acc)
+        //ASK WHY TO USE MOCKITO.ANY
+
+        accountService.createAccount(user)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+    }
+
+    @Test
+    fun getAllTest() {
+        Mockito.`when`(accountRepository.findAll()).thenReturn(mutableListOf(acc))
+
+        accountService.getAll()
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findAll()
+    }
+
+    @Test(expected = BankException::class)
+    fun getByIdWithError() {
+        Mockito.`when`(accountRepository.findById(acc.id!!)).thenReturn(Optional.empty())
+
+        accountService.getById(acc.id!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findById(acc.id!!)
+    }
+
+    @Test
+    fun getByIdWithSuccess() {
+        Mockito.`when`(accountRepository.findById(acc.id!!)).thenReturn(Optional.of(acc))
+
+        accountService.getById(acc.id!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findById(acc.id!!)
+    }
+
+    @Test(expected = BankException::class)
+    fun getByCpfWithError() {
+        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
+
+        accountService.getByCpf(user.cpf!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+    }
+
+    @Test
+    fun getByCpfWithSuccess() {
+        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+
+        accountService.getByCpf(user.cpf!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
     }
 }

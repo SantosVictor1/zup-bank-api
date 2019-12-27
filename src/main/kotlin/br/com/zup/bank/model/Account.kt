@@ -13,16 +13,16 @@ data class Account (
     @Column(name = "accountId")
     var id: Long? = null,
 
-    @Column(name = "balance", nullable = false)
+    @Column(name = "balance")
     var balance: Double? = 0.0,
 
-    @Column(name = "accLimit", nullable = false)
+    @Column(name = "accLimit")
     var limit: Double? = 1000.0,
 
-    @Column(name = "number", nullable = false, unique = true)
+    @Column(name = "number", unique = true)
     var accountNumber: String? = null,
 
     @OneToOne()
-    @JoinColumn(nullable = false)
+    @JoinColumn()
     var user: User? = null
 )

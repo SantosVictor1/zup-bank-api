@@ -7,8 +7,6 @@ import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
 import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IUserService
-import br.com.zup.bank.service.impl.AccountService
-import br.com.zup.bank.service.impl.UserServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -41,9 +39,11 @@ class AccountController {
             return ResponseEntity(ErrorResponse(400, errors), HttpStatus.BAD_REQUEST)
         }
 
-        val user = userService.findByCpf(accountRequestDTO.cpf!!)
+        var user = userService.findByCpf(accountRequestDTO.cpf!!)
+        val acc = accountService.createAccount(user)
+        val userResponse = UserAccountResponseDTO(user.name, user.cpf)
 
-        return ResponseEntity.ok(accountService.createAccount(user))
+        return ResponseEntity.ok(AccountResponseDTO(acc.id, acc.limit, acc.balance, acc.accountNumber, userResponse))
     }
 
     @GetMapping

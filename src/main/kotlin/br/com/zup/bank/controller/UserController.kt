@@ -5,7 +5,6 @@ import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.service.IUserService
-import br.com.zup.bank.service.impl.UserServiceImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
