@@ -1,6 +1,5 @@
 package br.com.zup.bank.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 /**

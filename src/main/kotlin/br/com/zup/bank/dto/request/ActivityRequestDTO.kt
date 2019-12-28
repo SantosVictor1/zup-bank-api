@@ -3,6 +3,7 @@ package br.com.zup.bank.dto.request
 import br.com.zup.bank.enum.Operation
 import org.hibernate.validator.constraints.br.CPF
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 /**
@@ -17,9 +18,8 @@ class ActivityRequestDTO {
     @Size(message = "Número de conta deve ter tamanho 10", min = 10, max = 10)
     var accNumber: String? = null
 
-    @NotBlank(message = "Valor obrigatório")
+    @NotNull(message = "Valor obrigatório")
     var value: Double? = null
 
-    @NotBlank(message = "Operação obrigatória")
     var operation: Operation? = null
 }
