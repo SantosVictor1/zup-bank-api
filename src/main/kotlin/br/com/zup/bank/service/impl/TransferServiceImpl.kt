@@ -59,6 +59,10 @@ class TransferServiceImpl : ITransferService {
             throw BankException(400, "Saldo insuficiente da conta de origem")
         }
 
+        if (destinyAccount.user?.cpf != transferDTO.recipientsCpf) {
+            throw BankException(400, "CPF do destinatário incorreto")
+        }
+
         var originActivity = getActivity(originAccount, transferDTO)
         originActivity.value = originActivity.value!! * -1
         val destinyActivity = getActivity(destinyAccount, transferDTO)
