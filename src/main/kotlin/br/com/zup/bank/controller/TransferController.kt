@@ -33,14 +33,4 @@ class TransferController {
 
         return ResponseEntity.ok(transferService.newTransfer(transferDTO))
     }
-
-    @GetMapping
-    fun getAll(): ResponseEntity<MutableList<Transfer>> {
-        return ResponseEntity.ok(transferService.getAllTransfer())
-    }
-
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Long): ResponseEntity<Transfer> {
-        return ResponseEntity.ok(transferService.getById(id))
-    }
 }

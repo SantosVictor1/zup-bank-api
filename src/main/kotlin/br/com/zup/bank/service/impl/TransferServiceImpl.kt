@@ -43,14 +43,6 @@ class TransferServiceImpl : ITransferService {
         return getTransferResponseDTO(transferRequestDTO)
     }
 
-    override fun getAllTransfer(): MutableList<Transfer> {
-        return transferRepository.findAll()
-    }
-
-    override fun getById(id: Long): Transfer {
-        return transferRepository.findById(id).get()
-    }
-
     private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
         originAccount.balance = originAccount.balance!! - transferDTO.transferValue!!
         destinyAccount.balance = transferDTO.transferValue!! + destinyAccount.balance!!

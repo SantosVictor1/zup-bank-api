@@ -10,8 +10,4 @@ import br.com.zup.bank.model.Transfer
 interface ITransferService {
 
     fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO
-
-    fun getAllTransfer(): MutableList<Transfer>
-
-    fun getById(id: Long): Transfer
 }
