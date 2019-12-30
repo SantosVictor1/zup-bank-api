@@ -90,6 +90,6 @@ class UserServiceImpl : IUserService {
     }
 
     private fun getUserDTO(user: User): UserResponseDTO {
-        return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!)
+        return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!, user.isActive!!)
     }
 }

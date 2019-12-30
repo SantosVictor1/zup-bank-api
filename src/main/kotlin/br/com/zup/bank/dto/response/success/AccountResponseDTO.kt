@@ -7,5 +7,6 @@ data class AccountResponseDTO (
     val limit: Double?,
     val balance: Double?,
     val accountNumber: String?,
+    val isActive: Boolean?,
     val user: UserAccountResponseDTO?
 )

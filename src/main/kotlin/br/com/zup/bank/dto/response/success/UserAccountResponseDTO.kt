@@ -5,5 +5,6 @@ package br.com.zup.bank.dto.response.success
  */
 data class UserAccountResponseDTO (
     val name: String?,
-    val cpf: String?
+    val cpf: String?,
+    val isActive: Boolean?
 )

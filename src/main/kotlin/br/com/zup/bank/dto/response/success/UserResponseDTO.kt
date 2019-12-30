@@ -7,5 +7,6 @@ data class UserResponseDTO(
     val id: Long,
     val name: String,
     val cpf: String,
-    val email: String
+    val email: String,
+    val isActive: Boolean
 )

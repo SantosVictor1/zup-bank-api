@@ -35,7 +35,7 @@ class AccountServiceTest {
 
     @Before
     fun setObjects() {
-        accResponse = AccountResponseDTO(1000.0, 0.0, "0138424688",null)
+        accResponse = AccountResponseDTO(1000.0, 0.0, "0138424688", true,null)
         user = User(2, "Victor", "02160795607", "victor@gmail.com", true)
         acc = Account(1, 1000.0, 0.0, "7278424688", true, user)
         accRequestDTO = AccountRequestDTO()

@@ -91,9 +91,9 @@ class AccountServiceImpl : IAccountService {
     }
 
     private fun getAccountDTO(account: Account): AccountResponseDTO {
-        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf)
+        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf, account.user?.isActive)
 
-        return AccountResponseDTO(account.limit, account.balance, account.accountNumber, userAccResponse)
+        return AccountResponseDTO(account.limit, account.balance, account.accountNumber, account.isActive, userAccResponse)
     }
 
     private fun findAccountByUser(cpf: String) {
