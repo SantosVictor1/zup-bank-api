@@ -4,6 +4,7 @@ import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.exception.BankException
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import javax.servlet.http.HttpServletRequest
@@ -20,5 +21,15 @@ class ExceptionHandlerController {
         errors.add(ErrorSupport(e.errorMessage))
 
         return ResponseEntity.status(e.httpStatus).body(ErrorResponse(e.httpStatus, errors))
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun missingArgumentException(
+        e: MissingServletRequestParameterException,
+        request: HttpServletRequest
+    ): ResponseEntity<Any> {
+        val errors = "Parâmetro obrigatório"
+
+        return ResponseEntity.badRequest().body(ErrorResponse(400, mutableListOf(ErrorSupport((errors)))))
     }
 }
