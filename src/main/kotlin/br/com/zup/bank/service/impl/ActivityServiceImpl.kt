@@ -3,7 +3,7 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.success.ActivityResponseDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
-import br.com.zup.bank.enum.Operation
+import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity

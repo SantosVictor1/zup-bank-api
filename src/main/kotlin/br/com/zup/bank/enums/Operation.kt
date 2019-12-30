@@ -1,4 +1,4 @@
-package br.com.zup.bank.enum
+package br.com.zup.bank.enums
 
 /**
  * Created by Victor Santos on 27/12/2019

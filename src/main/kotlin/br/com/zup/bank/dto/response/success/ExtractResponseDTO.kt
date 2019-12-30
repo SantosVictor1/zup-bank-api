@@ -1,6 +1,6 @@
 package br.com.zup.bank.dto.response.success
 
-import br.com.zup.bank.enum.Operation
+import br.com.zup.bank.enums.Operation
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.util.*
 

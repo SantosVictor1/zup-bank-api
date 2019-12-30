@@ -1,6 +1,6 @@
 package br.com.zup.bank.dto.request
 
-import br.com.zup.bank.enum.Operation
+import br.com.zup.bank.enums.Operation
 import org.hibernate.validator.constraints.br.CPF
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

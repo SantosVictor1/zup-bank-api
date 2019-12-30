@@ -4,7 +4,7 @@ import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
-import br.com.zup.bank.enum.Operation
+import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.service.IActivityService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
