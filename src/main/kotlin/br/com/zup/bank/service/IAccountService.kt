@@ -1,6 +1,7 @@
 package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
+import br.com.zup.bank.dto.response.success.AccountBalanceDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 
 /**
@@ -17,4 +18,6 @@ interface IAccountService {
     fun getByCpf(cpf: String): AccountResponseDTO
 
     fun getByAccountNumber(accNumber: String): AccountResponseDTO
+
+    fun getAccountBalance(accNumber: String): AccountBalanceDTO
 }

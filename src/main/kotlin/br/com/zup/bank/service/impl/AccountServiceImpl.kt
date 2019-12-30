@@ -1,6 +1,7 @@
 package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
+import br.com.zup.bank.dto.response.success.AccountBalanceDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
 import br.com.zup.bank.exception.BankException
@@ -77,6 +78,16 @@ class AccountServiceImpl : IAccountService {
         }
 
         return getAccountDTO(account.get())
+    }
+
+    override fun getAccountBalance(accNumber: String): AccountBalanceDTO {
+        val account = accountRepository.findByAccountNumber(accNumber)
+
+        if (!account.isPresent) {
+            throw BankException(404, "Conta não encontrada")
+        }
+
+        return AccountBalanceDTO(accNumber, account.get().balance)
     }
 
     private fun getAccountDTO(account: Account): AccountResponseDTO {
