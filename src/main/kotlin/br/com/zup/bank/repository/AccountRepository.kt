@@ -20,6 +20,14 @@ interface AccountRepository : JpaRepository<Account, Long> {
     fun existsAccountByUserCpf(cpf: String): Boolean
 
     /**
+     * Método responsável por verificar se existe uma conta pelo seu número
+     *
+     * @param  accNumber  Número de conta que será usado na busca
+     * @return true se já existir
+     */
+    fun existsAccountByAccountNumber(accNumber: String): Boolean
+
+    /**
      * Método responsável por encontrar um conta baseado no CPF do usuário
      *
      * @param  cpf  CPF que será usado na busca

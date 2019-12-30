@@ -87,9 +87,7 @@ class ActivityServiceImpl : IActivityService {
     }
 
     private fun getActivity(user: User, acc: Account, activityDTO: ActivityRequestDTO): Activity {
-        val date = Date()
-
-        return Activity(null, date, activityDTO.value, activityDTO.operation!!, acc, user)
+        return Activity(null, Date(), activityDTO.value, activityDTO.operation!!, acc, user)
     }
 
     private fun getUser(cpf: String): User {

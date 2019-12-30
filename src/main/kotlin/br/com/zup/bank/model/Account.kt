@@ -1,5 +1,7 @@
 package br.com.zup.bank.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import javax.persistence.*
 
 /**
@@ -26,6 +28,11 @@ class Account (
     @JoinColumn
     var user: User? = null,
 
+    @JsonBackReference
     @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL])
-    var activities: MutableList<Activity>? = null
+    var activities: MutableList<Activity>? = null,
+
+    @JsonManagedReference
+    @ManyToMany(mappedBy = "accounts")
+    var transfers: MutableList<Transfer>? = null
 )

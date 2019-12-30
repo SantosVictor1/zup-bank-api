@@ -1,7 +1,8 @@
 package br.com.zup.bank.model
 
-import br.com.zup.bank.enums.Operation
+    import br.com.zup.bank.enums.Operation
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
 import javax.persistence.*
 
@@ -26,6 +27,7 @@ data class Activity (
     @Enumerated(EnumType.STRING)
     var operation: Operation,
 
+    @JsonManagedReference
     @ManyToOne
     var account: Account? = null,
 
