@@ -151,4 +151,20 @@ class AccountServiceTest {
 
         Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
     }
+
+    @Test(expected = ResourceNotFoundException::class)
+    fun getAccountBalanceWithErrorTest() {
+        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.empty())
+
+        accountService.getAccountBalance(acc.accountNumber!!)
+    }
+
+    @Test
+    fun getAccountBalanceWithErrorSuccess() {
+        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+
+        accountService.getAccountBalance(acc.accountNumber!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
+    }
 }
