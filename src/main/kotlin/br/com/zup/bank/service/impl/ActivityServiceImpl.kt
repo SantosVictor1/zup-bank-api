@@ -70,7 +70,10 @@ class ActivityServiceImpl : IActivityService {
         validateWithdraw(acc.balance!!)
 
         accountRepository.save(acc)
-        val activity = activityRepository.save(getActivity(user, acc, activityDTO))
+        var activity = getActivity(user, acc, activityDTO)
+        activity.value = activity.value!! * -1
+
+        activity = activityRepository.save(activity)
 
         return getActivityResponseDTO(acc, activity)
     }
@@ -86,7 +89,7 @@ class ActivityServiceImpl : IActivityService {
     }
 
     private fun getExtractResponseDTO(activity: Activity): ExtractResponseDTO {
-        return ExtractResponseDTO(activity.activityDate, activity.value, activity.account?.accountNumber, activity.operation)
+        return ExtractResponseDTO(activity.activityDate, activity.value, activity.operation)
     }
 
     private fun getActivity(user: User, acc: Account, activityDTO: ActivityRequestDTO): Activity {

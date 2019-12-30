@@ -11,6 +11,5 @@ data class ExtractResponseDTO (
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     val date: Date?,
     val value: Double?,
-    val accountNumber: String?,
     val operation: Operation?
 )

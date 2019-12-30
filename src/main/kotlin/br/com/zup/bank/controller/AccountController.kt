@@ -52,7 +52,7 @@ class AccountController {
         return ResponseEntity.ok(accountService.getByCpf(cpf))
     }
 
-    @GetMapping("/{accNumber}")
+    @GetMapping("/number/{accNumber}")
     fun getByAccountNumber(@PathVariable accNumber: String): ResponseEntity<AccountResponseDTO> {
         return ResponseEntity.ok(accountService.getByAccountNumber(accNumber))
     }
