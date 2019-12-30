@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 interface ActivityRepository : JpaRepository<Activity, Long> {
-    fun findAllByOrderByActivityDateDesc(): List<Activity>
+    fun findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber: String): List<Activity>
 }

@@ -42,9 +42,11 @@ class ActivityServiceImpl : IActivityService {
         return withdraw(activityDTO)
     }
 
-    override fun extract(): MutableList<ExtractResponseDTO> {
+    override fun extract(accNumber: String): MutableList<ExtractResponseDTO> {
+        getAccount(accNumber)
+
         var extractResponseDTO = mutableListOf<ExtractResponseDTO>()
-        val extracts = activityRepository.findAllByOrderByActivityDateDesc()
+        val extracts = activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber)
 
         extracts.forEach {
             extractResponseDTO.add(getExtractResponseDTO(it))

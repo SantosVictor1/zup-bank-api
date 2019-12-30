@@ -1,7 +1,7 @@
 package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
-import br.com.zup.bank.dto.response.success.TransferResponseDTO
+import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Account
@@ -29,7 +29,7 @@ class TransferServiceImpl : ITransferService {
     @Autowired
     private lateinit var activityRepository: ActivityRepository
 
-    override fun newTransfer(transferRequestDTO: TransferRequestDTO): TransferResponseDTO {
+    override fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO {
         validateAccounts(transferRequestDTO)
 
         val originAccount = getAccount(transferRequestDTO.originAccount!!)
@@ -76,11 +76,11 @@ class TransferServiceImpl : ITransferService {
         return Transfer(null, transferDTO.transferValue, Date(), accounts)
     }
 
-    private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): TransferResponseDTO {
+    private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): NewTransferResponseDTO {
         val message = "Transferência no valor de ${transferDTO.transferValue} " +
             "reais para a conta ${transferDTO.destinyAccount} realizada com sucesso"
 
-        return TransferResponseDTO(Date(), message)
+        return NewTransferResponseDTO(Date(), message)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {

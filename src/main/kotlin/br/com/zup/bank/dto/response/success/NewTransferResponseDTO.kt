@@ -6,7 +6,7 @@ import java.util.*
 /**
  * Created by Victor Santos on 30/12/2019
  */
-class TransferResponseDTO(
+class NewTransferResponseDTO(
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     val transferDate: Date?,
     val message: String?

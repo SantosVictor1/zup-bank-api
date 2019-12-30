@@ -9,7 +9,7 @@ import br.com.zup.bank.dto.response.success.ExtractResponseDTO
  */
 interface IActivityService {
 
-    fun operation(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO
+    fun operation(activityDTO: ActivityRequestDTO): ActivityResponseDTO
 
-    fun extract(): MutableList<ExtractResponseDTO>
+    fun extract(accNumber: String): MutableList<ExtractResponseDTO>
 }

@@ -51,7 +51,7 @@ class ActivityController {
     }
 
     @GetMapping("/extract")
-    fun extract(): ResponseEntity<MutableList<ExtractResponseDTO>> {
-        return ResponseEntity.ok(activityService.extract())
+    fun extract(@RequestParam accNumber: String): ResponseEntity<MutableList<ExtractResponseDTO>> {
+        return ResponseEntity.ok(activityService.extract(accNumber))
     }
 }
