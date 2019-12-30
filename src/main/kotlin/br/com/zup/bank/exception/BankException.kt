@@ -5,5 +5,5 @@ package br.com.zup.bank.exception
  */
 class BankException(
     val httpStatus: Int,
-    val errorMessage: String
+    val errors: MutableList<String>
 ) : RuntimeException()

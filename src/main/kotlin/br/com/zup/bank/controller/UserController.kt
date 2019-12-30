@@ -4,11 +4,13 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.service.IUserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
+import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -22,14 +24,12 @@ class UserController {
     private lateinit var userService: IUserService
 
     @PostMapping
-    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO, result: BindingResult): ResponseEntity<Any> {
+    fun createUser(
+        @RequestBody @Valid userRequestDTO: UserRequestDTO,
+        result: BindingResult
+    ): ResponseEntity<UserResponseDTO> {
         if (result.hasErrors()) {
-            var errors = mutableListOf<ErrorSupport>()
-            result.allErrors.forEach {
-                errors.add(ErrorSupport(it.defaultMessage.toString()))
-            }
-
-            return ResponseEntity(ErrorResponse(400, errors), HttpStatus.BAD_REQUEST)
+            badRequest(result.allErrors)
         }
 
         return ResponseEntity(userService.createUser(userRequestDTO), HttpStatus.CREATED)
@@ -50,5 +50,15 @@ class UserController {
         userService.deleteUser(cpf)
 
         return ResponseEntity.noContent().build()
+    }
+
+    private fun badRequest(objectErrors: MutableList<ObjectError>) {
+        val errors = mutableListOf<String>()
+
+        objectErrors.forEach {
+            errors.add(it.defaultMessage.toString())
+        }
+
+        throw BankException(400, errors)
     }
 }

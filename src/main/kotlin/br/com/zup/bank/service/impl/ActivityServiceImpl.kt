@@ -5,6 +5,7 @@ import br.com.zup.bank.dto.response.success.ActivityResponseDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
 import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.User
@@ -76,7 +77,7 @@ class ActivityServiceImpl : IActivityService {
 
     private fun validateWithdraw(balance: Double) {
         if (balance < 0.0) {
-            throw BankException(400, "Saldo insuficiente!")
+            badRequest(mutableListOf("Saldo insuficiente!"))
         }
     }
 
@@ -96,7 +97,7 @@ class ActivityServiceImpl : IActivityService {
         val user = userRepository.findByCpf(cpf)
 
         if (!user.isPresent) {
-            throw BankException(404, "Usuário não encontrado")
+            resourceNotFound(mutableListOf("Usuário não encontrado"))
         }
 
         return user.get()
@@ -106,9 +107,21 @@ class ActivityServiceImpl : IActivityService {
         val acc = accountRepository.findByAccountNumber(accNumber)
 
         if (!acc.isPresent) {
-            throw BankException(404, "Conta não encontrada")
+            resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return acc.get()
+    }
+
+    private fun resourceNotFound(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw ResourceNotFoundException(errors)
+        }
+    }
+
+    private fun badRequest(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw BankException(400, errors)
+        }
     }
 }

@@ -5,6 +5,7 @@ import br.com.zup.bank.dto.response.success.AccountBalanceDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
@@ -27,7 +28,7 @@ class AccountServiceImpl : IAccountService {
         var user = userRepository.findByCpf(accountRequestDTO.cpf)
 
         if (!user.isPresent) {
-            throw BankException(400, "Usuário não encontrado")
+            resourceNotFound(mutableListOf("Usuário não encontrado"))
         }
 
         findAccountByUser(user.get().cpf!!)
@@ -54,7 +55,7 @@ class AccountServiceImpl : IAccountService {
         val account = accountRepository.findById(id)
 
         if (!account.isPresent) {
-            throw BankException(404, "Conta não encontrada")
+            resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return getAccountDTO(account.get())
@@ -64,7 +65,7 @@ class AccountServiceImpl : IAccountService {
         val account = accountRepository.findByUserCpf(cpf)
 
         if (!account.isPresent) {
-            throw BankException(404, "Conta não encontrada")
+            resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return getAccountDTO(account.get())
@@ -74,7 +75,7 @@ class AccountServiceImpl : IAccountService {
         val account = accountRepository.findByAccountNumber(accNumber)
 
         if (!account.isPresent) {
-            throw BankException(404, "Conta não encontrada")
+            resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return getAccountDTO(account.get())
@@ -84,7 +85,7 @@ class AccountServiceImpl : IAccountService {
         val account = accountRepository.findByAccountNumber(accNumber)
 
         if (!account.isPresent) {
-            throw BankException(404, "Conta não encontrada")
+            resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return AccountBalanceDTO(accNumber, account.get().balance)
@@ -98,7 +99,7 @@ class AccountServiceImpl : IAccountService {
 
     private fun findAccountByUser(cpf: String) {
         if (accountRepository.existsAccountByUserCpf(cpf)) {
-            throw BankException(400, "Usuário já possui uma conta em seu nome")
+            badRequest(mutableListOf("Usuário já possui uma conta em seu nome"))
         }
     }
 
@@ -112,5 +113,17 @@ class AccountServiceImpl : IAccountService {
         }
 
         return accNumber
+    }
+
+    private fun resourceNotFound(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw ResourceNotFoundException(errors)
+        }
+    }
+
+    private fun badRequest(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw BankException(400, errors)
+        }
     }
 }

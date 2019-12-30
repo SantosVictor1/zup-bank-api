@@ -3,12 +3,15 @@ package br.com.zup.bank.controller
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
 import br.com.zup.bank.dto.response.error.ErrorSupport
+import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
+import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.Transfer
 import br.com.zup.bank.service.ITransferService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
+import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -22,15 +25,24 @@ class TransferController {
     private lateinit var transferService: ITransferService
 
     @PostMapping
-    fun newTransfer(@RequestBody @Valid transferDTO: TransferRequestDTO, result: BindingResult): ResponseEntity<Any> {
+    fun newTransfer(
+        @RequestBody @Valid transferDTO: TransferRequestDTO,
+        result: BindingResult
+    ): ResponseEntity<NewTransferResponseDTO> {
         if (result.hasErrors()) {
-            val errors = mutableListOf<ErrorSupport>()
-            result.allErrors.forEach {
-                errors.add(ErrorSupport(it.defaultMessage.toString()))
-            }
-            return ResponseEntity(ErrorResponse(400, errors), HttpStatus.BAD_REQUEST)
+            badRequest(result.allErrors)
         }
 
         return ResponseEntity.ok(transferService.newTransfer(transferDTO))
+    }
+
+    private fun badRequest(objectErrors: MutableList<ObjectError>) {
+        val errors = mutableListOf<String>()
+
+        objectErrors.forEach {
+            errors.add(it.defaultMessage.toString())
+        }
+
+        throw BankException(400, errors)
     }
 }

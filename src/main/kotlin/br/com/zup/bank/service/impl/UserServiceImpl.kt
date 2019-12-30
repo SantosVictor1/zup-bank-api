@@ -3,6 +3,7 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
@@ -45,7 +46,7 @@ class UserServiceImpl : IUserService {
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
-            throw BankException(404, "Usuário não encontrado")
+            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
         return getUserDTO(user.get())
@@ -57,7 +58,7 @@ class UserServiceImpl : IUserService {
         var account = accountRepository.findByUserCpf(cpf)
 
         if (!user.isPresent) {
-            throw BankException(404, "Usuário não encontrado")
+            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
         user.get().isActive = false
@@ -72,13 +73,17 @@ class UserServiceImpl : IUserService {
     }
 
     private fun validateFields(user: UserRequestDTO) {
+        var errors = mutableListOf<String>()
+
         if (existsByCpf(user.cpf!!)) {
-            throw BankException(400, "CPF já cadastrado")
+            errors.add("CPF já cadastrado")
         }
 
         if (existsByEmail(user.email!!)) {
-            throw BankException(400, "Email já cadastrado")
+            errors.add("Email já cadastrado")
         }
+
+        badRequestException(errors)
     }
 
     private fun existsByCpf(cpf: String): Boolean {
@@ -91,5 +96,17 @@ class UserServiceImpl : IUserService {
 
     private fun getUserDTO(user: User): UserResponseDTO {
         return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!, user.isActive!!)
+    }
+
+    private fun resourceNotFoundException(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw ResourceNotFoundException(errors)
+        }
+    }
+
+    private fun badRequestException(errors: MutableList<String>) {
+        if (errors.size > 0) {
+            throw BankException(400, errors)
+        }
     }
 }
