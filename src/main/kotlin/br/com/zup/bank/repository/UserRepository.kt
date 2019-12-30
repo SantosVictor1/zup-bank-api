@@ -2,6 +2,8 @@ package br.com.zup.bank.repository
 
 import br.com.zup.bank.model.User
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -33,5 +35,9 @@ interface UserRepository : JpaRepository<User, Long> {
      * @param  cpf  CPF que será usado na busca
      * @return User encontrado
      */
-    fun findByCpf(cpf: String?): Optional<User>
+    @Query(value = "SELECT user FROM User user WHERE user.cpf = :cpf AND user.isActive = true")
+    fun findByCpf(@Param(value = "cpf") cpf: String?): Optional<User>
+
+    @Query(value = "SELECT user FROM User user WHERE user.id = :id AND user.isActive = true")
+    override fun findById(@Param(value = "id") id: Long): Optional<User>
 }

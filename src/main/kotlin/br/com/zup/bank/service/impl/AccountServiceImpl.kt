@@ -33,7 +33,7 @@ class AccountServiceImpl : IAccountService {
         findAccountByUser(user.get().cpf!!)
 
         val accountNumber = createAccountNumber()
-        acc = Account(accountNumber = accountNumber, user = user.get())
+        acc = Account(accountNumber = accountNumber, user = user.get(), isActive = true)
         acc = accountRepository.save(acc)
 
         return getAccountDTO(acc)

@@ -4,10 +4,12 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.model.User
+import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IUserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 /**
  * Created by Victor Santos on 23/12/2019
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service
 class UserServiceImpl : IUserService {
     @Autowired
     private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var accountRepository: AccountRepository
 
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
@@ -47,18 +51,24 @@ class UserServiceImpl : IUserService {
         return getUserDTO(user.get())
     }
 
-    override fun deleteById(id: Long) {
-        val user = userRepository.findById(id)
+    @Transactional
+    override fun deleteUser(cpf: String) {
+        var user = userRepository.findByCpf(cpf)
+        var account = accountRepository.findByUserCpf(cpf)
 
         if (!user.isPresent) {
             throw BankException(404, "Usuário não encontrado")
         }
 
-        userRepository.deleteById(id)
+        user.get().isActive = false
+        account.get().isActive = false
+
+        userRepository.save(user.get())
+        accountRepository.save(account.get())
     }
 
     private fun setUser(userRequestDTO: UserRequestDTO): User {
-        return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email)
+        return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
     }
 
     private fun validateFields(user: UserRequestDTO) {

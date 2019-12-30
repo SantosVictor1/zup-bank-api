@@ -24,6 +24,9 @@ class Account (
     @Column(name = "number", unique = true)
     var accountNumber: String? = null,
 
+    @Column(name = "isActive")
+    var isActive: Boolean?,
+
     @OneToOne
     @JoinColumn
     var user: User? = null,

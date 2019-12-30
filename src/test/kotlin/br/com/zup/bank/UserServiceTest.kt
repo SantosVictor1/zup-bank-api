@@ -5,6 +5,8 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.UserServiceImpl
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.model.Account
+import br.com.zup.bank.repository.AccountRepository
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,8 +25,11 @@ class UserServiceTest {
     private lateinit var userService: UserServiceImpl
     @Mock
     private lateinit var userRepository: UserRepository
+    @Mock
+    private lateinit var accountRepository: AccountRepository
     private lateinit var user: User
     private lateinit var userRequestDTO: UserRequestDTO
+    private lateinit var acc: Account
 
     @Before
     fun createUser() {
@@ -32,12 +37,15 @@ class UserServiceTest {
             id = 1,
             name = "Victor",
             cpf = "02160795607",
-            email = "teste@gmail.com"
+            email = "teste@gmail.com",
+            isActive = true
         )
         userRequestDTO = UserRequestDTO()
         userRequestDTO.cpf = "02160795607"
         userRequestDTO.email = "teste@gmail.com"
         userRequestDTO.name = "Victor"
+
+        acc = Account(id = 1, accountNumber = "1234567891", user = user, isActive = true)
 
     }
 
@@ -93,18 +101,26 @@ class UserServiceTest {
 
     @Test(expected = BankException::class)
     fun deleteByIdWithErrorTest() {
-        Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.empty())
-        userService.deleteById(user.id!!)
+        Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
+        userService.deleteUser(user.cpf!!)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
+        Mockito.verify(userRepository, Mockito.times(2)).findByCpf(user.cpf!!)
     }
 
     @Test
     fun deleteByIdWithSuccessTest() {
-        Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.of(user))
-        userService.deleteById(user.id!!)
+        Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.of(user))
+        Mockito.`when`(userRepository.save(user)).thenReturn(user)
+        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountRepository.save(acc)).thenReturn(acc)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
+        userService.deleteUser(user.cpf!!)
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).save(user)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
     }
 
     @Test

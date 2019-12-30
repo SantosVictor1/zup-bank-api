@@ -2,6 +2,8 @@ package br.com.zup.bank.repository
 
 import br.com.zup.bank.model.Account
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -33,7 +35,8 @@ interface AccountRepository : JpaRepository<Account, Long> {
      * @param  cpf  CPF que será usado na busca
      * @return Optional
      */
-    fun findByUserCpf(cpf: String): Optional<Account>
+    @Query(value = "SELECT acc FROM Account acc WHERE acc.user.cpf = :cpf AND acc.isActive = true")
+    fun findByUserCpf(@Param(value = "cpf") cpf: String): Optional<Account>
 
     /**
      * Método responsável por encontrar um conta baseado em seu número
@@ -41,5 +44,6 @@ interface AccountRepository : JpaRepository<Account, Long> {
      * @param  accNumber  AccountNumber que será usado na busca
      * @return Optional
      */
-    fun findByAccountNumber(accNumber: String): Optional<Account>
+    @Query(value = "SELECT acc FROM Account acc WHERE acc.accountNumber = :accNumber AND acc.isActive = true")
+    fun findByAccountNumber(@Param(value = "accNumber") accNumber: String): Optional<Account>
 }

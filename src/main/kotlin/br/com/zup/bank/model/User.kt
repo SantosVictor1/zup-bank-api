@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 /**
@@ -20,7 +21,10 @@ data class User (
     var cpf: String? = null,
 
     @Column(name = "email", unique = true, nullable = false)
-    var email: String? = null
+    var email: String? = null,
+
+    @Column(name = "isActive")
+    var isActive: Boolean?
 
 //
 //    @NotBlank(message = "Senha obrigatória")

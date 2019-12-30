@@ -14,5 +14,5 @@ interface IUserService {
 
     fun getById(id: Long): UserResponseDTO
 
-    fun deleteById(id: Long)
+    fun deleteUser(cpf: String)
 }

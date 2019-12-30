@@ -45,9 +45,9 @@ class UserController {
         return ResponseEntity.ok().body(userService.getById(id))
     }
 
-    @DeleteMapping("/{id}")
-    fun deleteById(@PathVariable id: Long): ResponseEntity<Any> {
-        userService.deleteById(id)
+    @DeleteMapping("/{cpf}")
+    fun deleteById(@PathVariable cpf: String): ResponseEntity<Any> {
+        userService.deleteUser(cpf)
 
         return ResponseEntity.noContent().build()
     }
