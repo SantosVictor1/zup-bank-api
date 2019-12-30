@@ -1,7 +1,5 @@
 package br.com.zup.bank.exception
 
-import java.lang.RuntimeException
-
 /**
  * Created by Victor Santos on 30/12/2019
  */

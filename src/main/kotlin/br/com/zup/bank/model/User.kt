@@ -1,6 +1,5 @@
 package br.com.zup.bank.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.*
 
 /**
@@ -8,7 +7,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "user")
-data class User (
+data class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId")

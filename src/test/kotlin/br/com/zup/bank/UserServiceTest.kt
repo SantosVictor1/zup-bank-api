@@ -1,13 +1,13 @@
 package br.com.zup.bank
 
 import br.com.zup.bank.dto.request.UserRequestDTO
-import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.UserRepository
-import br.com.zup.bank.service.impl.UserServiceImpl
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
+import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
+import br.com.zup.bank.repository.UserRepository
+import br.com.zup.bank.service.impl.UserServiceImpl
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

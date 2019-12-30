@@ -2,7 +2,6 @@ package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
-import br.com.zup.bank.model.Transfer
 
 /**
  * Created by Victor Santos on 30/12/2019

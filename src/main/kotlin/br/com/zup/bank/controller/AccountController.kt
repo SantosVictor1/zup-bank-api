@@ -1,14 +1,11 @@
 package br.com.zup.bank.controller
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
-import br.com.zup.bank.dto.response.error.ErrorResponse
-import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.AccountBalanceDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.service.IAccountService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.validation.ObjectError

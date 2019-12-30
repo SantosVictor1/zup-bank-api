@@ -7,7 +7,7 @@ import java.util.*
 /**
  * Created by Victor Santos on 27/12/2019
  */
-data class ExtractResponseDTO (
+data class ExtractResponseDTO(
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     val date: Date?,
     val value: Double?,

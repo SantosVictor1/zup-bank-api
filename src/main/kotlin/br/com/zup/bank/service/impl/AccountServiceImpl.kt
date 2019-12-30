@@ -104,11 +104,11 @@ class AccountServiceImpl : IAccountService {
     }
 
     private fun createAccountNumber(): String {
-        val numbers = arrayOf("0","1","2","3","4","5","6","7","8","9")
+        val numbers = arrayOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
         var accNumber = ""
 
         for (number in numbers) {
-            val j = (Math.random()*numbers.size).toInt()
+            val j = (Math.random() * numbers.size).toInt()
             accNumber += numbers[j]
         }
 

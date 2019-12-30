@@ -10,7 +10,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "transfer")
-data class Transfer (
+data class Transfer(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transferId")

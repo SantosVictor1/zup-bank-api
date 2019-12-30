@@ -1,6 +1,6 @@
 package br.com.zup.bank.model
 
-    import br.com.zup.bank.enums.Operation
+import br.com.zup.bank.enums.Operation
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
@@ -11,7 +11,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(name = "activity")
-data class Activity (
+data class Activity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "activityId")

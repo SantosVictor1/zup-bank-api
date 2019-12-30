@@ -66,7 +66,7 @@ class ActivityServiceImpl : IActivityService {
     }
 
     private fun withdraw(activityDTO: ActivityRequestDTO): ActivityResponseDTO {
-        acc.balance =  acc.balance!! - activityDTO.value!!
+        acc.balance = acc.balance!! - activityDTO.value!!
         validateWithdraw(acc.balance!!)
 
         accountRepository.save(acc)

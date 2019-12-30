@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository
  * Created by Victor Santos on 30/12/2019
  */
 @Repository
-interface TransferRepository : JpaRepository<Transfer, Long> {
-}
+interface TransferRepository : JpaRepository<Transfer, Long>

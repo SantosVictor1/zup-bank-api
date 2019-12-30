@@ -2,13 +2,13 @@ package br.com.zup.bank
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
-import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.AccountRepository
-import br.com.zup.bank.service.impl.AccountServiceImpl
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
+import br.com.zup.bank.model.User
+import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
+import br.com.zup.bank.service.impl.AccountServiceImpl
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +36,7 @@ class AccountServiceTest {
 
     @Before
     fun setObjects() {
-        accResponse = AccountResponseDTO(1000.0, 0.0, "0138424688", true,null)
+        accResponse = AccountResponseDTO(1000.0, 0.0, "0138424688", true, null)
         user = User(2, "Victor", "02160795607", "victor@gmail.com", true)
         acc = Account(1, 1000.0, 0.0, "7278424688", true, user)
         accRequestDTO = AccountRequestDTO()

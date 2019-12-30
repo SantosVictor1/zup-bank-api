@@ -1,8 +1,6 @@
 package br.com.zup.bank.controller
 
 import br.com.zup.bank.dto.request.UserRequestDTO
-import br.com.zup.bank.dto.response.error.ErrorResponse
-import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.service.IUserService
