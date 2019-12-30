@@ -5,6 +5,7 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.UserServiceImpl
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.repository.AccountRepository
 import org.junit.Before
@@ -83,7 +84,7 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = ResourceNotFoundException::class)
     fun getByIdWithErrorTest() {
         Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.empty())
         userService.getById(user.id!!)
@@ -99,17 +100,20 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
     }
 
-    @Test(expected = BankException::class)
-    fun deleteByIdWithErrorTest() {
+    @Test(expected = ResourceNotFoundException::class)
+    fun deleteWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
         userService.deleteUser(user.cpf!!)
 
         Mockito.verify(userRepository, Mockito.times(2)).findByCpf(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).save(user)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
     }
 
     @Test
-    fun deleteByIdWithSuccessTest() {
+    fun deleteWithSuccessTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.of(user))
         Mockito.`when`(userRepository.save(user)).thenReturn(user)
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))

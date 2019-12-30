@@ -6,6 +6,7 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.service.impl.AccountServiceImpl
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.repository.UserRepository
 import org.junit.Before
@@ -42,7 +43,7 @@ class AccountServiceTest {
         accRequestDTO.cpf = "02160795607"
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = ResourceNotFoundException::class)
     fun userDontExistsTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
 
@@ -60,6 +61,8 @@ class AccountServiceTest {
         accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test(expected = BankException::class)
@@ -70,6 +73,7 @@ class AccountServiceTest {
         accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test
@@ -77,11 +81,12 @@ class AccountServiceTest {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(false)
         Mockito.`when`(accountRepository.save(Mockito.any(Account::class.java))).thenReturn(acc)
-        //ASK WHY TO USE MOCKITO.ANY
 
         accountService.createAccount(accRequestDTO)
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test
@@ -93,7 +98,7 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findAll()
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = ResourceNotFoundException::class)
     fun getByIdWithError() {
         Mockito.`when`(accountRepository.findById(acc.id!!)).thenReturn(Optional.empty())
 
@@ -111,7 +116,7 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findById(acc.id!!)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = ResourceNotFoundException::class)
     fun getByCpfWithError() {
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
 
@@ -127,5 +132,23 @@ class AccountServiceTest {
         accountService.getByCpf(user.cpf!!)
 
         Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+    }
+
+    @Test(expected = ResourceNotFoundException::class)
+    fun getByAccountNumberWithError() {
+        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.empty())
+
+        accountService.getByAccountNumber(acc.accountNumber!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
+    }
+
+    @Test
+    fun getByAccountNumberWithSuccess() {
+        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+
+        accountService.getByAccountNumber(acc.accountNumber!!)
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
     }
 }
