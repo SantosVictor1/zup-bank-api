@@ -104,9 +104,9 @@ class UserServiceTest {
     fun deleteWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
-        userService.deleteUser(user.cpf!!)
+        userService.deactivateUser(user.cpf!!)
 
-        Mockito.verify(userRepository, Mockito.times(2)).findByCpf(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
         Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
         Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
@@ -119,11 +119,35 @@ class UserServiceTest {
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
         Mockito.`when`(accountRepository.save(acc)).thenReturn(acc)
 
-        userService.deleteUser(user.cpf!!)
+        userService.deactivateUser(user.cpf!!)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
         Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
+    }
+
+    @Test(expected = ResourceNotFoundException::class)
+    fun reactivateWithErrorTest() {
+        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByUserCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.empty())
+        userService.reactivateUser(user.cpf!!)
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).save(user)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpfAndIsActiveFalse(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
+    }
+
+    @Test
+    fun reactivateWithSuccessTest() {
+        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(user))
+        Mockito.`when`(accountRepository.findByUserCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(acc))
+        userService.reactivateUser(user.cpf!!)
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).save(user)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpfAndIsActiveFalse(user.cpf!!)
         Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
     }
 

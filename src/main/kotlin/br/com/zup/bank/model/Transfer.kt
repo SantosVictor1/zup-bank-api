@@ -1,7 +1,6 @@
 package br.com.zup.bank.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonFormat
 import java.util.*
 import javax.persistence.*
 
@@ -19,8 +18,7 @@ data class Transfer(
     @Column(name = "value")
     val value: Double?,
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    @Column(name = "date")
+    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     val transferDate: Date?,
 
     @JsonBackReference

@@ -121,9 +121,9 @@ class TransferServiceTest {
         transferDTO.originAccount = "7894561231"
         val user = User(1, "Fulano", "50359879063", "fulano@gmail.com", true)
         val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
-        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, null, null, null)
-        val originActivity = Activity(1, Date(), transferDTO.transferValue, Operation.TRANSFER, originAccount, user)
-        val destinyActivity = Activity(2, Date(), transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
+        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user, null, null)
+        val originActivity = Activity(null, Date(), - transferDTO.transferValue!!, Operation.TRANSFER, originAccount, user)
+        val destinyActivity = Activity(null, Date(), transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
