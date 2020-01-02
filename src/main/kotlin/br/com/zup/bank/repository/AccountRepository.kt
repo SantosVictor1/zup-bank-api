@@ -38,6 +38,8 @@ interface AccountRepository : JpaRepository<Account, Long> {
     @Query(value = "SELECT acc FROM Account acc WHERE acc.user.cpf = :cpf AND acc.isActive = true")
     fun findByUserCpf(@Param(value = "cpf") cpf: String): Optional<Account>
 
+    fun findByUserCpfAndIsActiveFalse(cpf: String): Optional<Account>
+
     /**
      * Método responsável por encontrar um conta baseado em seu número
      *

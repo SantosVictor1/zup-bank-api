@@ -33,6 +33,11 @@ class UserController {
         return ResponseEntity(userService.createUser(userRequestDTO), HttpStatus.CREATED)
     }
 
+    @PatchMapping("/reactivate/{cpf}")
+    fun reactivateUser(@PathVariable cpf: String): ResponseEntity<UserResponseDTO> {
+        return ResponseEntity.ok(userService.reactivateUser(cpf))
+    }
+
     @GetMapping
     fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> {
         return ResponseEntity.ok().body(userService.getAll())

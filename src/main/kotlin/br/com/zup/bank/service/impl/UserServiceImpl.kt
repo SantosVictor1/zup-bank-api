@@ -55,17 +55,35 @@ class UserServiceImpl : IUserService {
     @Transactional
     override fun deleteUser(cpf: String) {
         var user = userRepository.findByCpf(cpf)
-        var account = accountRepository.findByUserCpf(cpf)
+        var account = accountRepository.findByUserCpf(cpf).get()
 
         if (!user.isPresent) {
             resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
         user.get().isActive = false
-        account.get().isActive = false
+        account.isActive = false
 
         userRepository.save(user.get())
-        accountRepository.save(account.get())
+        accountRepository.save(account)
+    }
+
+    @Transactional
+    override fun reactivateUser(cpf: String): UserResponseDTO {
+        var user = userRepository.findByCpfAndIsActiveFalse(cpf)
+        var account = accountRepository.findByUserCpfAndIsActiveFalse(cpf).get()
+
+        if (!user.isPresent) {
+            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+        }
+
+        user.get().isActive = true
+        account.isActive = true
+
+        userRepository.save(user.get())
+        accountRepository.save(account)
+
+        return getUserDTO(user.get())
     }
 
     private fun setUser(userRequestDTO: UserRequestDTO): User {

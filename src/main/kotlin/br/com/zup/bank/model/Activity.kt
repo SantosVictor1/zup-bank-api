@@ -1,7 +1,6 @@
 package br.com.zup.bank.model
 
 import br.com.zup.bank.enums.Operation
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
 import javax.persistence.*
@@ -17,8 +16,7 @@ data class Activity(
     @Column(name = "activityId")
     var id: Long? = null,
 
-    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    @Column(name = "activityDate")
+    @Column(name = "activityDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     var activityDate: Date? = null,
 
     @Column(name = "value")
