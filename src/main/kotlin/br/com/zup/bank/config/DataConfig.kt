@@ -21,16 +21,18 @@ class DataConfig {
 
     @Bean
     fun databaseInitializer(userRepository: UserRepository, accountRepository: AccountRepository) = ApplicationRunner {
-        val user = userRepository.save(
-            User
-            (null,
-            "Victor Santos",
-            "02160795607",
-            "victor@gmail.com",
-            true
+        if (!userRepository.existsByCpf(cpf = "02160795607")) {
+            val user = userRepository.save(
+                User
+                (null,
+                    "Victor Santos",
+                    "02160795607",
+                    "victor@gmail.com",
+                    true
+                )
             )
-        )
 
-        accountRepository.save(Account(accountNumber = "5146789132", user = user, isActive = true))
+            accountRepository.save(Account(accountNumber = "5146789132", user = user, isActive = true))
+        }
     }
 }
