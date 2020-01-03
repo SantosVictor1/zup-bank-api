@@ -15,7 +15,7 @@ Tecnologias utilizadas:
 
 O arquivo docker-compose.yml é utilizado para definir as configurações do banco de dados necessárias para o funcionamento da API.
  
-Antes de rodar o Bank no ambiente de desenvolvimento, é necessário executar o seguinte comando:
+Antes de rodar o projeto no ambiente de desenvolvimento, é necessário executar o seguinte comando:
 ```
 docker-compose --file docker-compose.yml up
 ```
