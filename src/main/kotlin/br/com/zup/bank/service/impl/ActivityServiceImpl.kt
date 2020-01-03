@@ -2,7 +2,9 @@ package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.success.ActivityResponseDTO
+import br.com.zup.bank.dto.response.success.ExtractDataDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
+import br.com.zup.bank.dto.response.success.PaginationResponseDTO
 import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
@@ -14,6 +16,8 @@ import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IActivityService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -43,17 +47,13 @@ class ActivityServiceImpl : IActivityService {
         return withdraw(activityDTO)
     }
 
-    override fun extract(accNumber: String): MutableList<ExtractResponseDTO> {
+    override fun extract(accNumber: String, page: Int, size: Int): ExtractResponseDTO {
         getAccount(accNumber)
 
-        var extractResponseDTO = mutableListOf<ExtractResponseDTO>()
-        val extracts = activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber)
+        var pageRequest = PageRequest.of(page, size)
+        val extracts = activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber, pageRequest)
 
-        extracts.forEach {
-            extractResponseDTO.add(getExtractResponseDTO(it))
-        }
-
-        return extractResponseDTO
+        return getExtractResponseDTO(extracts, page, size)
     }
 
     private fun deposit(activityDTO: ActivityRequestDTO): ActivityResponseDTO {
@@ -88,8 +88,15 @@ class ActivityServiceImpl : IActivityService {
         return ActivityResponseDTO(acc.balance, acc.accountNumber, activity.activityDate, activity.operation.toString())
     }
 
-    private fun getExtractResponseDTO(activity: Activity): ExtractResponseDTO {
-        return ExtractResponseDTO(activity.activityDate, activity.value, activity.operation)
+    private fun getExtractResponseDTO(activities: Page<Activity>, page: Int, size: Int): ExtractResponseDTO {
+        val pagination = PaginationResponseDTO(page, size)
+        var extractDataDTO = mutableListOf<ExtractDataDTO>()
+
+        activities.forEach {
+            extractDataDTO.add(ExtractDataDTO(it.activityDate, it.value, it.operation))
+        }
+
+        return ExtractResponseDTO(extractDataDTO, pagination)
     }
 
     private fun getActivity(user: User, acc: Account, activityDTO: ActivityRequestDTO): Activity {

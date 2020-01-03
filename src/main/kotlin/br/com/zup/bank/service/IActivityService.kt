@@ -11,5 +11,5 @@ interface IActivityService {
 
     fun operation(activityDTO: ActivityRequestDTO): ActivityResponseDTO
 
-    fun extract(accNumber: String): MutableList<ExtractResponseDTO>
+    fun extract(accNumber: String, page: Int, size: Int): ExtractResponseDTO
 }

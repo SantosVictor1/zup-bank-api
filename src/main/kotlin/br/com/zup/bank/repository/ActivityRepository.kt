@@ -1,6 +1,8 @@
 package br.com.zup.bank.repository
 
 import br.com.zup.bank.model.Activity
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -9,5 +11,6 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 interface ActivityRepository : JpaRepository<Activity, Long> {
-    fun findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber: String): List<Activity>
+
+    fun findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber: String, pageable: Pageable): Page<Activity>
 }

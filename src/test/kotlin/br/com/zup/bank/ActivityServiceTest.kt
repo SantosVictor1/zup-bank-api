@@ -17,6 +17,9 @@ import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.test.context.junit4.SpringRunner
 import java.util.*
 
@@ -121,13 +124,14 @@ class ActivityServiceTest {
 
     @Test
     fun extractWithSuccess() {
+        var pageRequest = PageRequest.of(0, 10)
         Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!))
-            .thenReturn(mutableListOf(activity))
+        Mockito.`when`(activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
+            .thenReturn((Page.empty(pageRequest)))
 
-        activityService.extract(activityDTO.accNumber!!)
+        activityService.extract(activityDTO.accNumber!!, 0,10)
 
         Mockito.verify(activityRepository, Mockito.times(1))
-            .findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!)
+            .findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest)
     }
 }

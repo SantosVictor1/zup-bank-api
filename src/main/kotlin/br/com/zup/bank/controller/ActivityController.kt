@@ -65,14 +65,16 @@ class ActivityController {
 
     @ApiOperation(value = "Retorna o extrato de uma conta")
     @ApiResponses(
-        ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = ExtractResponseDTO::class, responseContainer = "List"),
+        ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = ExtractResponseDTO::class),
         ApiResponse(code = 400, message = "Campo inválido", response = ErrorResponse::class)
     )
     @GetMapping("/extract")
     fun extract(
-        @RequestParam @ApiParam(value = "Número da conta") accNumber: String
-    ): ResponseEntity<MutableList<ExtractResponseDTO>> {
-        return ResponseEntity.ok(activityService.extract(accNumber))
+        @RequestParam(required = true) @ApiParam(value = "Número da conta") accNumber: String,
+        @RequestParam(required = false, defaultValue = "0") @ApiParam(value = "Número da página") page: Int,
+        @RequestParam(required = false, defaultValue = "10") @ApiParam(value = "Tamanho da página") size: Int
+    ): ResponseEntity<ExtractResponseDTO> {
+        return ResponseEntity.ok(activityService.extract(accNumber, page, size))
     }
 
     private fun badRequest(objectErrors: MutableList<ObjectError>) {
