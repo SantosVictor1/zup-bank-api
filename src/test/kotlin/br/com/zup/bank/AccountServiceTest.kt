@@ -48,8 +48,6 @@ class AccountServiceTest {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
 
         accountService.createAccount(accRequestDTO)
-
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test
@@ -71,9 +69,6 @@ class AccountServiceTest {
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf!!)).thenReturn(true)
 
         accountService.createAccount(accRequestDTO)
-
-        Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf!!)
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test
@@ -103,8 +98,6 @@ class AccountServiceTest {
         Mockito.`when`(accountRepository.findById(acc.id!!)).thenReturn(Optional.empty())
 
         accountService.getById(acc.id!!)
-
-        Mockito.verify(accountRepository, Mockito.times(1)).findById(acc.id!!)
     }
 
     @Test
@@ -121,8 +114,6 @@ class AccountServiceTest {
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
 
         accountService.getByCpf(user.cpf!!)
-
-        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
     }
 
     @Test
@@ -139,8 +130,6 @@ class AccountServiceTest {
         Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.empty())
 
         accountService.getByAccountNumber(acc.accountNumber!!)
-
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
     }
 
     @Test

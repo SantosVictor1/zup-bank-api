@@ -62,8 +62,6 @@ class ActivityServiceTest {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
 
         activityService.operation(activityDTO)
-
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
     }
 
     @Test(expected = ResourceNotFoundException::class)
@@ -72,9 +70,6 @@ class ActivityServiceTest {
         Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.empty())
 
         activityService.operation(activityDTO)
-
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(activityDTO.accNumber!!)
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityDTO.cpf)
     }
 
     @Test
@@ -105,11 +100,6 @@ class ActivityServiceTest {
         activityDTO.value = 10000.0
 
         activityService.operation(activityDTO)
-
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(activityDTO.accNumber!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).save(account)
-        Mockito.verify(activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
 
     @Test

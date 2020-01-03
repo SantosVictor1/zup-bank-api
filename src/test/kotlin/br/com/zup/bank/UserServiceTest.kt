@@ -53,15 +53,15 @@ class UserServiceTest {
     @Test(expected = BankException::class)
     fun existsByCpfTest() {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(true)
-        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
+        userService.createUser(userRequestDTO)
     }
 
     @Test
     fun notExistsByCpfTest() {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(false)
         Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
+
         userService.createUser(userRequestDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
@@ -70,15 +70,15 @@ class UserServiceTest {
     @Test(expected = BankException::class)
     fun existsByEmailTest() {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(true)
-        userService.createUser(userRequestDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
+        userService.createUser(userRequestDTO)
     }
 
     @Test
     fun notExistsByEmailTest() {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(false)
         Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
+
         userService.createUser(userRequestDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
@@ -87,9 +87,8 @@ class UserServiceTest {
     @Test(expected = ResourceNotFoundException::class)
     fun getByIdWithErrorTest() {
         Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.empty())
-        userService.getById(user.id!!)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
+        userService.getById(user.id!!)
     }
 
     @Test
@@ -104,12 +103,8 @@ class UserServiceTest {
     fun deleteWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
         Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
-        userService.deactivateUser(user.cpf!!)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
-        Mockito.verify(userRepository, Mockito.times(1)).save(user)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
+        userService.deactivateUser(user.cpf!!)
     }
 
     @Test
@@ -131,18 +126,15 @@ class UserServiceTest {
     fun reactivateWithErrorTest() {
         Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.empty())
         Mockito.`when`(accountRepository.findByUserCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.empty())
-        userService.reactivateUser(user.cpf!!)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
-        Mockito.verify(userRepository, Mockito.times(1)).save(user)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpfAndIsActiveFalse(user.cpf!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
+        userService.reactivateUser(user.cpf!!)
     }
 
     @Test
     fun reactivateWithSuccessTest() {
         Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(user))
         Mockito.`when`(accountRepository.findByUserCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(acc))
+
         userService.reactivateUser(user.cpf!!)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
