@@ -70,11 +70,17 @@ class ActivityController {
     )
     @GetMapping("/extract")
     fun extract(
-        @RequestParam(required = true) @ApiParam(value = "Número da conta") accNumber: String,
-        @RequestParam(required = false, defaultValue = "0") @ApiParam(value = "Número da página") page: Int,
-        @RequestParam(required = false, defaultValue = "10") @ApiParam(value = "Tamanho da página") size: Int
+        @RequestParam(required = true)
+        @ApiParam(value = "Número da conta", required = true, defaultValue = "")
+        accNumber: String,
+        @RequestParam(required = false, defaultValue = "0")
+        @ApiParam(value = "Número da página")
+        page: String,
+        @RequestParam(required = false, defaultValue = "10")
+        @ApiParam(value = "Tamanho da página")
+        size: String
     ): ResponseEntity<ExtractResponseDTO> {
-        return ResponseEntity.ok(activityService.extract(accNumber, page, size))
+        return ResponseEntity.ok(activityService.extract(accNumber, page.toInt(), size.toInt()))
     }
 
     private fun badRequest(objectErrors: MutableList<ObjectError>) {
