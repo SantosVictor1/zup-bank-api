@@ -1,6 +1,7 @@
 package br.com.zup.bank.dto.request
 
 import org.hibernate.validator.constraints.br.CPF
+import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
@@ -20,4 +21,6 @@ class TransferRequestDTO {
 
     @NotNull(message = "Valor de transferência obrigatório")
     var transferValue: Double? = null
+
+    var date: Date = Date()
 }

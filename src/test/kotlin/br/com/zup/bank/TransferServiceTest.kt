@@ -122,8 +122,8 @@ class TransferServiceTest {
         val user = User(1, "Fulano", "50359879063", "fulano@gmail.com", true)
         val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
         val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user, null, null)
-        val originActivity = Activity(null, Date(), - transferDTO.transferValue!!, Operation.TRANSFER, originAccount, user)
-        val destinyActivity = Activity(null, Date(), transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
+        val originActivity = Activity(null, transferDTO.date, - transferDTO.transferValue!!, Operation.TRANSFER, originAccount, user)
+        val destinyActivity = Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
@@ -139,7 +139,6 @@ class TransferServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(transferDTO.destinyAccount!!)
         Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(transferDTO.originAccount!!)
         Mockito.verify(accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
-//        Mockito.verify(activityRepository, Mockito.times(1)).saveAll(mutableListOf(originActivity, destinyActivity))
-
+        Mockito.verify(activityRepository, Mockito.times(1)).saveAll(mutableListOf(originActivity, destinyActivity))
     }
 }
