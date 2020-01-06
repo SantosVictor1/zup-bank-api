@@ -17,12 +17,10 @@ import org.springframework.stereotype.Service
  * Created by Victor Santos on 26/12/2019
  */
 @Service
-class AccountServiceImpl : IAccountService {
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
+class AccountServiceImpl(
+    val accountRepository: AccountRepository,
+    val userRepository: UserRepository
+) : IAccountService {
     override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account
         var user = userRepository.findByCpf(accountRequestDTO.cpf)
