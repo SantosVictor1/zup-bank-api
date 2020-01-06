@@ -68,14 +68,9 @@ class AccountController {
     )
     @GetMapping("/data")
     fun getByAccountNumber(
-        @RequestParam(defaultValue = "") @ApiParam(value = "Número da conta") accNumber: String,
-        @RequestParam(defaultValue = "") @ApiParam cpf: String
+        @RequestParam(defaultValue = "") @ApiParam(value = "Número da conta ou CPF") accNumberOrCpf: String
     ): ResponseEntity<AccountResponseDTO> {
-        if (accNumber.isNotEmpty()) {
-            return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(accNumber))
-        }
-
-        return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(cpf))
+        return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(accNumberOrCpf))
     }
 
     @ApiOperation(value = "Retorna extrato de uma conta pelo seu número")

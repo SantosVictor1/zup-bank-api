@@ -16,12 +16,10 @@ import javax.transaction.Transactional
  * Created by Victor Santos on 23/12/2019
  */
 @Service
-class UserServiceImpl : IUserService {
-    @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-
+class UserServiceImpl(
+    val userRepository: UserRepository,
+    val accountRepository: AccountRepository
+) : IUserService {
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
