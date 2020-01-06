@@ -1,4 +1,4 @@
-package br.com.zup.bank
+package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO

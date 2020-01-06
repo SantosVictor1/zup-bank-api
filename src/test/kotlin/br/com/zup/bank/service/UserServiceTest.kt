@@ -1,4 +1,4 @@
-package br.com.zup.bank
+package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.exception.BankException

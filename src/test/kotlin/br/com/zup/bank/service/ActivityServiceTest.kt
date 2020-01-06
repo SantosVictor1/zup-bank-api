@@ -1,4 +1,4 @@
-package br.com.zup.bank
+package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.enums.Operation
@@ -19,7 +19,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.test.context.junit4.SpringRunner
 import java.util.*
 
