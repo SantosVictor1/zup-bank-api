@@ -1,6 +1,7 @@
 package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
+import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
@@ -8,6 +9,7 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.UserServiceImpl
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +33,7 @@ class UserServiceTest {
     private lateinit var user: User
     private lateinit var userRequestDTO: UserRequestDTO
     private lateinit var acc: Account
+    private lateinit var userResponseDTO: UserResponseDTO
 
     @Before
     fun createUser() {
@@ -45,6 +48,8 @@ class UserServiceTest {
         userRequestDTO.cpf = "02160795607"
         userRequestDTO.email = "teste@gmail.com"
         userRequestDTO.name = "Victor"
+
+        userResponseDTO = UserResponseDTO(1, "Victor", "02160795607", "teste@gmail.com", true)
 
         acc = Account(id = 1, accountNumber = "1234567891", user = user, isActive = true)
 
@@ -62,9 +67,11 @@ class UserServiceTest {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(false)
         Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
 
-        userService.createUser(userRequestDTO)
+        val userResponseDTO = userService.createUser(userRequestDTO)
+        Assert.assertEquals(this.userResponseDTO, userResponseDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
     @Test(expected = BankException::class)
@@ -79,9 +86,11 @@ class UserServiceTest {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(false)
         Mockito.`when`(userRepository.save(Mockito.any(User::class.java))).thenReturn(user)
 
-        userService.createUser(userRequestDTO)
+        val userResponseDTO = userService.createUser(userRequestDTO)
+        Assert.assertEquals(this.userResponseDTO, userResponseDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
     @Test(expected = ResourceNotFoundException::class)
@@ -94,7 +103,9 @@ class UserServiceTest {
     @Test
     fun getByIdWithSuccessTest() {
         Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.of(user))
-        userService.getById(user.id!!)
+
+        val userResponse = userService.getById(user.id!!)
+        Assert.assertEquals(this.userResponseDTO, userResponse)
 
         Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
     }
@@ -115,6 +126,8 @@ class UserServiceTest {
         Mockito.`when`(accountRepository.save(acc)).thenReturn(acc)
 
         userService.deactivateUser(user.cpf!!)
+        Assert.assertTrue(user.isActive == false)
+        Assert.assertTrue(acc.isActive == false)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
@@ -135,7 +148,8 @@ class UserServiceTest {
         Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(user))
         Mockito.`when`(accountRepository.findByUserCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(acc))
 
-        userService.reactivateUser(user.cpf!!)
+        val userResponse = userService.reactivateUser(user.cpf!!)
+        Assert.assertEquals(this.userResponseDTO, userResponse)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
@@ -147,7 +161,8 @@ class UserServiceTest {
     fun getAllTest() {
         Mockito.`when`(userRepository.findAll()).thenReturn(mutableListOf(user))
 
-        userService.getAll()
+        val users = userService.getAll()
+        Assert.assertEquals(users, mutableListOf(this.userResponseDTO))
 
         Mockito.verify(userRepository, Mockito.times(1)).findAll()
     }
