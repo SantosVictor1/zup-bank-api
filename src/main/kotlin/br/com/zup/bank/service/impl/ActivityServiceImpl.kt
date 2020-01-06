@@ -27,13 +27,11 @@ import java.util.*
  */
 @Service
 @Transactional
-class ActivityServiceImpl : IActivityService {
-    @Autowired
-    private lateinit var activityRepository: ActivityRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-    @Autowired
-    private lateinit var userRepository: UserRepository
+class ActivityServiceImpl(
+    val activityRepository: ActivityRepository,
+    val accountRepository: AccountRepository,
+    val userRepository: UserRepository
+) : IActivityService {
     private lateinit var user: User
     private lateinit var acc: Account
 
@@ -100,7 +98,13 @@ class ActivityServiceImpl : IActivityService {
     }
 
     private fun getActivity(user: User, acc: Account, activityDTO: ActivityRequestDTO): Activity {
-        return Activity(null, Date(), activityDTO.value, activityDTO.operation!!, acc, user)
+        return Activity(
+            id = null,
+            value = activityDTO.value,
+            operation = activityDTO.operation!!,
+            account = acc,
+            user = user
+        )
     }
 
     private fun getUser(cpf: String): User {

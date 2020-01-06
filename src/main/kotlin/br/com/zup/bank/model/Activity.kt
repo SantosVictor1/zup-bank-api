@@ -17,7 +17,7 @@ data class Activity(
     var id: Long? = null,
 
     @Column(name = "activityDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    var activityDate: Date? = null,
+    var activityDate: Date = Date(),
 
     @Column(name = "value")
     var value: Double? = null,

@@ -1,6 +1,9 @@
 package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.ActivityRequestDTO
+import br.com.zup.bank.dto.response.success.ActivityResponseDTO
+import br.com.zup.bank.dto.response.success.ExtractResponseDTO
+import br.com.zup.bank.dto.response.success.PaginationResponseDTO
 import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
@@ -11,6 +14,7 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.ActivityServiceImpl
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,14 +31,11 @@ import java.util.*
  */
 @RunWith(SpringRunner::class)
 class ActivityServiceTest {
-    @InjectMocks
-    private lateinit var activityService: ActivityServiceImpl
-    @Mock
-    private lateinit var activityRepository: ActivityRepository
-    @Mock
-    private lateinit var accountRepository: AccountRepository
-    @Mock
-    private lateinit var userRepository: UserRepository
+    private val activityService: ActivityServiceImpl = ActivityServiceImpl(
+        Mockito.mock(ActivityRepository::class.java),
+        Mockito.mock(AccountRepository::class.java),
+        Mockito.mock(UserRepository::class.java)
+    )
     private lateinit var user: User
     private lateinit var account: Account
     private lateinit var activity: Activity
@@ -55,48 +56,56 @@ class ActivityServiceTest {
             isActive = true
         )
 
-        account = Account(1, 1000.0, 0.0, "7278424688", true, user)
-        activity = Activity(1, Date(), 100.0, Operation.DEPOSIT, account, user)
+        account = Account(1, 1000.0, 1000.0, "7278424688", true, user)
+        activity = Activity(id = 1, value = 100.0, operation = Operation.DEPOSIT, account = account, user = user)
     }
 
     @Test(expected = ResourceNotFoundException::class)
     fun userNotExistsTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
+        Mockito.`when`(activityService.userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
 
         activityService.operation(activityDTO)
     }
 
     @Test(expected = ResourceNotFoundException::class)
     fun accountNotExistsTest() {
-        Mockito.`when`(userRepository.findByCpf(activityDTO.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.empty())
+        Mockito.`when`(activityService.userRepository.findByCpf(activityDTO.cpf)).thenReturn(Optional.of(user))
+        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.empty())
 
         activityService.operation(activityDTO)
     }
 
     @Test
     fun userExistsTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(accountRepository.save(account)).thenReturn(account)
-        Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
+        val activityResponseDTO = ActivityResponseDTO(
+            1100.0,
+            "7278424688",
+            activity.activityDate,
+            Operation.DEPOSIT.toString()
+        )
+        Mockito.`when`(activityService.userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
+        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(activityService.accountRepository.save(account)).thenReturn(account)
+        Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
         activityDTO.operation = Operation.DEPOSIT
 
-        activityService.operation(activityDTO)
+        val operationResponse = activityService.operation(activityDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).save(account)
-        Mockito.verify(activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
+        Assert.assertEquals(operationResponse, activityResponseDTO)
+
+        Mockito.verify(activityService.userRepository, Mockito.times(1)).findByCpf(user.cpf)
+        Mockito.verify(activityService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
+        Mockito.verify(activityService.accountRepository, Mockito.times(1)).save(account)
+        Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
 
     @Test(expected = BankException::class)
     fun withdrawWithError() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(accountRepository.save(account)).thenReturn(account)
-        Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
+        Mockito.`when`(activityService.userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
+        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(activityService.accountRepository.save(account)).thenReturn(account)
+        Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
         activityDTO.operation = Operation.WITHDRAW
         activityDTO.value = 10000.0
@@ -106,31 +115,46 @@ class ActivityServiceTest {
 
     @Test
     fun withdrawWithSuccess() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(accountRepository.save(account)).thenReturn(account)
-        Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
+        val activityResponseDTO = ActivityResponseDTO(
+            900.0,
+            "7278424688",
+            activity.activityDate,
+            Operation.WITHDRAW.toString()
+        )
+
+        activity.operation = Operation.WITHDRAW
+
+        Mockito.`when`(activityService.userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
+        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(activityService.accountRepository.save(account)).thenReturn(account)
+        Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
         activityDTO.operation = Operation.WITHDRAW
 
-        activityService.operation(activityDTO)
+        val operationResponse = activityService.operation(activityDTO)
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).save(account)
-        Mockito.verify(activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
+        Assert.assertEquals(operationResponse, activityResponseDTO)
+
+        Mockito.verify(activityService.userRepository, Mockito.times(1)).findByCpf(user.cpf)
+        Mockito.verify(activityService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
+        Mockito.verify(activityService.accountRepository, Mockito.times(1)).save(account)
+        Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
 
     @Test
     fun extractWithSuccess() {
+        val paginationDTO = PaginationResponseDTO(0, 10)
         var pageRequest = PageRequest.of(0, 10)
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
+
+        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
             .thenReturn((Page.empty(pageRequest)))
 
-        activityService.extract(activityDTO.accNumber!!, 0,10)
+        val extracts = activityService.extract(activityDTO.accNumber!!, 0,10)
 
-        Mockito.verify(activityRepository, Mockito.times(1))
+        Assert.assertEquals(extracts, ExtractResponseDTO(mutableListOf(), paginationDTO))
+
+        Mockito.verify(activityService.activityRepository, Mockito.times(1))
             .findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest)
     }
 }
