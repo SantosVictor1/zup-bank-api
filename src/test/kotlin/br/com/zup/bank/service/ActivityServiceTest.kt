@@ -69,7 +69,7 @@ class ActivityServiceTest {
     @Test(expected = ResourceNotFoundException::class)
     fun accountNotExistsTest() {
         Mockito.`when`(userRepository.findByCpf(activityDTO.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.empty())
 
         activityService.operation(activityDTO)
     }
@@ -77,7 +77,7 @@ class ActivityServiceTest {
     @Test
     fun userExistsTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
         Mockito.`when`(accountRepository.save(account)).thenReturn(account)
         Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -86,7 +86,7 @@ class ActivityServiceTest {
         activityService.operation(activityDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(activityDTO.accNumber!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
         Mockito.verify(accountRepository, Mockito.times(1)).save(account)
         Mockito.verify(activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
@@ -94,7 +94,7 @@ class ActivityServiceTest {
     @Test(expected = BankException::class)
     fun withdrawWithError() {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
         Mockito.`when`(accountRepository.save(account)).thenReturn(account)
         Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -107,7 +107,7 @@ class ActivityServiceTest {
     @Test
     fun withdrawWithSuccess() {
         Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
-        Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
         Mockito.`when`(accountRepository.save(account)).thenReturn(account)
         Mockito.`when`(activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -116,7 +116,7 @@ class ActivityServiceTest {
         activityService.operation(activityDTO)
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(activityDTO.accNumber!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityDTO.accNumber!!)
         Mockito.verify(accountRepository, Mockito.times(1)).save(account)
         Mockito.verify(activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
@@ -124,7 +124,7 @@ class ActivityServiceTest {
     @Test
     fun extractWithSuccess() {
         var pageRequest = PageRequest.of(0, 10)
-        Mockito.`when`(accountRepository.findByAccountNumber(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
         Mockito.`when`(activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
             .thenReturn((Page.empty(pageRequest)))
 

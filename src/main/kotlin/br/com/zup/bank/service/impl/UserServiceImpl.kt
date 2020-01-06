@@ -55,7 +55,7 @@ class UserServiceImpl : IUserService {
     @Transactional
     override fun deactivateUser(cpf: String) {
         var user = userRepository.findByCpf(cpf)
-        var account = accountRepository.findByUserCpf(cpf)
+        var account = accountRepository.findByAccountNumberOrUserCpf(cpf)
 
         if (!user.isPresent) {
             resourceNotFoundException(mutableListOf("Usuário não encontrado"))

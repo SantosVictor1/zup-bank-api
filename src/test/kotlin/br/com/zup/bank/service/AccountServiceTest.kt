@@ -111,49 +111,49 @@ class AccountServiceTest {
 
     @Test(expected = ResourceNotFoundException::class)
     fun getByCpfWithError() {
-        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.empty())
 
-        accountService.getByCpf(user.cpf!!)
+        accountService.getByAccountNumberOrCpf(user.cpf!!)
     }
 
     @Test
     fun getByCpfWithSuccess() {
-        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
 
-        accountService.getByCpf(user.cpf!!)
+        accountService.getByAccountNumberOrCpf(user.cpf!!)
 
-        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(user.cpf!!)
     }
 
     @Test(expected = ResourceNotFoundException::class)
     fun getByAccountNumberWithError() {
-        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
 
-        accountService.getByAccountNumber(acc.accountNumber!!)
+        accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
     }
 
     @Test
     fun getByAccountNumberWithSuccess() {
-        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
 
-        accountService.getByAccountNumber(acc.accountNumber!!)
+        accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
 
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
     }
 
     @Test(expected = ResourceNotFoundException::class)
     fun getAccountBalanceWithErrorTest() {
-        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
 
         accountService.getAccountBalance(acc.accountNumber!!)
     }
 
     @Test
     fun getAccountBalanceWithErrorSuccess() {
-        Mockito.`when`(accountRepository.findByAccountNumber(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
 
         accountService.getAccountBalance(acc.accountNumber!!)
 
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(acc.accountNumber!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
     }
 }

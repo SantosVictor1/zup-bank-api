@@ -61,18 +61,8 @@ class AccountServiceImpl : IAccountService {
         return getAccountDTO(account.get())
     }
 
-    override fun getByCpf(cpf: String): AccountResponseDTO {
-        val account = accountRepository.findByUserCpf(cpf)
-
-        if (!account.isPresent) {
-            resourceNotFound(mutableListOf("Conta não encontrada"))
-        }
-
-        return getAccountDTO(account.get())
-    }
-
-    override fun getByAccountNumber(accNumber: String): AccountResponseDTO {
-        val account = accountRepository.findByAccountNumber(accNumber)
+    override fun getByAccountNumberOrCpf(accountNumberOrCpf: String): AccountResponseDTO {
+        val account = accountRepository.findByAccountNumberOrUserCpf(accountNumberOrCpf)
 
         if (!account.isPresent) {
             resourceNotFound(mutableListOf("Conta não encontrada"))
@@ -82,7 +72,7 @@ class AccountServiceImpl : IAccountService {
     }
 
     override fun getAccountBalance(accNumber: String): AccountBalanceDTO {
-        val account = accountRepository.findByAccountNumber(accNumber)
+        val account = accountRepository.findByAccountNumberOrUserCpf(accNumber)
 
         if (!account.isPresent) {
             resourceNotFound(mutableListOf("Conta não encontrada"))

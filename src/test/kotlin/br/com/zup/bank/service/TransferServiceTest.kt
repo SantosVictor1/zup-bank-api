@@ -82,7 +82,7 @@ class TransferServiceTest {
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.empty())
 
         transferService.newTransfer(transferDTO)
     }
@@ -95,8 +95,8 @@ class TransferServiceTest {
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.originAccount!!)).thenReturn(Optional.of(account2))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(account))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(account2))
 
         transferService.newTransfer(transferDTO)
     }
@@ -110,8 +110,8 @@ class TransferServiceTest {
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
 
         transferService.newTransfer(transferDTO)
     }
@@ -127,8 +127,8 @@ class TransferServiceTest {
 
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
-        Mockito.`when`(accountRepository.findByAccountNumber(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
         Mockito.`when`(activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
         Mockito.`when`(accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
 
@@ -136,8 +136,8 @@ class TransferServiceTest {
 
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.destinyAccount!!)
         Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.originAccount!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(transferDTO.destinyAccount!!)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumber(transferDTO.originAccount!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.originAccount!!)
         Mockito.verify(accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
         Mockito.verify(activityRepository, Mockito.times(1)).saveAll(mutableListOf(originActivity, destinyActivity))
     }

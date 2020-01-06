@@ -62,33 +62,29 @@ class AccountController {
         return ResponseEntity.ok(accountService.getById(id))
     }
 
-    @ApiOperation(value = "Retorna uma conta pelo cpf")
+    @ApiOperation(value = "Retorna uma conta pelo número de conta ou pelo cpf")
     @ApiResponses(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class)
     )
-    @GetMapping("/cpf/{cpf}")
-    fun getByUserCpf(@PathVariable cpf: String): ResponseEntity<AccountResponseDTO> {
-        return ResponseEntity.ok(accountService.getByCpf(cpf))
-    }
-
-    @ApiOperation(value = "Retorna uma conta pelo número de conta")
-    @ApiResponses(
-        ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class)
-    )
-    @GetMapping("/number/{accNumber}")
+    @GetMapping("/data")
     fun getByAccountNumber(
-        @PathVariable @ApiParam(value = "Número da conta") accNumber: String
+        @RequestParam(defaultValue = "") @ApiParam(value = "Número da conta") accNumber: String,
+        @RequestParam(defaultValue = "") @ApiParam cpf: String
     ): ResponseEntity<AccountResponseDTO> {
-        return ResponseEntity.ok(accountService.getByAccountNumber(accNumber))
+        if (accNumber.isNotEmpty()) {
+            return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(accNumber))
+        }
+
+        return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(cpf))
     }
 
     @ApiOperation(value = "Retorna extrato de uma conta pelo seu número")
     @ApiResponses(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class)
     )
-    @GetMapping("/balance/{accNumber}")
+    @GetMapping("/balance")
     fun getAccountBalance(
-        @PathVariable @ApiParam(value = "Número da conta") accNumber: String
+        @RequestParam(required = true) @ApiParam(value = "Número da conta", required = true) accNumber: String
     ): ResponseEntity<AccountBalanceDTO> {
         return ResponseEntity.ok(accountService.getAccountBalance(accNumber))
     }

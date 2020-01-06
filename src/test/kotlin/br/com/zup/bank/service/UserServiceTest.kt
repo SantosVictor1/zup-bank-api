@@ -113,7 +113,7 @@ class UserServiceTest {
     @Test(expected = ResourceNotFoundException::class)
     fun deleteWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
-        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.empty())
 
         userService.deactivateUser(user.cpf!!)
     }
@@ -122,7 +122,7 @@ class UserServiceTest {
     fun deleteWithSuccessTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.of(user))
         Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        Mockito.`when`(accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
         Mockito.`when`(accountRepository.save(acc)).thenReturn(acc)
 
         userService.deactivateUser(user.cpf!!)
@@ -131,7 +131,7 @@ class UserServiceTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
-        Mockito.verify(accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(user.cpf!!)
         Mockito.verify(accountRepository, Mockito.times(1)).save(acc)
     }
 
