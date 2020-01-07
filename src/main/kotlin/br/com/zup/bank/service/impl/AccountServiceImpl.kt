@@ -10,6 +10,8 @@ import br.com.zup.bank.model.Account
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
+import br.com.zup.bank.service.IUserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 /**
@@ -58,8 +60,8 @@ class AccountServiceImpl(
         return getAccountDTO(account.get())
     }
 
-    override fun getByAccountNumberOrCpf(accountNumberOrCpf: String): AccountResponseDTO {
-        val account = accountRepository.findByAccountNumberOrUserCpf(accountNumberOrCpf)
+    override fun getByAccountNumberOrCpf(accNumber: String, cpf: String): AccountResponseDTO {
+        val account = accountRepository.findByAccountNumberOrUserCpf(cpf, accNumber)
 
         if (!account.isPresent) {
             resourceNotFound(mutableListOf("Conta não encontrada"))
@@ -69,13 +71,31 @@ class AccountServiceImpl(
     }
 
     override fun getAccountBalance(accNumber: String): AccountBalanceDTO {
-        val account = accountRepository.findByAccountNumberOrUserCpf(accNumber)
+        val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
             resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
         return AccountBalanceDTO(accNumber, account.get().balance)
+    }
+
+    override fun deactivateAccount(cpf: String) {
+        var account = accountRepository.findByUserCpf(cpf)
+
+        if (account.isPresent) {
+            account.get().isActive = false
+            accountRepository.save(account.get())
+        }
+    }
+
+    override fun reactivateAccount(cpf: String) {
+        var account = accountRepository.findByUserCpf(cpf)
+
+        if (account.isPresent) {
+            account.get().isActive = true
+            accountRepository.save(account.get())
+        }
     }
 
     private fun getAccountDTO(account: Account): AccountResponseDTO {

@@ -106,7 +106,7 @@ class TransferServiceImpl(
     }
 
     private fun getAccount(accNumber: String): Account {
-        val account = accountRepository.findByAccountNumberOrUserCpf(accNumber)
+        val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
             resourceNotFoundException(mutableListOf("Alguma das contas não foi encontrada"))

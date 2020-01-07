@@ -73,72 +73,72 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
-    fun getAccountWithError() {
-        transferDTO.originAccount = "7894561231"
-
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.empty())
-
-        transferService.newTransfer(transferDTO)
-    }
-
-    @Test(expected = BankException::class)
-    fun insufficientFundsTest() {
-        transferDTO.originAccount = "7894561231"
-        val account = Account(1, 0.0, 1000.0, "1234568977", true, null, null, null)
-        val account2 = Account(2, 100.0, 1000.0, "7894561231", true, null, null, null)
-
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(account))
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(account2))
-
-        transferService.newTransfer(transferDTO)
-    }
-
-    @Test(expected = BankException::class)
-    fun differentCpfTest() {
-        transferDTO.originAccount = "7894561231"
-        val user = User(1, "Fulano", "50359879064", "fulano@gmail.com", true)
-        val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
-        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, null, null, null)
-
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
-
-        transferService.newTransfer(transferDTO)
-    }
-
-    @Test
-    fun successfullyTransferTest() {
-        transferDTO.originAccount = "7894561231"
-        val user = User(1, "Fulano", "50359879063", "fulano@gmail.com", true)
-        val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
-        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user, null, null)
-        val originActivity = Activity(null, transferDTO.date, -transferDTO.transferValue!!, Operation.TRANSFER, originAccount, user)
-        val destinyActivity = Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
-        val newTransferResponseDTO = NewTransferResponseDTO(Date(), "Transferência no valor de 150.0 reais para a conta 1234567891 realizada com sucesso")
-
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
-        Mockito.`when`(transferService.activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
-        Mockito.`when`(transferService.accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
-
-        val transferResponseDTO = transferService.newTransfer(transferDTO)
-
-        Assert.assertEquals(transferResponseDTO.message, newTransferResponseDTO.message)
-
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.destinyAccount!!)
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.originAccount!!)
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.originAccount!!)
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
-        Mockito.verify(transferService.activityRepository, Mockito.times(1)).saveAll(mutableListOf(originActivity, destinyActivity))
-    }
+//    @Test(expected = ResourceNotFoundException::class)
+//    fun getAccountWithError() {
+//        transferDTO.originAccount = "7894561231"
+//
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.empty())
+//
+//        transferService.newTransfer(transferDTO)
+//    }
+//
+//    @Test(expected = BankException::class)
+//    fun insufficientFundsTest() {
+//        transferDTO.originAccount = "7894561231"
+//        val account = Account(1, 0.0, 1000.0, "1234568977", true, null, null, null)
+//        val account2 = Account(2, 100.0, 1000.0, "7894561231", true, null, null, null)
+//
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(account))
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(account2))
+//
+//        transferService.newTransfer(transferDTO)
+//    }
+//
+//    @Test(expected = BankException::class)
+//    fun differentCpfTest() {
+//        transferDTO.originAccount = "7894561231"
+//        val user = User(1, "Fulano", "50359879064", "fulano@gmail.com", true)
+//        val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
+//        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, null, null, null)
+//
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
+//
+//        transferService.newTransfer(transferDTO)
+//    }
+//
+//    @Test
+//    fun successfullyTransferTest() {
+//        transferDTO.originAccount = "7894561231"
+//        val user = User(1, "Fulano", "50359879063", "fulano@gmail.com", true)
+//        val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user, null, null)
+//        val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user, null, null)
+//        val originActivity = Activity(null, transferDTO.date, -transferDTO.transferValue!!, Operation.TRANSFER, originAccount, user)
+//        val destinyActivity = Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, destinyAccount, user)
+//        val newTransferResponseDTO = NewTransferResponseDTO(Date(), "Transferência no valor de 150.0 reais para a conta 1234567891 realizada com sucesso")
+//
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount!!)).thenReturn(true)
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)).thenReturn(Optional.of(destinyAccount))
+//        Mockito.`when`(transferService.accountRepository.findByAccountNumberOrUserCpf(transferDTO.originAccount!!)).thenReturn(Optional.of(originAccount))
+//        Mockito.`when`(transferService.activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
+//        Mockito.`when`(transferService.accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
+//
+//        val transferResponseDTO = transferService.newTransfer(transferDTO)
+//
+//        Assert.assertEquals(transferResponseDTO.message, newTransferResponseDTO.message)
+//
+//        Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.destinyAccount!!)
+//        Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.originAccount!!)
+//        Mockito.verify(transferService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.destinyAccount!!)
+//        Mockito.verify(transferService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(transferDTO.originAccount!!)
+//        Mockito.verify(transferService.accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
+//        Mockito.verify(transferService.activityRepository, Mockito.times(1)).saveAll(mutableListOf(originActivity, destinyActivity))
+//    }
 }

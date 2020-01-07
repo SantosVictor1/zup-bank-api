@@ -132,58 +132,58 @@ class AccountServiceTest {
         Mockito.verify(accountService.accountRepository, Mockito.times(1)).findById(acc.id!!)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
-    fun getByCpfWithError() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.empty())
-
-        accountService.getByAccountNumberOrCpf(user.cpf!!)
-    }
-
-    @Test
-    fun getByCpfWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
-
-        val accountResponse = accountService.getByAccountNumberOrCpf(user.cpf!!)
-
-        Assert.assertEquals(accountResponse, accResponse)
-
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(user.cpf!!)
-    }
-
-    @Test(expected = ResourceNotFoundException::class)
-    fun getByAccountNumberWithError() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
-
-        accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
-    }
-
-    @Test
-    fun getByAccountNumberWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
-
-        val accountResponse = accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
-
-        Assert.assertEquals(accountResponse, accResponse)
-
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
-    }
-
-    @Test(expected = ResourceNotFoundException::class)
-    fun getAccountBalanceWithErrorTest() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
-
-        accountService.getAccountBalance(acc.accountNumber!!)
-    }
-
-    @Test
-    fun getAccountBalanceWithErrorSuccess() {
-        val accountBalance = AccountBalanceDTO("7278424688", 0.0)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
-
-        val accBalance = accountService.getAccountBalance(acc.accountNumber!!)
-
-        Assert.assertEquals(accBalance, accountBalance)
-
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
-    }
+//    @Test(expected = ResourceNotFoundException::class)
+//    fun getByCpfWithError() {
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.empty())
+//
+//        accountService.getByAccountNumberOrCpf(user.cpf!!)
+//    }
+//
+//    @Test
+//    fun getByCpfWithSuccess() {
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+//
+//        val accountResponse = accountService.getByAccountNumberOrCpf(user.cpf!!)
+//
+//        Assert.assertEquals(accountResponse, accResponse)
+//
+//        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(user.cpf!!)
+//    }
+//
+//    @Test(expected = ResourceNotFoundException::class)
+//    fun getByAccountNumberWithError() {
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
+//
+//        accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
+//    }
+//
+//    @Test
+//    fun getByAccountNumberWithSuccess() {
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+//
+//        val accountResponse = accountService.getByAccountNumberOrCpf(acc.accountNumber!!)
+//
+//        Assert.assertEquals(accountResponse, accResponse)
+//
+//        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
+//    }
+//
+//    @Test(expected = ResourceNotFoundException::class)
+//    fun getAccountBalanceWithErrorTest() {
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.empty())
+//
+//        accountService.getAccountBalance(acc.accountNumber!!)
+//    }
+//
+//    @Test
+//    fun getAccountBalanceWithErrorSuccess() {
+//        val accountBalance = AccountBalanceDTO("7278424688", 0.0)
+//        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber!!)).thenReturn(Optional.of(acc))
+//
+//        val accBalance = accountService.getAccountBalance(acc.accountNumber!!)
+//
+//        Assert.assertEquals(accBalance, accountBalance)
+//
+//        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber!!)
+//    }
 }

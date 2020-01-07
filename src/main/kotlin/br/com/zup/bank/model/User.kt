@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import br.com.zup.bank.dto.response.success.UserResponseDTO
 import javax.persistence.*
 
 /**
@@ -14,20 +15,14 @@ data class User(
     var id: Long? = null,
 
     @Column(name = "name", nullable = false)
-    var name: String? = null,
+    var name: String,
 
     @Column(name = "cpf", unique = true, nullable = false)
-    var cpf: String? = null,
+    var cpf: String,
 
     @Column(name = "email", unique = true, nullable = false)
-    var email: String? = null,
+    var email: String,
 
     @Column(name = "isActive")
-    var isActive: Boolean?
-
-//
-//    @NotBlank(message = "Senha obrigatória")
-//    @Size(min = 10, message = "Senha deve ser maior que 10 caracteres")
-//    @Column(name = "password")
-//    var password: String? = null
+    var isActive: Boolean = true
 )

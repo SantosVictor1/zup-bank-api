@@ -5,8 +5,8 @@ import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
+import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IUserService
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -17,8 +17,9 @@ import javax.transaction.Transactional
 @Service
 class UserServiceImpl(
     val userRepository: UserRepository,
-    val accountRepository: AccountRepository
+    val accountService: IAccountService
 ) : IUserService {
+
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
@@ -52,18 +53,13 @@ class UserServiceImpl(
     @Transactional
     override fun deactivateUser(cpf: String) {
         var user = userRepository.findByCpf(cpf)
-        var account = accountRepository.findByAccountNumberOrUserCpf(cpf)
 
         if (!user.isPresent) {
             resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
-        if (account.isPresent) {
-            account.get().isActive = false
-            accountRepository.save(account.get())
-        }
-
         user.get().isActive = false
+        accountService.deactivateAccount(cpf)
 
         userRepository.save(user.get())
     }
@@ -71,26 +67,21 @@ class UserServiceImpl(
     @Transactional
     override fun reactivateUser(cpf: String): UserResponseDTO {
         var user = userRepository.findByCpfAndIsActiveFalse(cpf)
-        var account = accountRepository.findByUserCpfAndIsActiveFalse(cpf)
 
         if (!user.isPresent) {
             resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
-        if (account.isPresent) {
-            account.get().isActive = true
-            accountRepository.save(account.get())
-        }
-
         user.get().isActive = true
 
+        accountService.reactivateAccount(cpf)
         userRepository.save(user.get())
 
         return getUserDTO(user.get())
     }
 
     private fun setUser(userRequestDTO: UserRequestDTO): User {
-        return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
+        return User(null, userRequestDTO.name!!, userRequestDTO.cpf!!, userRequestDTO.email!!, true)
     }
 
     private fun validateFields(user: UserRequestDTO) {

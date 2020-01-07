@@ -116,7 +116,7 @@ class ActivityServiceImpl(
     }
 
     private fun getAccount(accNumber: String): Account {
-        val acc = accountRepository.findByAccountNumberOrUserCpf(accNumber)
+        val acc = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!acc.isPresent) {
             resourceNotFound(mutableListOf("Conta não encontrada"))
