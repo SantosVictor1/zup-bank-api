@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import javax.persistence.*
 
@@ -25,4 +26,10 @@ data class User(
 
     @Column(name = "isActive")
     var isActive: Boolean = true
-)
+) {
+    companion object {
+        fun fromUserRequestToEntity(userRequestDTO: UserRequestDTO): User {
+            return User(null, userRequestDTO.name!!, userRequestDTO.cpf!!, userRequestDTO.email!!, true)
+        }
+    }
+}

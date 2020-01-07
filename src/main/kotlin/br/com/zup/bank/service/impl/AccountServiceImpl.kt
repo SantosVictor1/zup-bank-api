@@ -1,18 +1,21 @@
 package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
-import br.com.zup.bank.dto.response.success.AccountBalanceDTO
-import br.com.zup.bank.dto.response.success.AccountResponseDTO
-import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
+import br.com.zup.bank.dto.request.ActivityRequestDTO
+import br.com.zup.bank.dto.response.success.*
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
+import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
+import br.com.zup.bank.service.IActivityService
 import br.com.zup.bank.service.IUserService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by Victor Santos on 26/12/2019
@@ -20,23 +23,20 @@ import org.springframework.stereotype.Service
 @Service
 class AccountServiceImpl(
     val accountRepository: AccountRepository,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    val activityService: IActivityService
 ) : IAccountService {
     override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account
-        var user = userRepository.findByCpf(accountRequestDTO.cpf)
+        var user = getUser(accountRequestDTO.cpf!!)
 
-        if (!user.isPresent) {
-            resourceNotFound(mutableListOf("Usuário não encontrado"))
-        }
-
-        findAccountByUser(user.get().cpf!!)
+        findAccountByUser(user.cpf)
 
         val accountNumber = createAccountNumber()
-        acc = Account(accountNumber = accountNumber, user = user.get(), isActive = true)
+        acc = Account(accountNumber = accountNumber, user = user, isActive = true)
         acc = accountRepository.save(acc)
 
-        return getAccountDTO(acc)
+        return AccountResponseDTO.toResponseDto(acc)
     }
 
     override fun getAll(): MutableList<AccountResponseDTO> {
@@ -44,7 +44,7 @@ class AccountServiceImpl(
         val accResponse = mutableListOf<AccountResponseDTO>()
 
         accounts.forEach {
-            accResponse.add(getAccountDTO(it))
+            accResponse.add(AccountResponseDTO.toResponseDto(it))
         }
 
         return accResponse
@@ -57,7 +57,7 @@ class AccountServiceImpl(
             resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
-        return getAccountDTO(account.get())
+        return AccountResponseDTO.toResponseDto(account.get())
     }
 
     override fun getByAccountNumberOrCpf(accNumber: String, cpf: String): AccountResponseDTO {
@@ -67,7 +67,7 @@ class AccountServiceImpl(
             resourceNotFound(mutableListOf("Conta não encontrada"))
         }
 
-        return getAccountDTO(account.get())
+        return AccountResponseDTO.toResponseDto(account.get())
     }
 
     override fun getAccountBalance(accNumber: String): AccountBalanceDTO {
@@ -98,17 +98,68 @@ class AccountServiceImpl(
         }
     }
 
-    private fun getAccountDTO(account: Account): AccountResponseDTO {
-        val userAccResponse = UserAccountResponseDTO(account.user?.name, account.user?.cpf, account.user?.isActive)
+    @Transactional
+    override fun deposit(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
+        val user = getUser(activityRequestDTO.cpf!!)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
 
-        return AccountResponseDTO(
-            account.id,
-            account.limit,
-            account.balance,
-            account.accountNumber,
-            account.isActive,
-            userAccResponse
-        )
+        if (account.user?.cpf != activityRequestDTO.cpf) {
+            badRequest(mutableListOf("CPF inválido"))
+        }
+
+        if (activityRequestDTO.value!! <= 0.0) {
+            badRequest(mutableListOf("Valor deve ser maior que 0"))
+        }
+
+        account.balance += activityRequestDTO.value!!
+
+        accountRepository.save(account)
+
+        return activityService.createActivity(account, activityRequestDTO)
+    }
+
+    @Transactional
+    override fun withdraw(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
+        val user = getUser(activityRequestDTO.cpf!!)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
+
+        if (account.user?.cpf != activityRequestDTO.cpf) {
+            badRequest(mutableListOf("CPF inválido"))
+        }
+
+        account.balance -= activityRequestDTO.value!!
+
+        if (account.balance < 0.0) {
+            badRequest(mutableListOf("Saldo insuficiente!"))
+        }
+
+        accountRepository.save(account)
+
+        return activityService.createActivity(account, activityRequestDTO)
+    }
+
+    override fun extract(accNumber: String, page: Int, size: Int): ExtractResponseDTO {
+        existsByNumber(accNumber)
+
+        var pageRequest = PageRequest.of(page, size)
+
+        return activityService.extract(accNumber, pageRequest)
+    }
+
+    private fun existsByNumber(accNumber: String) {
+        if (!accountRepository.existsAccountByAccountNumber(accNumber)) {
+            resourceNotFound(mutableListOf("Conta não encontrada"))
+        }
+    }
+
+    private fun getUser(cpf: String): User {
+        val user = userRepository.findByCpf(cpf)
+
+        if (!user.isPresent) {
+            resourceNotFound(mutableListOf("Usuário não encontrado"))
+        }
+
+        return user.get()
     }
 
     private fun findAccountByUser(cpf: String) {

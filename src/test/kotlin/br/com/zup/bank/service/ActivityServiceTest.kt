@@ -30,9 +30,7 @@ import java.util.*
 @RunWith(SpringRunner::class)
 class ActivityServiceTest {
     private val activityService: ActivityServiceImpl = ActivityServiceImpl(
-        Mockito.mock(ActivityRepository::class.java),
-        Mockito.mock(AccountRepository::class.java),
-        Mockito.mock(UserRepository::class.java)
+        Mockito.mock(ActivityRepository::class.java)
     )
     private lateinit var user: User
     private lateinit var account: Account
@@ -55,15 +53,10 @@ class ActivityServiceTest {
         )
 
         account = Account(1, 1000.0, 1000.0, "7278424688", true, user)
-        activity = Activity(id = 1, value = 100.0, operation = Operation.DEPOSIT, account = account, user = user)
+        activity = Activity(id = 1, value = 100.0, operation = Operation.DEPOSIT, account = account)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
-    fun userNotExistsTest() {
-        Mockito.`when`(activityService.userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
-
-        activityService.operation(activityDTO)
-    }
+//
 
 //    @Test(expected = ResourceNotFoundException::class)
 //    fun accountNotExistsTest() {

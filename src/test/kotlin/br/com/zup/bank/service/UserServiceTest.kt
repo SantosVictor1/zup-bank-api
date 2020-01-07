@@ -9,6 +9,7 @@ import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.AccountServiceImpl
+import br.com.zup.bank.service.impl.ActivityServiceImpl
 import br.com.zup.bank.service.impl.UserServiceImpl
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -27,7 +28,8 @@ class UserServiceTest {
     private val userRepository = Mockito.mock(UserRepository::class.java)
     private val accountService: AccountServiceImpl = AccountServiceImpl(
         Mockito.mock(AccountRepository::class.java),
-        userRepository
+        userRepository,
+        Mockito.mock(IActivityService::class.java)
     )
     private val userService: UserServiceImpl = UserServiceImpl(
         userRepository,

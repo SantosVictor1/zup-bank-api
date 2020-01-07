@@ -1,5 +1,6 @@
 package br.com.zup.bank.model
 
+import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.enums.Operation
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
@@ -14,21 +15,29 @@ data class Activity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "activityId")
-    var id: Long? = null,
+    val id: Long? = null,
 
     @Column(name = "activityDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    var activityDate: Date = Date(),
+    val activityDate: Date = Date(),
 
     @Column(name = "value")
-    var value: Double? = null,
+    var value: Double,
 
     @Enumerated(EnumType.STRING)
-    var operation: Operation,
+    val operation: Operation,
 
     @JsonManagedReference
     @ManyToOne
-    var account: Account? = null,
-
-    @OneToOne
-    var user: User? = null
-)
+    val account: Account
+) {
+    companion object {
+        fun toEntity(acc: Account, activityDTO: ActivityRequestDTO): Activity {
+            return Activity(
+                id = null,
+                value = activityDTO.value!!,
+                operation = activityDTO.operation!!,
+                account = acc
+            )
+        }
+    }
+}

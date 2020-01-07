@@ -23,10 +23,10 @@ class UserServiceImpl(
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
-        var user: User = setUser(userRequestDTO)
+        var user: User = User.fromUserRequestToEntity(userRequestDTO)
         user = userRepository.save(user)
 
-        return getUserDTO(user)
+        return UserResponseDTO.toResponseDto(user)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {
@@ -34,7 +34,7 @@ class UserServiceImpl(
         val response = userRepository.findAll()
 
         response.forEach {
-            userResponseDTOList.add(getUserDTO(it))
+            userResponseDTOList.add(UserResponseDTO.toResponseDto(it))
         }
 
         return userResponseDTOList
@@ -47,7 +47,17 @@ class UserServiceImpl(
             resourceNotFoundException(mutableListOf("Usuário não encontrado"))
         }
 
-        return getUserDTO(user.get())
+        return UserResponseDTO.toResponseDto(user.get())
+    }
+
+    override fun getByCpf(cpf: String): UserResponseDTO {
+        val user = userRepository.findByCpf(cpf)
+
+        if (!user.isPresent) {
+            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+        }
+
+        return UserResponseDTO.toResponseDto(user.get())
     }
 
     @Transactional
@@ -77,11 +87,7 @@ class UserServiceImpl(
         accountService.reactivateAccount(cpf)
         userRepository.save(user.get())
 
-        return getUserDTO(user.get())
-    }
-
-    private fun setUser(userRequestDTO: UserRequestDTO): User {
-        return User(null, userRequestDTO.name!!, userRequestDTO.cpf!!, userRequestDTO.email!!, true)
+        return UserResponseDTO.toResponseDto(user.get())
     }
 
     private fun validateFields(user: UserRequestDTO) {
@@ -104,10 +110,6 @@ class UserServiceImpl(
 
     private fun existsByEmail(email: String): Boolean {
         return userRepository.existsByEmail(email)
-    }
-
-    private fun getUserDTO(user: User): UserResponseDTO {
-        return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!, user.isActive!!)
     }
 
     private fun resourceNotFoundException(errors: MutableList<String>) {

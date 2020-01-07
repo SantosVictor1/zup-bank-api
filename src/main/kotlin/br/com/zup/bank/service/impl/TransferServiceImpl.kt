@@ -66,7 +66,7 @@ class TransferServiceImpl(
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc, acc.user)
+        return Activity(null, transferDTO.date, transferDTO.transferValue!!, Operation.TRANSFER, acc)
     }
 
     private fun getTransfer(transferDTO: TransferRequestDTO, accounts: MutableList<Account>): Transfer {
