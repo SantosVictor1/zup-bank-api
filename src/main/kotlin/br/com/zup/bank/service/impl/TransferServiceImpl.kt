@@ -12,7 +12,6 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.ITransferService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional

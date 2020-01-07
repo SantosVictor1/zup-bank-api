@@ -18,8 +18,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -150,7 +148,7 @@ class ActivityServiceTest {
         Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
             .thenReturn((Page.empty(pageRequest)))
 
-        val extracts = activityService.extract(activityDTO.accNumber!!, 0,10)
+        val extracts = activityService.extract(activityDTO.accNumber!!, 0, 10)
 
         Assert.assertEquals(extracts, ExtractResponseDTO(mutableListOf(), paginationDTO))
 

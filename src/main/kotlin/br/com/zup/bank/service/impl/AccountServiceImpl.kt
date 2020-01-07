@@ -10,7 +10,6 @@ import br.com.zup.bank.model.Account
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 /**
