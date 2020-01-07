@@ -22,14 +22,11 @@ import javax.transaction.Transactional
  */
 @Service
 @Transactional
-class TransferServiceImpl : ITransferService {
-    @Autowired
-    private lateinit var transferRepository: TransferRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-    @Autowired
-    private lateinit var activityRepository: ActivityRepository
-
+class TransferServiceImpl(
+    val transferRepository: TransferRepository,
+    val accountRepository: AccountRepository,
+    val activityRepository: ActivityRepository
+) : ITransferService {
     override fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO {
         validateAccounts(transferRequestDTO)
 
