@@ -72,8 +72,8 @@ class AccountController {
     )
     @GetMapping("/data")
     fun getByAccountNumber(
-        @RequestParam(defaultValue = "") @ApiParam(value = "Número da conta") accNumber: String,
-        @RequestParam(defaultValue = "") cpf: String
+        @RequestParam @ApiParam(value = "Número da conta") accNumber: String,
+        @RequestParam cpf: String
     ): ResponseEntity<AccountResponseDTO> {
         return ResponseEntity.ok(accountService.getByAccountNumberOrCpf(accNumber, cpf))
     }

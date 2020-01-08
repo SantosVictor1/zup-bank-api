@@ -45,14 +45,19 @@ class ExceptionHandlerController(
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
-    fun handleMissingArgumentException(e: MissingServletRequestParameterException): ResponseEntity<Any> {
-        var errors = mutableListOf<ErrorSupport>(ErrorSupport("Parâmetro obrigatório"))
+    fun handleMissingArgumentException(e: MissingServletRequestParameterException): ResponseEntity<ObjectErrorResponse> {
+        val errorCode = "missing.query.parameter"
+        lateinit var objectErrorResponse: ObjectErrorResponse
+        val errorMessage = message.getMessage(errorCode)
+        var fields: MutableList<FieldError> = mutableListOf(FieldError(errorCode, e.parameterName, errorMessage))
 
-        return ResponseEntity.badRequest().body(ErrorResponse(400, errors))
+        objectErrorResponse = ObjectErrorResponse(HttpStatus.BAD_REQUEST.value(), "", fields)
+
+        return ResponseEntity.badRequest().body(objectErrorResponse)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): Any {
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ResponseEntity<ObjectErrorResponse> {
         lateinit var objectErrorResponse: ObjectErrorResponse
         var fields: MutableList<FieldError> = mutableListOf()
 

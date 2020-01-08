@@ -2,6 +2,7 @@ package br.com.zup.bank.controller
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
+import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.service.IUserService
 import io.swagger.annotations.ApiOperation
@@ -24,7 +25,7 @@ class UserController(
     @ApiResponses(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = Any::class),
         ApiResponse(code = 201, message = "Requisição feita com sucesso!", response = UserResponseDTO::class),
-        ApiResponse(code = 400, message = "Algum dado é inválido", response = ErrorResponse::class)
+        ApiResponse(code = 400, message = "Algum dado é inválido", response = ObjectErrorResponse::class)
     )
     @PostMapping
     fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserResponseDTO> {
@@ -36,8 +37,8 @@ class UserController(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = UserResponseDTO::class),
         ApiResponse(code = 404, message = "Usuário não encontrado", response = ErrorResponse::class)
     )
-    @PatchMapping("/reactivate/{cpf}")
-    fun reactivateUser(@PathVariable cpf: String): ResponseEntity<UserResponseDTO> {
+    @PatchMapping("/reactivate")
+    fun reactivateUser(@RequestParam cpf: String): ResponseEntity<UserResponseDTO> {
         return ResponseEntity.ok(userService.reactivateUser(cpf))
     }
 
@@ -65,8 +66,8 @@ class UserController(
         ApiResponse(code = 204, message = "Requisição feita com sucesso!"),
         ApiResponse(code = 404, message = "Usuário não encontrado", response = ErrorResponse::class)
     )
-    @DeleteMapping("/{cpf}")
-    fun deactivateUser(@PathVariable cpf: String): ResponseEntity<Any> {
+    @DeleteMapping("/deactivate")
+    fun deactivateUser(@RequestParam cpf: String): ResponseEntity<Any> {
         userService.deactivateUser(cpf)
 
         return ResponseEntity.noContent().build()
