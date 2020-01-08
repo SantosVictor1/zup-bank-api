@@ -33,10 +33,7 @@ class TransferServiceTest {
 
     @Before
     fun setMocks() {
-        transferDTO = TransferRequestDTO()
-        transferDTO.destinyAccount = "1234567891"
-        transferDTO.transferValue = 150.0
-        transferDTO.recipientsCpf = "50359879063"
+        transferDTO = TransferRequestDTO("7894561231", "1234567891", "50359879063", 150.0)
     }
 
     @Test(expected = BankException::class)
