@@ -29,9 +29,14 @@ class BankErrorCode {
         val BANK020: BankErrorCode = BankErrorCode("account.number.required")
         val BANK021: BankErrorCode = BankErrorCode("account.number.size.invalid")
         val BANK022: BankErrorCode = BankErrorCode("account.not.found")
+        val BANK023: BankErrorCode = BankErrorCode("double.account.not.allowed")
+        val BANK024: BankErrorCode = BankErrorCode("negative.balance")
 
         //Transfer errors
         val BANK030: BankErrorCode = BankErrorCode("origin.account.required")
         val BANK031: BankErrorCode = BankErrorCode("destiny.account.required")
+
+        //Operation errors
+        val BANK040: BankErrorCode = BankErrorCode("value.invalid")
     }
 }

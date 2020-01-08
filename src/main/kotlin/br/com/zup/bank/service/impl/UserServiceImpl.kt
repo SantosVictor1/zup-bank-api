@@ -46,48 +46,40 @@ class UserServiceImpl(
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
+            resourceNotFoundException(BankErrorCode.BANK018.code, "id", "User")
         }
 
         return UserResponseDTO.toResponseDto(user.get())
     }
 
-    override fun getByCpf(cpf: String): UserResponseDTO {
-        val user = userRepository.findByCpf(cpf)
+    override fun getByCpf(cpf: String, isActive: Boolean): UserResponseDTO {
+        val user = userRepository.findByCpf(cpf, isActive)
 
-        if (!user.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
+        if (user == null) {
+            resourceNotFoundException(BankErrorCode.BANK018.code, "cpf", "User")
         }
 
-        return UserResponseDTO.toResponseDto(user.get())
+        return UserResponseDTO.toResponseDto(user!!)
     }
 
     @Transactional
     override fun deactivateUser(cpf: String) {
-        var user = userRepository.findByCpf(cpf)
+        var user = User.fromUserResponseToEntity(getByCpf(cpf, true))
 
-        if (!user.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
-        }
-
-        user.get().isActive = false
+        user.isActive = false
         accountService.deactivateAccount(cpf)
 
-        userRepository.save(user.get())
+        userRepository.save(user)
     }
 
     @Transactional
     override fun reactivateUser(cpf: String): UserResponseDTO {
-        var user = userRepository.findByCpfAndIsActiveFalse(cpf)
+        var user = User.fromUserResponseToEntity(getByCpf(cpf, false))
 
-        if (user == null) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
-        }
-
-        user?.isActive = true
+        user.isActive = true
 
         accountService.reactivateAccount(cpf)
-        userRepository.save(user!!)
+        userRepository.save(user)
 
         return UserResponseDTO.toResponseDto(user)
     }

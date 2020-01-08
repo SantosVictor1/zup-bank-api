@@ -1,29 +1,20 @@
 package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.ActivityRequestDTO
-import br.com.zup.bank.dto.response.success.ActivityResponseDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
 import br.com.zup.bank.dto.response.success.PaginationResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
-import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.impl.ActivityServiceImpl
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.test.context.junit4.SpringRunner
-import java.util.*
 
 /**
  * Created by Victor Santos on 30/12/2019
@@ -59,8 +50,7 @@ class ActivityServiceTest {
         val paginationDTO = PaginationResponseDTO(0, 10)
         var pageRequest = PageRequest.of(0, 10)
 
-        Mockito.`when`(activityService.activityRepository.
-            findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
+        Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
         ).thenReturn((Page.empty(pageRequest)))
 
         val extracts = activityService.extract(account.accountNumber, pageRequest)

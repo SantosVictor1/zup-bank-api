@@ -5,6 +5,8 @@ import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.success.*
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.DuplicatedResourceException
+import br.com.zup.bank.exception.InvalidResourceException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
@@ -123,7 +125,7 @@ class AccountServiceImpl(
         account.balance -= activityRequestDTO.value
 
         if (account.balance < 0.0) {
-            badRequest(mutableListOf("Saldo insuficiente!"))
+            invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
         }
 
         accountRepository.save(account)
@@ -141,11 +143,11 @@ class AccountServiceImpl(
 
     private fun validateOperation(account: Account, activityRequestDTO: ActivityRequestDTO) {
         if (account.user?.cpf != activityRequestDTO.cpf) {
-            badRequest(mutableListOf("CPF inválido"))
+            invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
         }
 
         if (activityRequestDTO.value <= 0.0) {
-            badRequest(mutableListOf("Valor deve ser maior que 0"))
+            invalidResourceException(BankErrorCode.BANK040.code, "value", "activityRequestDTO")
         }
     }
 
@@ -156,18 +158,18 @@ class AccountServiceImpl(
     }
 
     private fun getUser(cpf: String): User {
-        val user = userRepository.findByCpf(cpf)
+        val user = userRepository.findByCpf(cpf, true)
 
-        if (!user.isPresent) {
+        if (user == null) {
             resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
-        return user.get()
+        return user!!
     }
 
     private fun findAccountByUser(cpf: String) {
         if (accountRepository.existsAccountByUserCpf(cpf)) {
-            badRequest(mutableListOf("Usuário já possui uma conta em seu nome"))
+            duplicatedResourceException(BankErrorCode.BANK023.code, "", "Account")
         }
     }
 
@@ -187,9 +189,11 @@ class AccountServiceImpl(
         throw ResourceNotFoundException(errorCode, field, objectName)
     }
 
-    private fun badRequest(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw BankException(400, errors)
-        }
+    private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        throw DuplicatedResourceException(errorCode, field, objectName)
+    }
+
+    private fun invalidResourceException(errorCode: String, field: String, objectName: String) {
+        throw InvalidResourceException(errorCode, field, objectName)
     }
 }

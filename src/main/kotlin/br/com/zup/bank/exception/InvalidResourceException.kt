@@ -1,9 +1,9 @@
 package br.com.zup.bank.exception
 
 /**
- * Created by Victor Santos on 30/12/2019
+ * Created by Victor Santos on 08/01/2020
  */
-class ResourceNotFoundException(
+class InvalidResourceException(
     errorCode: String,
     field: String,
     objectName: String

@@ -14,7 +14,7 @@ interface IUserService {
 
     fun getById(id: Long): UserResponseDTO
 
-    fun getByCpf(cpf: String): UserResponseDTO
+    fun getByCpf(cpf: String, isActive: Boolean): UserResponseDTO
 
     fun deactivateUser(cpf: String)
 

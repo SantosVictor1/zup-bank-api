@@ -7,6 +7,7 @@ import br.com.zup.bank.dto.response.error.FieldError
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.exception.DuplicatedResourceException
+import br.com.zup.bank.exception.InvalidResourceException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
@@ -81,5 +82,15 @@ class ExceptionHandlerController(
         objectErrorResponse = ObjectErrorResponse(HttpStatus.BAD_REQUEST.value(), e.bindingResult.objectName, fields)
 
         return ResponseEntity.badRequest().body(objectErrorResponse)
+    }
+
+    @ExceptionHandler(InvalidResourceException::class)
+    fun handleInvalidResourceException(e: InvalidResourceException): ResponseEntity<ObjectErrorResponse> {
+        val errorMessage = message.getMessage(e.errorCode)
+        var fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
+
+        val objectErrorResponse = ObjectErrorResponse(HttpStatus.BAD_REQUEST.value(), e.objectName, fields)
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectErrorResponse)
     }
 }

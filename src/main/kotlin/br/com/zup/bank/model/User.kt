@@ -31,5 +31,15 @@ data class User(
         fun fromUserRequestToEntity(userRequestDTO: UserRequestDTO): User {
             return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
         }
+
+        fun fromUserResponseToEntity(userResponseDTO: UserResponseDTO): User {
+            return User(
+                userResponseDTO.id,
+                userResponseDTO.name,
+                userResponseDTO.cpf,
+                userResponseDTO.email,
+                userResponseDTO.isActive
+            )
+        }
     }
 }
