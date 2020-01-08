@@ -3,7 +3,7 @@ package br.com.zup.bank.service
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.EqualResourcesBankException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.InvalidResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
@@ -35,7 +35,7 @@ class TransferServiceTest {
         transferDTO = TransferRequestDTO("7894561231", "1234567891", "50359879063", 150.0)
     }
 
-    @Test(expected = EqualResourcesBankException::class)
+    @Test(expected = DuplicatedResourceBankException::class)
     fun equalsAccountsTest() {
         transferDTO.originAccount = transferDTO.destinyAccount
 

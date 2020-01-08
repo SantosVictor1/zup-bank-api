@@ -104,7 +104,7 @@ class AccountServiceImpl(
     @Transactional
     override fun deposit(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
         val user = getUser(activityRequestDTO.cpf)
-        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber,""), user)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber, ""), user)
 
         validateOperation(account, activityRequestDTO)
 
@@ -118,7 +118,7 @@ class AccountServiceImpl(
     @Transactional
     override fun withdraw(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
         val user = getUser(activityRequestDTO.cpf)
-        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber,""), user)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber, ""), user)
 
         validateOperation(account, activityRequestDTO)
 

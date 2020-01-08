@@ -4,7 +4,9 @@ import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.*
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.Transfer
@@ -78,7 +80,7 @@ class TransferServiceImpl(
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
         if (transferDTO.originAccount == transferDTO.destinyAccount) {
-            equalResourceException(BankErrorCode.BANK032.code, "", "transferDTO")
+            duplicatedResourceException(BankErrorCode.BANK032.code, "", "transferDTO")
         }
 
         if (transferDTO.transferValue <= 0) {
@@ -112,8 +114,8 @@ class TransferServiceImpl(
         throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
-    private fun equalResourceException(errorCode: String, field: String, objectName: String) {
-        throw EqualResourcesBankException(errorCode, field, objectName)
+    private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        throw DuplicatedResourceBankException(errorCode, field, objectName)
     }
 
     private fun invalidResourceException(errorCode: String, field: String, objectName: String) {

@@ -1,8 +1,6 @@
 package br.com.zup.bank.model
 
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
-import com.fasterxml.jackson.annotation.JsonBackReference
-import com.fasterxml.jackson.annotation.JsonManagedReference
 import javax.persistence.*
 
 /**
