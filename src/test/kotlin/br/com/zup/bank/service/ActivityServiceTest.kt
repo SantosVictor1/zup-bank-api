@@ -132,20 +132,4 @@ class ActivityServiceTest {
 //        Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
 //    }
 //
-//    @Test
-//    fun extractWithSuccess() {
-//        val paginationDTO = PaginationResponseDTO(0, 10)
-//        var pageRequest = PageRequest.of(0, 10)
-//
-//        Mockito.`when`(activityService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber!!)).thenReturn(Optional.of(account))
-//        Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest))
-//            .thenReturn((Page.empty(pageRequest)))
-//
-//        val extracts = activityService.extract(activityDTO.accNumber!!, 0, 10)
-//
-//        Assert.assertEquals(extracts, ExtractResponseDTO(mutableListOf(), paginationDTO))
-//
-//        Mockito.verify(activityService.activityRepository, Mockito.times(1))
-//            .findAllByAccountAccountNumberOrderByActivityDateDesc(activityDTO.accNumber!!, pageRequest)
-//    }
 }

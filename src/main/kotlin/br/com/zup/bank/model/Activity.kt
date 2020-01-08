@@ -24,7 +24,7 @@ data class Activity(
     var value: Double,
 
     @Enumerated(EnumType.STRING)
-    val operation: Operation,
+    var operation: Operation,
 
     @JsonManagedReference
     @ManyToOne

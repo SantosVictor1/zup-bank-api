@@ -103,13 +103,7 @@ class AccountServiceImpl(
         val user = getUser(activityRequestDTO.cpf!!)
         val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
 
-        if (account.user?.cpf != activityRequestDTO.cpf) {
-            badRequest(mutableListOf("CPF inválido"))
-        }
-
-        if (activityRequestDTO.value!! <= 0.0) {
-            badRequest(mutableListOf("Valor deve ser maior que 0"))
-        }
+        validateOperation(account, activityRequestDTO)
 
         account.balance += activityRequestDTO.value!!
 
@@ -123,9 +117,7 @@ class AccountServiceImpl(
         val user = getUser(activityRequestDTO.cpf!!)
         val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
 
-        if (account.user?.cpf != activityRequestDTO.cpf) {
-            badRequest(mutableListOf("CPF inválido"))
-        }
+        validateOperation(account, activityRequestDTO)
 
         account.balance -= activityRequestDTO.value!!
 
@@ -144,6 +136,16 @@ class AccountServiceImpl(
         var pageRequest = PageRequest.of(page, size)
 
         return activityService.extract(accNumber, pageRequest)
+    }
+
+    private fun validateOperation(account: Account, activityRequestDTO: ActivityRequestDTO) {
+        if (account.user?.cpf != activityRequestDTO.cpf) {
+            badRequest(mutableListOf("CPF inválido"))
+        }
+
+        if (activityRequestDTO.value!! <= 0.0) {
+            badRequest(mutableListOf("Valor deve ser maior que 0"))
+        }
     }
 
     private fun existsByNumber(accNumber: String) {
