@@ -3,8 +3,9 @@ package br.com.zup.bank.service
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.EqualResourcesBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.User
@@ -34,14 +35,14 @@ class TransferServiceTest {
         transferDTO = TransferRequestDTO("7894561231", "1234567891", "50359879063", 150.0)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = EqualResourcesBankException::class)
     fun equalsAccountsTest() {
         transferDTO.originAccount = transferDTO.destinyAccount
 
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = InvalidResourceBankException::class)
     fun invalidValueTest() {
         transferDTO.originAccount = "7894561231"
         transferDTO.transferValue = 0.0
@@ -49,7 +50,7 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun originAccountNotFoundTest() {
         transferDTO.originAccount = "7894561231"
 
@@ -59,7 +60,7 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun destinyAccountNotFoundTest() {
         Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount)).thenReturn(false)
 
@@ -67,7 +68,7 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun getAccountWithError() {
         transferDTO.originAccount = "7894561231"
 
@@ -78,7 +79,7 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = InvalidResourceBankException::class)
     fun insufficientFundsTest() {
         transferDTO.originAccount = "7894561231"
         val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, null)
@@ -92,7 +93,7 @@ class TransferServiceTest {
         transferService.newTransfer(transferDTO)
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = InvalidResourceBankException::class)
     fun differentCpfTest() {
         transferDTO.originAccount = "7894561231"
         val user = User(1, "Fulano", "50359879064", "fulano@gmail.com", true)

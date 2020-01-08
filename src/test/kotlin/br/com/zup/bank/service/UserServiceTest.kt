@@ -2,8 +2,8 @@ package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.exception.DuplicatedResourceException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
@@ -53,7 +53,7 @@ class UserServiceTest {
 
     }
 
-    @Test(expected = DuplicatedResourceException::class)
+    @Test(expected = DuplicatedResourceBankException::class)
     fun existsByCpfTest() {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(true)
 
@@ -72,7 +72,7 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
-    @Test(expected = DuplicatedResourceException::class)
+    @Test(expected = DuplicatedResourceBankException::class)
     fun existsByEmailTest() {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(true)
 
@@ -91,7 +91,7 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun getByIdWithErrorTest() {
         Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.empty())
 
@@ -108,7 +108,7 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun deleteWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
 
@@ -133,7 +133,7 @@ class UserServiceTest {
         Mockito.verify(accountService.accountRepository, Mockito.times(1)).save(acc)
     }
 
-    @Test(expected = ResourceNotFoundException::class)
+    @Test(expected = ResourceNotFoundBankException::class)
     fun reactivateWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
 

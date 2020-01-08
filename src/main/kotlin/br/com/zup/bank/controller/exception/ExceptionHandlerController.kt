@@ -2,14 +2,11 @@ package br.com.zup.bank.controller.exception
 
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.common.Message
-import br.com.zup.bank.dto.response.error.ErrorResponse
-import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.error.FieldError
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.DuplicatedResourceException
-import br.com.zup.bank.exception.InvalidResourceException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -24,20 +21,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 class ExceptionHandlerController(
     val message: Message
 ) {
-
-    @ExceptionHandler(BankException::class)
-    fun handleBankException(e: BankException): ResponseEntity<ErrorResponse> {
-        val errors = mutableListOf<ErrorSupport>()
-
-        e.errors.forEach {
-            errors.add(ErrorSupport(it))
-        }
-
-        return ResponseEntity.status(e.httpStatus).body(ErrorResponse(e.httpStatus, errors))
-    }
-
-    @ExceptionHandler(ResourceNotFoundException::class)
-    fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ObjectErrorResponse> {
+    @ExceptionHandler(ResourceNotFoundBankException::class)
+    fun handleResourceNotFoundException(e: ResourceNotFoundBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
         val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
 
@@ -46,8 +31,8 @@ class ExceptionHandlerController(
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectErrorResponse)
     }
 
-    @ExceptionHandler(DuplicatedResourceException::class)
-    fun handleDuplicatedResourceException(e: DuplicatedResourceException): ResponseEntity<ObjectErrorResponse> {
+    @ExceptionHandler(DuplicatedResourceBankException::class)
+    fun handleDuplicatedResourceException(e: DuplicatedResourceBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
         val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
 
@@ -81,8 +66,8 @@ class ExceptionHandlerController(
         return ResponseEntity.badRequest().body(objectErrorResponse)
     }
 
-    @ExceptionHandler(InvalidResourceException::class)
-    fun handleInvalidResourceException(e: InvalidResourceException): ResponseEntity<ObjectErrorResponse> {
+    @ExceptionHandler(InvalidResourceBankException::class)
+    fun handleInvalidResourceException(e: InvalidResourceBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
         val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
 

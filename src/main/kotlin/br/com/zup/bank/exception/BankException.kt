@@ -1,9 +1,10 @@
 package br.com.zup.bank.exception
 
 /**
- * Created by Victor Santos on 23/12/2019
+ * Created by Victor Santos on 08/01/2020
  */
-class BankException(
-    val httpStatus: Int,
-    val errors: MutableList<String>
+open class BankException(
+    val errorCode: String,
+    val field: String,
+    val objectName: String
 ) : RuntimeException()

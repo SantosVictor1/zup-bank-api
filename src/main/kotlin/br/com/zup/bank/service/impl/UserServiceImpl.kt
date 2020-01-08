@@ -3,9 +3,8 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.DuplicatedResourceException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
@@ -103,10 +102,10 @@ class UserServiceImpl(
     }
 
     private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
-        throw ResourceNotFoundException(errorCode, field, objectName)
+        throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
     private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
-        throw DuplicatedResourceException(errorCode, field, objectName)
+        throw DuplicatedResourceBankException(errorCode, field, objectName)
     }
 }

@@ -3,8 +3,8 @@ package br.com.zup.bank.exception
 /**
  * Created by Victor Santos on 30/12/2019
  */
-class ResourceNotFoundException(
+class ResourceNotFoundBankException(
     errorCode: String,
     field: String,
     objectName: String
-) : Exception(errorCode, field, objectName)
+) : BankException(errorCode, field, objectName)

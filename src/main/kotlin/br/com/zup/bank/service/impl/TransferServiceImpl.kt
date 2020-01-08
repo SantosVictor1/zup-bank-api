@@ -4,8 +4,7 @@ import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.*
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.Transfer
@@ -42,20 +41,16 @@ class TransferServiceImpl(
     }
 
     private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
-        var errors = mutableListOf<String>()
-
         originAccount.balance = originAccount.balance - transferDTO.transferValue
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
         if (originAccount.balance < 0) {
-            errors.add("Saldo insuficiente da conta de origem")
+            invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
         }
 
         if (destinyAccount.user?.cpf != transferDTO.recipientsCpf) {
-            errors.add("CPF do destinatário incorreto")
+            invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
         }
-
-        badRequestException(errors)
 
         var originActivity = getActivity(originAccount, transferDTO)
         originActivity.value = originActivity.value * -1
@@ -82,24 +77,20 @@ class TransferServiceImpl(
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
-        var errors = mutableListOf<String>()
-
         if (transferDTO.originAccount == transferDTO.destinyAccount) {
-            errors.add("Números de contas iguais")
+            equalResourceException(BankErrorCode.BANK032.code, "", "transferDTO")
         }
 
         if (transferDTO.transferValue <= 0) {
-            errors.add("Valor deve ser maior que 0")
+            invalidResourceException(BankErrorCode.BANK040.code, "transferValue", "transferDTO")
         }
 
-        badRequestException(errors)
-
         if (!findAccountByNumber(transferDTO.destinyAccount)) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "DestinyAccount")
+            resourceNotFoundException(BankErrorCode.BANK022.code, "destintyAccount", "transferDTO")
         }
 
         if (!findAccountByNumber(transferDTO.originAccount)) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "OriginAccount")
+            resourceNotFoundException(BankErrorCode.BANK022.code, "originAccount", "transferDTO")
         }
     }
 
@@ -107,7 +98,7 @@ class TransferServiceImpl(
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
+            resourceNotFoundException(BankErrorCode.BANK022.code, "accNumber", "Account")
         }
 
         return account.get()
@@ -118,12 +109,14 @@ class TransferServiceImpl(
     }
 
     private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
-        throw ResourceNotFoundException(errorCode, field, objectName)
+        throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
-    private fun badRequestException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw BankException(400, errors)
-        }
+    private fun equalResourceException(errorCode: String, field: String, objectName: String) {
+        throw EqualResourcesBankException(errorCode, field, objectName)
+    }
+
+    private fun invalidResourceException(errorCode: String, field: String, objectName: String) {
+        throw InvalidResourceBankException(errorCode, field, objectName)
     }
 }

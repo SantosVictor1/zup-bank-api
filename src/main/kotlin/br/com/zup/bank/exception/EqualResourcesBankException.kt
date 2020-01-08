@@ -3,8 +3,8 @@ package br.com.zup.bank.exception
 /**
  * Created by Victor Santos on 08/01/2020
  */
-class DuplicatedResourceException(
+class EqualResourcesBankException (
     errorCode: String,
     field: String,
     objectName: String
-) : Exception(errorCode, field, objectName)
+) : BankException(errorCode, field, objectName)

@@ -3,19 +3,19 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
-import br.com.zup.bank.dto.response.success.*
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.DuplicatedResourceException
-import br.com.zup.bank.exception.InvalidResourceException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.dto.response.success.AccountBalanceDTO
+import br.com.zup.bank.dto.response.success.AccountResponseDTO
+import br.com.zup.bank.dto.response.success.ActivityResponseDTO
+import br.com.zup.bank.dto.response.success.ExtractResponseDTO
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
 import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IActivityService
-import br.com.zup.bank.service.IUserService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -186,14 +186,14 @@ class AccountServiceImpl(
     }
 
     private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
-        throw ResourceNotFoundException(errorCode, field, objectName)
+        throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
     private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
-        throw DuplicatedResourceException(errorCode, field, objectName)
+        throw DuplicatedResourceBankException(errorCode, field, objectName)
     }
 
     private fun invalidResourceException(errorCode: String, field: String, objectName: String) {
-        throw InvalidResourceException(errorCode, field, objectName)
+        throw InvalidResourceBankException(errorCode, field, objectName)
     }
 }
