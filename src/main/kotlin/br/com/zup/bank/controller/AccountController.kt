@@ -3,21 +3,18 @@ package br.com.zup.bank.controller
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.error.ErrorResponse
+import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.dto.response.success.AccountBalanceDTO
 import br.com.zup.bank.dto.response.success.AccountResponseDTO
 import br.com.zup.bank.dto.response.success.ActivityResponseDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.BankException
 import br.com.zup.bank.service.IAccountService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.BindingResult
-import org.springframework.validation.ObjectError
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -26,25 +23,16 @@ import javax.validation.Valid
  */
 @RestController
 @RequestMapping("api/account")
-class AccountController {
-
-    @Autowired
-    private lateinit var accountService: IAccountService
-
+class AccountController(
+    val accountService: IAccountService
+) {
     @ApiOperation(value = "Cadastra um usuário")
     @ApiResponses(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class),
-        ApiResponse(code = 400, message = "Algum dado é inválido", response = ErrorResponse::class)
+        ApiResponse(code = 400, message = "Algum dado é inválido", response = ObjectErrorResponse::class)
     )
     @PostMapping
-    fun newAccount(
-        @RequestBody @Valid accountRequestDTO: AccountRequestDTO,
-        result: BindingResult
-    ): ResponseEntity<AccountResponseDTO> {
-        if (result.hasErrors()) {
-            badRequest(result.allErrors)
-        }
-
+    fun newAccount(@RequestBody @Valid accountRequestDTO: AccountRequestDTO): ResponseEntity<AccountResponseDTO> {
         return ResponseEntity.ok(accountService.createAccount(accountRequestDTO))
     }
 
@@ -95,14 +83,7 @@ class AccountController {
         ApiResponse(code = 400, message = "Algum dado é inválido", response = ErrorResponse::class)
     )
     @PostMapping("/deposit")
-    fun deposit(
-        @RequestBody @Valid activityRequestDTO: ActivityRequestDTO,
-        result: BindingResult
-    ): ResponseEntity<ActivityResponseDTO> {
-        if (result.hasErrors()) {
-            badRequest(result.allErrors)
-        }
-
+    fun deposit(@RequestBody @Valid activityRequestDTO: ActivityRequestDTO): ResponseEntity<ActivityResponseDTO> {
         activityRequestDTO.operation = Operation.DEPOSIT
         return ResponseEntity.ok(accountService.deposit(activityRequestDTO))
     }
@@ -113,14 +94,7 @@ class AccountController {
         ApiResponse(code = 400, message = "Algum dado é inválido", response = ErrorResponse::class)
     )
     @PostMapping("/withdraw")
-    fun withdraw(
-        @RequestBody @Valid activityRequestDTO: ActivityRequestDTO,
-        result: BindingResult
-    ): ResponseEntity<ActivityResponseDTO> {
-        if (result.hasErrors()) {
-            badRequest(result.allErrors)
-        }
-
+    fun withdraw(@RequestBody @Valid activityRequestDTO: ActivityRequestDTO): ResponseEntity<ActivityResponseDTO> {
         activityRequestDTO.operation = Operation.WITHDRAW
         return ResponseEntity.ok(accountService.withdraw(activityRequestDTO))
     }
@@ -143,15 +117,5 @@ class AccountController {
         size: String
     ): ResponseEntity<ExtractResponseDTO> {
         return ResponseEntity.ok(accountService.extract(accNumber, page.toInt(), size.toInt()))
-    }
-
-    private fun badRequest(objectErrors: MutableList<ObjectError>) {
-        val errors = mutableListOf<String>()
-
-        objectErrors.forEach {
-            errors.add(it.defaultMessage.toString())
-        }
-
-        throw BankException(400, errors)
     }
 }

@@ -6,8 +6,10 @@ import javax.validation.constraints.NotBlank
 /**
  * Created by Victor Santos on 26/12/2019
  */
-class AccountRequestDTO {
-    @NotBlank(message = "CPF obrigatório")
-    @CPF(message = "CPF inválido")
-    var cpf: String? = null
+class AccountRequestDTO(
+    cpf: String
+) {
+    @NotBlank(message = "cpf.required")
+    @CPF(message = "cpf.invalid")
+    var cpf: String = cpf
 }

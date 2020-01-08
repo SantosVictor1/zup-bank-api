@@ -34,8 +34,8 @@ data class Activity(
         fun toEntity(acc: Account, activityDTO: ActivityRequestDTO): Activity {
             return Activity(
                 id = null,
-                value = activityDTO.value!!,
-                operation = activityDTO.operation!!,
+                value = activityDTO.value,
+                operation = activityDTO.operation,
                 account = acc
             )
         }

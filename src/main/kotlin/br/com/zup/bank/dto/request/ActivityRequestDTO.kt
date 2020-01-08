@@ -1,6 +1,7 @@
 package br.com.zup.bank.dto.request
 
 import br.com.zup.bank.enums.Operation
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.validator.constraints.br.CPF
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -9,17 +10,21 @@ import javax.validation.constraints.Size
 /**
  * Created by Victor Santos on 27/12/2019
  */
-class ActivityRequestDTO {
-    @CPF
-    @NotBlank(message = "CPF obrigatório")
-    var cpf: String? = null
+class ActivityRequestDTO(
+    cpf: String,
+    accNumber: String,
+    value: Double
+) {
+    @CPF(message = "cpf.invalid")
+    @NotBlank(message = "cpf.required")
+    var cpf: String = cpf
 
-    @NotBlank(message = "Número de conta obrigatório")
-    @Size(message = "Número de conta deve ter tamanho 10", min = 10, max = 10)
-    var accNumber: String? = null
+    @NotBlank(message = "account.number.required")
+    @Size(message = "account.number.size.invalid", min = 10, max = 10)
+    var accNumber: String = accNumber
 
-    @NotNull(message = "Valor obrigatório")
-    var value: Double? = null
+    var value: Double = value
 
-    var operation: Operation? = null
+    @JsonIgnore
+    lateinit var operation: Operation
 }

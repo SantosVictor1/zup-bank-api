@@ -28,7 +28,7 @@ class AccountServiceImpl(
 ) : IAccountService {
     override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account
-        var user = getUser(accountRequestDTO.cpf!!)
+        var user = getUser(accountRequestDTO.cpf)
 
         findAccountByUser(user.cpf)
 
@@ -100,12 +100,12 @@ class AccountServiceImpl(
 
     @Transactional
     override fun deposit(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
-        val user = getUser(activityRequestDTO.cpf!!)
-        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
+        val user = getUser(activityRequestDTO.cpf)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber,""), user)
 
         validateOperation(account, activityRequestDTO)
 
-        account.balance += activityRequestDTO.value!!
+        account.balance += activityRequestDTO.value
 
         accountRepository.save(account)
 
@@ -114,12 +114,12 @@ class AccountServiceImpl(
 
     @Transactional
     override fun withdraw(activityRequestDTO: ActivityRequestDTO): ActivityResponseDTO {
-        val user = getUser(activityRequestDTO.cpf!!)
-        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber!!,""), user)
+        val user = getUser(activityRequestDTO.cpf)
+        val account = Account.toEntity(getByAccountNumberOrCpf(activityRequestDTO.accNumber,""), user)
 
         validateOperation(account, activityRequestDTO)
 
-        account.balance -= activityRequestDTO.value!!
+        account.balance -= activityRequestDTO.value
 
         if (account.balance < 0.0) {
             badRequest(mutableListOf("Saldo insuficiente!"))
@@ -143,7 +143,7 @@ class AccountServiceImpl(
             badRequest(mutableListOf("CPF inválido"))
         }
 
-        if (activityRequestDTO.value!! <= 0.0) {
+        if (activityRequestDTO.value <= 0.0) {
             badRequest(mutableListOf("Valor deve ser maior que 0"))
         }
     }

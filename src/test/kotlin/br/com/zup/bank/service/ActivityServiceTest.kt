@@ -39,10 +39,7 @@ class ActivityServiceTest {
 
     @Before
     fun setObjects() {
-        activityDTO = ActivityRequestDTO()
-        activityDTO.accNumber = "6085506328"
-        activityDTO.cpf = "50359879063"
-        activityDTO.value = 100.0
+        activityDTO = ActivityRequestDTO("50359879063", "6085506328", 100.0)
         activityDTO.operation = Operation.DEPOSIT
 
         user = User(
