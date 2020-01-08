@@ -30,8 +30,8 @@ class TransferServiceImpl(
     override fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO {
         validateAccounts(transferRequestDTO)
 
-        val originAccount = getAccount(transferRequestDTO.originAccount!!)
-        val destinyAccount = getAccount(transferRequestDTO.destinyAccount!!)
+        val originAccount = getAccount(transferRequestDTO.originAccount)
+        val destinyAccount = getAccount(transferRequestDTO.destinyAccount)
         var transfer = getTransfer(transferRequestDTO, mutableListOf(originAccount, destinyAccount))
 
         doTransfer(originAccount, destinyAccount, transferRequestDTO)
@@ -44,8 +44,8 @@ class TransferServiceImpl(
     private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
         var errors = mutableListOf<String>()
 
-        originAccount.balance = originAccount.balance - transferDTO.transferValue!!
-        destinyAccount.balance = transferDTO.transferValue!! + destinyAccount.balance
+        originAccount.balance = originAccount.balance - transferDTO.transferValue
+        destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
         if (originAccount.balance < 0) {
             errors.add("Saldo insuficiente da conta de origem")
@@ -67,7 +67,7 @@ class TransferServiceImpl(
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, transferDTO.date, transferDTO.transferValue!!, Operation.TRANSFER, acc)
+        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc)
     }
 
     private fun getTransfer(transferDTO: TransferRequestDTO, accounts: MutableList<Account>): Transfer {
@@ -88,17 +88,17 @@ class TransferServiceImpl(
             errors.add("Números de contas iguais")
         }
 
-        if (transferDTO.transferValue!! <= 0) {
+        if (transferDTO.transferValue <= 0) {
             errors.add("Valor deve ser maior que 0")
         }
 
         badRequestException(errors)
 
-        if (!findAccountByNumber(transferDTO.destinyAccount!!)) {
+        if (!findAccountByNumber(transferDTO.destinyAccount)) {
             resourceNotFoundException(BankErrorCode.BANK022.code, "", "DestinyAccount")
         }
 
-        if (!findAccountByNumber(transferDTO.originAccount!!)) {
+        if (!findAccountByNumber(transferDTO.originAccount)) {
             resourceNotFoundException(BankErrorCode.BANK022.code, "", "OriginAccount")
         }
     }

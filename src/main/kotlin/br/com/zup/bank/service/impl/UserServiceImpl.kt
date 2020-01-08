@@ -89,7 +89,7 @@ class UserServiceImpl(
         accountService.reactivateAccount(cpf)
         userRepository.save(user!!)
 
-        return UserResponseDTO.toResponseDto(user!!)
+        return UserResponseDTO.toResponseDto(user)
     }
 
     private fun validateFields(user: UserRequestDTO) {
