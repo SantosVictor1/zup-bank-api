@@ -1,8 +1,10 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.DuplicatedResourceException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.UserRepository
@@ -44,7 +46,7 @@ class UserServiceImpl(
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
         return UserResponseDTO.toResponseDto(user.get())
@@ -54,7 +56,7 @@ class UserServiceImpl(
         val user = userRepository.findByCpf(cpf)
 
         if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
         return UserResponseDTO.toResponseDto(user.get())
@@ -65,7 +67,7 @@ class UserServiceImpl(
         var user = userRepository.findByCpf(cpf)
 
         if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
         user.get().isActive = false
@@ -78,30 +80,26 @@ class UserServiceImpl(
     override fun reactivateUser(cpf: String): UserResponseDTO {
         var user = userRepository.findByCpfAndIsActiveFalse(cpf)
 
-        if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+        if (user == null) {
+            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
-        user.get().isActive = true
+        user?.isActive = true
 
         accountService.reactivateAccount(cpf)
-        userRepository.save(user.get())
+        userRepository.save(user!!)
 
-        return UserResponseDTO.toResponseDto(user.get())
+        return UserResponseDTO.toResponseDto(user!!)
     }
 
     private fun validateFields(user: UserRequestDTO) {
-        var errors = mutableListOf<String>()
-
-        if (existsByCpf(user.cpf!!)) {
-            errors.add("CPF já cadastrado")
+        if (existsByCpf(user.cpf)) {
+            duplicatedResourceException(BankErrorCode.BANK016.code, "cpf", "UserRequestDTO")
         }
 
-        if (existsByEmail(user.email!!)) {
-            errors.add("Email já cadastrado")
+        if (existsByEmail(user.email)) {
+            duplicatedResourceException(BankErrorCode.BANK017.code, "email", "UserRequestDTO")
         }
-
-        badRequestException(errors)
     }
 
     private fun existsByCpf(cpf: String): Boolean {
@@ -112,15 +110,11 @@ class UserServiceImpl(
         return userRepository.existsByEmail(email)
     }
 
-    private fun resourceNotFoundException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw ResourceNotFoundException(errors)
-        }
+    private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        throw ResourceNotFoundException(errorCode, field, objectName)
     }
 
-    private fun badRequestException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw BankException(400, errors)
-        }
+    private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        throw DuplicatedResourceException(errorCode, field, objectName)
     }
 }

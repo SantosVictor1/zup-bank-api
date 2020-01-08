@@ -29,7 +29,7 @@ data class User(
 ) {
     companion object {
         fun fromUserRequestToEntity(userRequestDTO: UserRequestDTO): User {
-            return User(null, userRequestDTO.name!!, userRequestDTO.cpf!!, userRequestDTO.email!!, true)
+            return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
         }
     }
 }

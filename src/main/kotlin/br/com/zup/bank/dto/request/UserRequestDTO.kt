@@ -22,6 +22,6 @@ class UserRequestDTO(
     var cpf: String = cpf
 
     @NotBlank(message = "email.required")
-    @Email(message = "email.required")
-    var email: String? = email
+    @Email(message = "email.invalid")
+    var email: String = email
 }

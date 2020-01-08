@@ -243,6 +243,7 @@ class AccountServiceTest {
 
     @Test(expected = BankException::class)
     fun depositWithUserCpfAndAccountUserCpfDifferent() {
+        user.cpf = "12345678912"
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf)).thenReturn(Optional.of(user))
         Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
 

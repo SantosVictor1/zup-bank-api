@@ -6,7 +6,9 @@ import br.com.zup.bank.dto.response.error.ErrorSupport
 import br.com.zup.bank.dto.response.error.FieldError
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.DuplicatedResourceException
 import br.com.zup.bank.exception.ResourceNotFoundException
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -34,14 +36,24 @@ class ExceptionHandlerController(
     }
 
     @ExceptionHandler(ResourceNotFoundException::class)
-    fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorResponse> {
-        var errors = mutableListOf<ErrorSupport>()
+    fun handleResourceNotFoundException(e: ResourceNotFoundException): ResponseEntity<ObjectErrorResponse> {
+        val errorMessage = message.getMessage(e.errorCode)
+        var fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
 
-        e.errors!!.forEach {
-            errors.add(ErrorSupport(it))
-        }
+        var objectErrorResponse = ObjectErrorResponse(HttpStatus.NOT_FOUND.value(), e.objectName, fields)
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(400, errors))
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectErrorResponse)
+    }
+
+    @ExceptionHandler(DuplicatedResourceException::class)
+    fun handleDuplicatedResourceException(e: DuplicatedResourceException): ResponseEntity<ObjectErrorResponse> {
+        lateinit var objectErrorResponse: ObjectErrorResponse
+        val errorMessage = message.getMessage(e.errorCode)
+        var fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
+
+        objectErrorResponse = ObjectErrorResponse(HttpStatus.BAD_REQUEST.value(), e.objectName, fields)
+
+        return ResponseEntity.badRequest().body(objectErrorResponse)
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
@@ -49,7 +61,7 @@ class ExceptionHandlerController(
         val errorCode = "missing.query.parameter"
         lateinit var objectErrorResponse: ObjectErrorResponse
         val errorMessage = message.getMessage(errorCode)
-        var fields: MutableList<FieldError> = mutableListOf(FieldError(errorCode, e.parameterName, errorMessage))
+        var fields = mutableListOf<FieldError>(FieldError(errorCode, e.parameterName, errorMessage))
 
         objectErrorResponse = ObjectErrorResponse(HttpStatus.BAD_REQUEST.value(), "", fields)
 

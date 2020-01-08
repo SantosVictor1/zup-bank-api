@@ -38,7 +38,7 @@ interface UserRepository : JpaRepository<User, Long> {
     @Query(value = "SELECT user FROM User user WHERE user.cpf = :cpf AND user.isActive = true")
     fun findByCpf(@Param(value = "cpf") cpf: String?): Optional<User>
 
-    fun findByCpfAndIsActiveFalse(cpf: String): Optional<User>
+    fun findByCpfAndIsActiveFalse(cpf: String): User?
 
     @Query(value = "SELECT user FROM User user WHERE user.id = :id AND user.isActive = true")
     override fun findById(@Param(value = "id") id: Long): Optional<User>

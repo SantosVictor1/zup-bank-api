@@ -3,6 +3,7 @@ package br.com.zup.bank.service
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.BankException
+import br.com.zup.bank.exception.DuplicatedResourceException
 import br.com.zup.bank.exception.ResourceNotFoundException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
@@ -57,7 +58,7 @@ class UserServiceTest {
 
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = DuplicatedResourceException::class)
     fun existsByCpfTest() {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(true)
 
@@ -76,7 +77,7 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
-    @Test(expected = BankException::class)
+    @Test(expected = DuplicatedResourceException::class)
     fun existsByEmailTest() {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(true)
 
@@ -114,43 +115,43 @@ class UserServiceTest {
 
     @Test(expected = ResourceNotFoundException::class)
     fun deleteWithErrorTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.empty())
 
-        userService.deactivateUser(user.cpf!!)
+        userService.deactivateUser(user.cpf)
     }
 
     @Test
     fun deleteWithSuccessTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf!!)).thenReturn(Optional.of(user))
+        Mockito.`when`(userRepository.findByCpf(user.cpf)).thenReturn(Optional.of(user))
         Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf!!)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(Optional.of(acc))
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
 
-        userService.deactivateUser(user.cpf!!)
+        userService.deactivateUser(user.cpf)
         Assert.assertThat(user.isActive, CoreMatchers.`is`(false))
-        Assert.assertThat(acc.isActive!!, CoreMatchers.`is`(false))
+        Assert.assertThat(acc.isActive, CoreMatchers.`is`(false))
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByUserCpf(user.cpf!!)
+        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByUserCpf(user.cpf)
         Mockito.verify(accountService.accountRepository, Mockito.times(1)).save(acc)
     }
 
     @Test(expected = ResourceNotFoundException::class)
     fun reactivateWithErrorTest() {
-        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.empty())
+        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf)).thenReturn(null)
 
-        userService.reactivateUser(user.cpf!!)
+        userService.reactivateUser(user.cpf)
     }
 
     @Test
     fun reactivateWithSuccessTest() {
-        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf!!)).thenReturn(Optional.of(user))
+        Mockito.`when`(userRepository.findByCpfAndIsActiveFalse(user.cpf)).thenReturn(user)
 
-        val userResponse = userService.reactivateUser(user.cpf!!)
+        val userResponse = userService.reactivateUser(user.cpf)
         Assert.assertThat(this.userResponseDTO, CoreMatchers.`is`(userResponse))
 
-        Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf!!)
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpfAndIsActiveFalse(user.cpf)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
     }
 

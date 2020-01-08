@@ -1,5 +1,6 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.success.*
@@ -54,7 +55,7 @@ class AccountServiceImpl(
         val account = accountRepository.findById(id)
 
         if (!account.isPresent) {
-            resourceNotFound(mutableListOf("Conta não encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
         return AccountResponseDTO.toResponseDto(account.get())
@@ -64,7 +65,7 @@ class AccountServiceImpl(
         val account = accountRepository.findByAccountNumberOrUserCpf(cpf, accNumber)
 
         if (!account.isPresent) {
-            resourceNotFound(mutableListOf("Conta não encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
         return AccountResponseDTO.toResponseDto(account.get())
@@ -74,7 +75,7 @@ class AccountServiceImpl(
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
-            resourceNotFound(mutableListOf("Conta não encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
         return AccountBalanceDTO(accNumber, account.get().balance)
@@ -150,7 +151,7 @@ class AccountServiceImpl(
 
     private fun existsByNumber(accNumber: String) {
         if (!accountRepository.existsAccountByAccountNumber(accNumber)) {
-            resourceNotFound(mutableListOf("Conta não encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
     }
 
@@ -158,7 +159,7 @@ class AccountServiceImpl(
         val user = userRepository.findByCpf(cpf)
 
         if (!user.isPresent) {
-            resourceNotFound(mutableListOf("Usuário não encontrado"))
+            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
         }
 
         return user.get()
@@ -182,10 +183,8 @@ class AccountServiceImpl(
         return accNumber
     }
 
-    private fun resourceNotFound(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw ResourceNotFoundException(errors)
-        }
+    private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        throw ResourceNotFoundException(errorCode, field, objectName)
     }
 
     private fun badRequest(errors: MutableList<String>) {

@@ -1,5 +1,6 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
@@ -92,24 +93,21 @@ class TransferServiceImpl(
         }
 
         badRequestException(errors)
-        errors = mutableListOf()
 
         if (!findAccountByNumber(transferDTO.destinyAccount!!)) {
-            errors.add("Conta de destino não encontrada")
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "DestinyAccount")
         }
 
         if (!findAccountByNumber(transferDTO.originAccount!!)) {
-            errors.add("Conta de origem não encontrada")
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "OriginAccount")
         }
-
-        resourceNotFoundException(errors)
     }
 
     private fun getAccount(accNumber: String): Account {
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
-            resourceNotFoundException(mutableListOf("Alguma das contas não foi encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
         return account.get()
@@ -119,10 +117,8 @@ class TransferServiceImpl(
         return accountRepository.existsAccountByAccountNumber(accNumber)
     }
 
-    private fun resourceNotFoundException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw ResourceNotFoundException(errors)
-        }
+    private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        throw ResourceNotFoundException(errorCode, field, objectName)
     }
 
     private fun badRequestException(errors: MutableList<String>) {
