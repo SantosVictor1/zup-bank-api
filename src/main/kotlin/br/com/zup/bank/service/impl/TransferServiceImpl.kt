@@ -43,10 +43,10 @@ class TransferServiceImpl(
     private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
         var errors = mutableListOf<String>()
 
-        originAccount.balance = originAccount.balance!! - transferDTO.transferValue!!
-        destinyAccount.balance = transferDTO.transferValue!! + destinyAccount.balance!!
+        originAccount.balance = originAccount.balance - transferDTO.transferValue!!
+        destinyAccount.balance = transferDTO.transferValue!! + destinyAccount.balance
 
-        if (originAccount.balance!! < 0) {
+        if (originAccount.balance < 0) {
             errors.add("Saldo insuficiente da conta de origem")
         }
 
@@ -57,7 +57,7 @@ class TransferServiceImpl(
         badRequestException(errors)
 
         var originActivity = getActivity(originAccount, transferDTO)
-        originActivity.value = originActivity.value!! * -1
+        originActivity.value = originActivity.value * -1
         val destinyActivity = getActivity(destinyAccount, transferDTO)
 
         activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))
