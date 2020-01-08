@@ -49,10 +49,7 @@ class UserServiceTest {
             email = "teste@gmail.com",
             isActive = true
         )
-        userRequestDTO = UserRequestDTO()
-        userRequestDTO.cpf = "02160795607"
-        userRequestDTO.email = "teste@gmail.com"
-        userRequestDTO.name = "Victor"
+        userRequestDTO = UserRequestDTO("Victor", "02160795607", "teste@gmail.com")
 
         userResponseDTO = UserResponseDTO(1, "Victor", "02160795607", "teste@gmail.com", true)
 

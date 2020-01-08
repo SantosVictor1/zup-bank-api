@@ -8,20 +8,20 @@ import javax.validation.constraints.Size
 /**
  * Created by Victor Santos on 23/12/2019
  */
-class UserRequestDTO {
-    @NotBlank(message = "Nome obrigatório")
-    @Size(min = 3, max = 80, message = "Nome deve ter entre 3 e 80 caracteres")
-    var name: String? = null
+class UserRequestDTO(
+    name: String,
+    cpf: String,
+    email: String
+) {
+    @NotBlank(message = "name.required")
+    @Size(min = 3, max = 80, message = "name.size.invalid")
+    var name: String = name
 
-    @NotBlank(message = "CPF obrigatório")
-    @CPF(message = "CPF inválido")
-    var cpf: String? = null
+    @NotBlank(message = "cpf.required")
+    @CPF(message = "cpf.invalid")
+    var cpf: String = cpf
 
-    @NotBlank(message = "Email obrigatório")
-    @Email(message = "Email inválido")
-    var email: String? = null
-//
-//    @NotBlank(message = "Senha obrigatória")
-//    @Size(min = 8, message = "Senha deve ser maior que 8 caracteres")
-//    val password: String
+    @NotBlank(message = "email.required")
+    @Email(message = "email.required")
+    var email: String? = email
 }
