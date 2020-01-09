@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -28,12 +29,12 @@ class AccountController(
 ) {
     @ApiOperation(value = "Cadastra um usuário")
     @ApiResponses(
-        ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class),
+        ApiResponse(code = 201, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class),
         ApiResponse(code = 400, message = "Algum dado é inválido", response = ObjectErrorResponse::class)
     )
     @PostMapping
     fun newAccount(@RequestBody @Valid accountRequestDTO: AccountRequestDTO): ResponseEntity<AccountResponseDTO> {
-        return ResponseEntity.ok(accountService.createAccount(accountRequestDTO))
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(accountRequestDTO))
     }
 
     @ApiOperation(value = "Retorna todas as contas")
@@ -59,7 +60,7 @@ class AccountController(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = AccountResponseDTO::class)
     )
     @GetMapping("/data")
-    fun getByAccountNumber(
+    fun getByAccountNumberOrCpf(
         @RequestParam @ApiParam(value = "Número da conta") accNumber: String,
         @RequestParam cpf: String
     ): ResponseEntity<AccountResponseDTO> {

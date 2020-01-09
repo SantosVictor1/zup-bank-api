@@ -2,13 +2,11 @@ package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.hibernate.annotations.SQLInsert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.jdbc.Sql
@@ -18,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
 import java.lang.RuntimeException
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * Created by Victor Santos on 08/01/2020
@@ -54,6 +51,7 @@ class UserControllerTest() {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Pedro"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("42511229846"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("pedro@gmail.com"))
@@ -61,7 +59,7 @@ class UserControllerTest() {
     }
 
     @Transactional
-    @Sql("/UserSQL.sql")
+    @Sql("/scripts/UserSQL.sql")
     @Test
     fun deactivateUserWithSuccess() {
         mvc.perform(MockMvcRequestBuilders
@@ -85,7 +83,7 @@ class UserControllerTest() {
     }
 
     @Transactional
-    @Sql("/UserSQL.sql")
+    @Sql("/scripts/UserSQL.sql")
     @Test
     fun getAllAndReturnAllUsers() {
         mvc.perform(MockMvcRequestBuilders
@@ -97,7 +95,7 @@ class UserControllerTest() {
     }
 
     @Transactional
-    @Sql("/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun getByIdAndReturnTheUser() {
         mvc.perform(MockMvcRequestBuilders
@@ -113,7 +111,7 @@ class UserControllerTest() {
     }
 
     @Transactional
-    @Sql("/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun throwExceptionWhenRequestUserNotFound() {
         mvc.perform(MockMvcRequestBuilders
@@ -127,7 +125,7 @@ class UserControllerTest() {
     }
 
     @Transactional
-    @Sql("/UserSQL.sql")
+    @Sql("/scripts/UserSQL.sql")
     @Test
     fun reactivateUserWithSuccess() {
         mvc.perform(MockMvcRequestBuilders
