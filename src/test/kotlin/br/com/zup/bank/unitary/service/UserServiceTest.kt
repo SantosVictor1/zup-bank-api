@@ -1,4 +1,4 @@
-package br.com.zup.bank.service
+package br.com.zup.bank.unitary.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
@@ -8,6 +8,7 @@ import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
+import br.com.zup.bank.service.IActivityService
 import br.com.zup.bank.service.impl.AccountServiceImpl
 import br.com.zup.bank.service.impl.UserServiceImpl
 import org.hamcrest.CoreMatchers

@@ -1,4 +1,4 @@
-package br.com.zup.bank.service
+package br.com.zup.bank.unitary.service
 
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.response.success.ExtractResponseDTO
