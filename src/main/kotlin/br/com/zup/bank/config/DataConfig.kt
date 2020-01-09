@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 /**
  * Created by Victor Santos on 03/01/2020
  */
 @Configuration
+@Profile("prod")
 class DataConfig {
     @Autowired
     private lateinit var userRepository: UserRepository

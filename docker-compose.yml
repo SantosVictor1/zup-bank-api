@@ -2,19 +2,25 @@ version: '3.3'
 services:
   db:
     image: mysql
-    restart: always
     environment:
       MYSQL_DATABASE: 'zup_bank_db'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'victor'
-      # You can use whatever password you like
-      MYSQL_PASSWORD: '123581321'
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: '123581321'
+      MYSQL_USER: 'zup_bank_db'
+      MYSQL_PASSWORD: 'zup_bank_db'
+      MYSQL_ROOT_PASSWORD: 'zup_bank_db'
+      SPRING_PROFILES_ACTIVE: 'prod'
     ports:
-      # <Port exposed> : < MySQL Port running inside container>
       - '3306:3306'
     expose:
-      # Opens port 3306 on the container
       - '3306'
-      # Where our data will be persisted
+  db_test:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: 'zup_bank_db_test'
+      MYSQL_USER: 'zup_bank_db_test'
+      MYSQL_PASSWORD: 'zup_bank_db_test'
+      MYSQL_ROOT_PASSWORD: 'zup_bank_db_test'
+      SPRING_PROFILES_ACTIVE: 'test'
+    ports:
+      - '3307:3306'
+    expose:
+      - '3307'
