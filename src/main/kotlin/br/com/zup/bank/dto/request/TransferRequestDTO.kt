@@ -3,24 +3,30 @@ package br.com.zup.bank.dto.request
 import org.hibernate.validator.constraints.br.CPF
 import java.util.*
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
 /**
  * Created by Victor Santos on 30/12/2019
  */
-class TransferRequestDTO {
-    @NotBlank(message = "Conta de origem obrigatória")
-    var originAccount: String? = null
+class TransferRequestDTO(
+    originAccount: String,
+    destinyAccount: String,
+    recipientsCpf: String,
+    transferValue: Double
+) {
+    @NotBlank(message = "origin.account.required")
+    @Size(min = 10, max = 10, message = "account.number.size.invalid")
+    var originAccount: String = originAccount
 
-    @NotBlank(message = "Conta de destino obrigatória")
-    var destinyAccount: String? = null
+    @NotBlank(message = "destiny.account.required")
+    @Size(min = 10, max = 10, message = "account.number.size.invalid")
+    var destinyAccount: String = destinyAccount
 
-    @NotBlank(message = "CPF do destinatário obrigatório")
-    @CPF(message = "CPF inválido")
-    var recipientsCpf: String? = null
+    @NotBlank(message = "cpf.required")
+    @CPF(message = "cpf.invalid")
+    var recipientsCpf: String = recipientsCpf
 
-    @NotNull(message = "Valor de transferência obrigatório")
-    var transferValue: Double? = null
+    var transferValue: Double = transferValue
 
     var date: Date = Date()
 }

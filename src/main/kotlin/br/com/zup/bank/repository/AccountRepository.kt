@@ -29,16 +29,9 @@ interface AccountRepository : JpaRepository<Account, Long> {
      */
     fun existsAccountByAccountNumber(accNumber: String): Boolean
 
-    /**
-     * Método responsável por encontrar um conta baseado no CPF do usuário
-     *
-     * @param  cpf  CPF que será usado na busca
-     * @return Optional
-     */
-    @Query(value = "SELECT acc FROM Account acc WHERE acc.user.cpf = :cpf AND acc.isActive = true")
-    fun findByUserCpf(@Param(value = "cpf") cpf: String): Optional<Account>
+    fun findByUserCpf(cpf: String): Optional<Account>
 
-    fun findByUserCpfAndIsActiveFalse(cpf: String): Optional<Account>
+    fun findByAccountNumberAndIsActiveTrue(accNumber: String): Optional<Account>
 
     /**
      * Método responsável por encontrar um conta baseado em seu número
@@ -46,6 +39,9 @@ interface AccountRepository : JpaRepository<Account, Long> {
      * @param  accNumber  AccountNumber que será usado na busca
      * @return Optional
      */
-    @Query(value = "SELECT acc FROM Account acc WHERE acc.accountNumber = :accNumber AND acc.isActive = true")
-    fun findByAccountNumber(@Param(value = "accNumber") accNumber: String): Optional<Account>
+    @Query(value = "SELECT acc FROM Account acc WHERE acc.isActive = true AND (acc.accountNumber = :accNumber OR acc.user.cpf = :cpf)")
+    fun findByAccountNumberOrUserCpf(
+        @Param(value = "cpf") cpf: String,
+        @Param(value = "accNumber") accNumber: String
+    ): Optional<Account>
 }

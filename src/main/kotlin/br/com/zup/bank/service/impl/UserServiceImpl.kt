@@ -1,14 +1,14 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
+import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IUserService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
@@ -16,19 +16,18 @@ import javax.transaction.Transactional
  * Created by Victor Santos on 23/12/2019
  */
 @Service
-class UserServiceImpl : IUserService {
-    @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
+class UserServiceImpl(
+    val userRepository: UserRepository,
+    val accountService: IAccountService
+) : IUserService {
 
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
-        var user: User = setUser(userRequestDTO)
+        var user: User = User.fromUserRequestToEntity(userRequestDTO)
         user = userRepository.save(user)
 
-        return getUserDTO(user)
+        return UserResponseDTO.toResponseDto(user)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {
@@ -36,7 +35,7 @@ class UserServiceImpl : IUserService {
         val response = userRepository.findAll()
 
         response.forEach {
-            userResponseDTOList.add(getUserDTO(it))
+            userResponseDTOList.add(UserResponseDTO.toResponseDto(it))
         }
 
         return userResponseDTOList
@@ -46,68 +45,52 @@ class UserServiceImpl : IUserService {
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
+            resourceNotFoundException(BankErrorCode.BANK018.code, "id", "User")
         }
 
-        return getUserDTO(user.get())
+        return UserResponseDTO.toResponseDto(user.get())
+    }
+
+    override fun getByCpf(cpf: String, isActive: Boolean): UserResponseDTO {
+        val user = userRepository.findByCpf(cpf, isActive)
+
+        if (user == null) {
+            resourceNotFoundException(BankErrorCode.BANK018.code, "cpf", "User")
+        }
+
+        return UserResponseDTO.toResponseDto(user!!)
     }
 
     @Transactional
     override fun deactivateUser(cpf: String) {
-        var user = userRepository.findByCpf(cpf)
-        var account = accountRepository.findByUserCpf(cpf)
+        var user = User.fromUserResponseToEntity(getByCpf(cpf, true))
 
-        if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
-        }
+        user.isActive = false
+        accountService.deactivateAccount(cpf)
 
-        if (account.isPresent) {
-            account.get().isActive = false
-            accountRepository.save(account.get())
-        }
-
-        user.get().isActive = false
-
-        userRepository.save(user.get())
+        userRepository.save(user)
     }
 
     @Transactional
     override fun reactivateUser(cpf: String): UserResponseDTO {
-        var user = userRepository.findByCpfAndIsActiveFalse(cpf)
-        var account = accountRepository.findByUserCpfAndIsActiveFalse(cpf)
+        var user = User.fromUserResponseToEntity(getByCpf(cpf, false))
 
-        if (!user.isPresent) {
-            resourceNotFoundException(mutableListOf("Usuário não encontrado"))
-        }
+        user.isActive = true
 
-        if (account.isPresent) {
-            account.get().isActive = true
-            accountRepository.save(account.get())
-        }
+        accountService.reactivateAccount(cpf)
+        userRepository.save(user)
 
-        user.get().isActive = true
-
-        userRepository.save(user.get())
-
-        return getUserDTO(user.get())
-    }
-
-    private fun setUser(userRequestDTO: UserRequestDTO): User {
-        return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
+        return UserResponseDTO.toResponseDto(user)
     }
 
     private fun validateFields(user: UserRequestDTO) {
-        var errors = mutableListOf<String>()
-
-        if (existsByCpf(user.cpf!!)) {
-            errors.add("CPF já cadastrado")
+        if (existsByCpf(user.cpf)) {
+            duplicatedResourceException(BankErrorCode.BANK016.code, "cpf", "UserRequestDTO")
         }
 
-        if (existsByEmail(user.email!!)) {
-            errors.add("Email já cadastrado")
+        if (existsByEmail(user.email)) {
+            duplicatedResourceException(BankErrorCode.BANK017.code, "email", "UserRequestDTO")
         }
-
-        badRequestException(errors)
     }
 
     private fun existsByCpf(cpf: String): Boolean {
@@ -118,19 +101,11 @@ class UserServiceImpl : IUserService {
         return userRepository.existsByEmail(email)
     }
 
-    private fun getUserDTO(user: User): UserResponseDTO {
-        return UserResponseDTO(user.id!!, user.name!!, user.cpf!!, user.email!!, user.isActive!!)
+    private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
-    private fun resourceNotFoundException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw ResourceNotFoundException(errors)
-        }
-    }
-
-    private fun badRequestException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw BankException(400, errors)
-        }
+    private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        throw DuplicatedResourceBankException(errorCode, field, objectName)
     }
 }

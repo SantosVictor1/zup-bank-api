@@ -1,10 +1,12 @@
 package br.com.zup.bank.service.impl
 
+import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
-import br.com.zup.bank.exception.BankException
-import br.com.zup.bank.exception.ResourceNotFoundException
+import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.Transfer
@@ -12,7 +14,6 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.ITransferService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -22,19 +23,16 @@ import javax.transaction.Transactional
  */
 @Service
 @Transactional
-class TransferServiceImpl : ITransferService {
-    @Autowired
-    private lateinit var transferRepository: TransferRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-    @Autowired
-    private lateinit var activityRepository: ActivityRepository
-
+class TransferServiceImpl(
+    val transferRepository: TransferRepository,
+    val accountRepository: AccountRepository,
+    val activityRepository: ActivityRepository
+) : ITransferService {
     override fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO {
         validateAccounts(transferRequestDTO)
 
-        val originAccount = getAccount(transferRequestDTO.originAccount!!)
-        val destinyAccount = getAccount(transferRequestDTO.destinyAccount!!)
+        val originAccount = getAccount(transferRequestDTO.originAccount)
+        val destinyAccount = getAccount(transferRequestDTO.destinyAccount)
         var transfer = getTransfer(transferRequestDTO, mutableListOf(originAccount, destinyAccount))
 
         doTransfer(originAccount, destinyAccount, transferRequestDTO)
@@ -45,23 +43,19 @@ class TransferServiceImpl : ITransferService {
     }
 
     private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
-        var errors = mutableListOf<String>()
+        originAccount.balance = originAccount.balance - transferDTO.transferValue
+        destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
-        originAccount.balance = originAccount.balance!! - transferDTO.transferValue!!
-        destinyAccount.balance = transferDTO.transferValue!! + destinyAccount.balance!!
-
-        if (originAccount.balance!! < 0) {
-            errors.add("Saldo insuficiente da conta de origem")
+        if (originAccount.balance < 0) {
+            invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
         }
 
         if (destinyAccount.user?.cpf != transferDTO.recipientsCpf) {
-            errors.add("CPF do destinatário incorreto")
+            invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
         }
 
-        badRequestException(errors)
-
         var originActivity = getActivity(originAccount, transferDTO)
-        originActivity.value = originActivity.value!! * -1
+        originActivity.value = originActivity.value * -1
         val destinyActivity = getActivity(destinyAccount, transferDTO)
 
         activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))
@@ -70,7 +64,7 @@ class TransferServiceImpl : ITransferService {
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc, acc.user)
+        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc)
     }
 
     private fun getTransfer(transferDTO: TransferRequestDTO, accounts: MutableList<Account>): Transfer {
@@ -85,35 +79,28 @@ class TransferServiceImpl : ITransferService {
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
-        var errors = mutableListOf<String>()
-
         if (transferDTO.originAccount == transferDTO.destinyAccount) {
-            errors.add("Números de contas iguais")
+            duplicatedResourceException(BankErrorCode.BANK032.code, "", "transferDTO")
         }
 
-        if (transferDTO.transferValue!! <= 0) {
-            errors.add("Valor deve ser maior que 0")
+        if (transferDTO.transferValue <= 0) {
+            invalidResourceException(BankErrorCode.BANK040.code, "transferValue", "transferDTO")
         }
 
-        badRequestException(errors)
-        errors = mutableListOf()
-
-        if (!findAccountByNumber(transferDTO.destinyAccount!!)) {
-            errors.add("Conta de destino não encontrada")
+        if (!findAccountByNumber(transferDTO.destinyAccount)) {
+            resourceNotFoundException(BankErrorCode.BANK022.code, "destintyAccount", "transferDTO")
         }
 
-        if (!findAccountByNumber(transferDTO.originAccount!!)) {
-            errors.add("Conta de origem não encontrada")
+        if (!findAccountByNumber(transferDTO.originAccount)) {
+            resourceNotFoundException(BankErrorCode.BANK022.code, "originAccount", "transferDTO")
         }
-
-        resourceNotFoundException(errors)
     }
 
     private fun getAccount(accNumber: String): Account {
-        val account = accountRepository.findByAccountNumber(accNumber)
+        val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (!account.isPresent) {
-            resourceNotFoundException(mutableListOf("Alguma das contas não foi encontrada"))
+            resourceNotFoundException(BankErrorCode.BANK022.code, "accNumber", "Account")
         }
 
         return account.get()
@@ -123,15 +110,15 @@ class TransferServiceImpl : ITransferService {
         return accountRepository.existsAccountByAccountNumber(accNumber)
     }
 
-    private fun resourceNotFoundException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw ResourceNotFoundException(errors)
-        }
+    private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
-    private fun badRequestException(errors: MutableList<String>) {
-        if (errors.size > 0) {
-            throw BankException(400, errors)
-        }
+    private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        throw DuplicatedResourceBankException(errorCode, field, objectName)
+    }
+
+    private fun invalidResourceException(errorCode: String, field: String, objectName: String) {
+        throw InvalidResourceBankException(errorCode, field, objectName)
     }
 }
