@@ -57,7 +57,7 @@ class AccountControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
             .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").isNotEmpty)
             .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(CoreMatchers.notNullValue()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))

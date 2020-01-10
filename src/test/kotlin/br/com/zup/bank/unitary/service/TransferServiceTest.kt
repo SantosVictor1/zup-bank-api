@@ -114,9 +114,9 @@ class TransferServiceTest {
         val user = User(1, "Fulano", "50359879063", "fulano@gmail.com", true)
         val destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user)
         val originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user)
-        val originActivity = Activity(null, transferDTO.date, -transferDTO.transferValue, Operation.TRANSFER, originAccount)
+        val originActivity = Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, originAccount)
         val destinyActivity = Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, destinyAccount)
-        val newTransferResponseDTO = NewTransferResponseDTO(Date(), "Transferência no valor de 150.0 reais para a conta 1234567891 realizada com sucesso")
+        val newTransferResponseDTO = NewTransferResponseDTO(Date(), transferDTO.transferValue, destinyAccount.accountNumber)
 
         Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.destinyAccount)).thenReturn(true)
         Mockito.`when`(transferService.accountRepository.existsAccountByAccountNumber(transferDTO.originAccount)).thenReturn(true)
@@ -127,7 +127,7 @@ class TransferServiceTest {
 
         val transferResponseDTO = transferService.newTransfer(transferDTO)
 
-        Assert.assertEquals(transferResponseDTO.message, newTransferResponseDTO.message)
+        Assert.assertEquals(transferResponseDTO.transferValue, newTransferResponseDTO.transferValue)
 
         Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.destinyAccount)
         Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.originAccount)
