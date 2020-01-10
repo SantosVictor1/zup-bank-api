@@ -9,5 +9,6 @@ import java.util.*
 data class NewTransferResponseDTO(
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     val transferDate: Date,
-    val message: String?
+    val transferValue: Double,
+    val destinyAccount: String
 )

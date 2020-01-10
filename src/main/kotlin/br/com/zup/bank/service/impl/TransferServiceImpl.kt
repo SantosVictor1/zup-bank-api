@@ -72,10 +72,7 @@ class TransferServiceImpl(
     }
 
     private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): NewTransferResponseDTO {
-        val message = "Transferência no valor de ${transferDTO.transferValue} " +
-            "reais para a conta ${transferDTO.destinyAccount} realizada com sucesso"
-
-        return NewTransferResponseDTO(Date(), message)
+        return NewTransferResponseDTO(Date(), transferDTO.transferValue , transferDTO.destinyAccount)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
