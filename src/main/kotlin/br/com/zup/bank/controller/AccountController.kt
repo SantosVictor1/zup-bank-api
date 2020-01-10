@@ -108,7 +108,7 @@ class AccountController(
     @GetMapping("/extract")
     fun extract(
         @RequestParam(required = true)
-        @ApiParam(value = "Número da conta", required = true, defaultValue = "")
+        @ApiParam(value = "Número da conta", required = true)
         accNumber: String,
         @RequestParam(required = false, defaultValue = "0")
         @ApiParam(value = "Número da página")
