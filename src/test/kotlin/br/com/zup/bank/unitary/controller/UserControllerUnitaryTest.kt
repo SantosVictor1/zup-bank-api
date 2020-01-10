@@ -20,7 +20,6 @@ import org.springframework.test.context.jdbc.Sql
 /**
  * Created by Victor Santos on 10/01/2020
  */
-@ActiveProfiles("test")
 class UserControllerUnitaryTest {
     private val userService: IUserService = Mockito.mock(IUserService::class.java)
     private val userController: UserController = UserController(
