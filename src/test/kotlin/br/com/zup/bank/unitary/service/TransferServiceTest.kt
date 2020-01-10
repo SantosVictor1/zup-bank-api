@@ -13,6 +13,7 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.impl.TransferServiceImpl
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -127,7 +128,7 @@ class TransferServiceTest {
 
         val transferResponseDTO = transferService.newTransfer(transferDTO)
 
-        Assert.assertEquals(transferResponseDTO.transferValue, newTransferResponseDTO.transferValue)
+        Assert.assertThat(transferResponseDTO.transferValue, CoreMatchers.`is`(newTransferResponseDTO.transferValue))
 
         Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.destinyAccount)
         Mockito.verify(transferService.accountRepository, Mockito.times(1)).existsAccountByAccountNumber(transferDTO.originAccount)
