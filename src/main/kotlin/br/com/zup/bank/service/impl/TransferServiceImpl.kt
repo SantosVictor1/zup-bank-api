@@ -55,7 +55,6 @@ class TransferServiceImpl(
         }
 
         var originActivity = getActivity(originAccount, transferDTO)
-        originActivity.value = originActivity.value * -1
         val destinyActivity = getActivity(destinyAccount, transferDTO)
 
         activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))
