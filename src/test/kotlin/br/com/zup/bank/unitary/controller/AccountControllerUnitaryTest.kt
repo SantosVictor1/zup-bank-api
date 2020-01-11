@@ -3,10 +3,10 @@ package br.com.zup.bank.unitary.controller
 import br.com.zup.bank.controller.AccountController
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
-import br.com.zup.bank.dto.response.success.AccountBalanceDTO
-import br.com.zup.bank.dto.response.success.AccountResponseDTO
-import br.com.zup.bank.dto.response.success.UserAccountResponseDTO
+import br.com.zup.bank.dto.response.success.*
+import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.exception.DuplicatedResourceBankException
+import br.com.zup.bank.exception.InvalidResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.service.IAccountService
 import org.junit.Assert
@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.http.HttpStatus
+import java.util.*
 
 /**
  * Created by Victor Santos on 10/01/2020
@@ -25,16 +26,18 @@ class AccountControllerUnitaryTest {
     )
     private lateinit var accountRequestDTO: AccountRequestDTO
     private lateinit var accountResponseDTO: AccountResponseDTO
-    private lateinit var user: UserAccountResponseDTO
+    private lateinit var userAccountResponseDTO: UserAccountResponseDTO
     private lateinit var activityRequestDTO: ActivityRequestDTO
+    private lateinit var activityResponseDTO: ActivityResponseDTO
 
     @Before
     fun setMocks() {
-        user = UserAccountResponseDTO("Victor", "02160795607", true)
+        userAccountResponseDTO = UserAccountResponseDTO("Victor", "02160795607", true)
         accountRequestDTO = AccountRequestDTO("02160795607")
-        accountResponseDTO = AccountResponseDTO(1, 1000.0, 0.0, "4658132467", true, user)
+        accountResponseDTO = AccountResponseDTO(1, 1000.0, 100.0, "4658132467", true, userAccountResponseDTO)
 
-        activityRequestDTO = ActivityRequestDTO(user.cpf!!, accountResponseDTO.accountNumber, 100.0)
+        activityRequestDTO = ActivityRequestDTO(userAccountResponseDTO.cpf!!, accountResponseDTO.accountNumber, 100.0)
+        activityResponseDTO = ActivityResponseDTO(accountResponseDTO.balance + 100.0, accountResponseDTO.accountNumber, Date(), Operation.DEPOSIT.toString())
     }
 
     @Test(expected = ResourceNotFoundBankException::class)
@@ -149,6 +152,63 @@ class AccountControllerUnitaryTest {
             .getAccountBalance(accountResponseDTO.accountNumber)
     }
 
-//    @Test(expected = ResourceNotFoundBankException::class.java)
-//    fun throw
+    @Test(expected = InvalidResourceBankException::class)
+    fun throwAnExceptionWhitInvalidResourcesToDeposit() {
+        Mockito.`when`(accountService.deposit(activityRequestDTO)).thenThrow(InvalidResourceBankException::class.java)
+
+        accountController.deposit(activityRequestDTO)
+    }
+
+    @Test
+    fun makeADepositWithSuccess() {
+        Mockito.`when`(accountService.deposit(activityRequestDTO)).thenReturn(activityResponseDTO)
+
+        val response = accountController.deposit(activityRequestDTO)
+
+        Assert.assertEquals(response.statusCodeValue, HttpStatus.OK.value())
+        Assert.assertEquals(response.body, activityResponseDTO)
+
+        Mockito.verify(accountService, Mockito.times(1)).deposit(activityRequestDTO)
+    }
+
+    @Test(expected = InvalidResourceBankException::class)
+    fun throwAnExceptionWhitInvalidResourcesToWithdraw() {
+        Mockito.`when`(accountService.withdraw(activityRequestDTO)).thenThrow(InvalidResourceBankException::class.java)
+
+        accountController.withdraw(activityRequestDTO)
+    }
+
+    @Test
+    fun makeAWithdrawWithSuccess() {
+        activityResponseDTO = ActivityResponseDTO(100.0, accountResponseDTO.accountNumber, Date(), Operation.WITHDRAW.toString())
+
+        Mockito.`when`(accountService.withdraw(activityRequestDTO)).thenReturn(activityResponseDTO)
+
+        val response = accountController.withdraw(activityRequestDTO)
+
+        Assert.assertEquals(response.statusCodeValue, HttpStatus.OK.value())
+        Assert.assertEquals(response.body, activityResponseDTO)
+
+        Mockito.verify(accountService, Mockito.times(1)).withdraw(activityRequestDTO)
+    }
+
+    @Test(expected = ResourceNotFoundBankException::class)
+    fun throwAnExceptionWhenNotFindAccount() {
+        Mockito.`when`(accountService.extract(activityRequestDTO.accNumber, 0, 10)).thenThrow(ResourceNotFoundBankException::class.java)
+
+        accountController.extract(activityRequestDTO.accNumber, "0", "10")
+    }
+
+    @Test
+    fun getExtractWithSuccess() {
+        val extractResponseDTO: ExtractResponseDTO = ExtractResponseDTO(mutableListOf(ExtractDataDTO(Date(), 100.0, Operation.DEPOSIT)), PaginationResponseDTO(0, 10))
+        Mockito.`when`(accountService.extract(activityRequestDTO.accNumber, 0, 10)).thenReturn(extractResponseDTO)
+
+        val response = accountController.extract(activityRequestDTO.accNumber, "0", "10")
+
+        Assert.assertEquals(response.statusCodeValue, HttpStatus.OK.value())
+        Assert.assertEquals(response.body, extractResponseDTO)
+
+        Mockito.verify(accountService, Mockito.times(1)).extract(activityRequestDTO.accNumber, 0, 10)
+    }
 }
