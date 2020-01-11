@@ -87,8 +87,8 @@ class AccountServiceImpl(
         var account = accountRepository.findByUserCpf(cpf)
 
         if (account != null) {
-            account?.isActive = false
-            accountRepository.save(account!!)
+            account.isActive = false
+            accountRepository.save(account)
         }
     }
 
@@ -96,7 +96,7 @@ class AccountServiceImpl(
         var account = accountRepository.findByUserCpf(cpf)
 
         if (account != null) {
-            account?.isActive = true
+            account.isActive = true
             accountRepository.save(account)
         }
     }

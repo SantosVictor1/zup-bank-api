@@ -5,17 +5,12 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
-import br.com.zup.bank.repository.UserRepository
-import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IUserService
-import br.com.zup.bank.service.impl.UserServiceImpl
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.jdbc.Sql
 
 /**
  * Created by Victor Santos on 10/01/2020

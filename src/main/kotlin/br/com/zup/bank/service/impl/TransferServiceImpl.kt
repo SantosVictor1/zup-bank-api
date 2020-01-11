@@ -71,7 +71,7 @@ class TransferServiceImpl(
     }
 
     private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): NewTransferResponseDTO {
-        return NewTransferResponseDTO(Date(), transferDTO.transferValue , transferDTO.destinyAccount)
+        return NewTransferResponseDTO(Date(), transferDTO.transferValue, transferDTO.destinyAccount)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {

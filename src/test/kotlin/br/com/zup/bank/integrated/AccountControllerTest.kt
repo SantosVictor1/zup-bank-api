@@ -18,8 +18,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
-import java.lang.RuntimeException
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  * Created by Victor Santos on 09/01/2020
@@ -303,7 +301,7 @@ class AccountControllerTest {
     private fun asJsonStringActivityRequest(activityRequestDTO: ActivityRequestDTO): String {
         try {
             return ObjectMapper().writeValueAsString(activityRequestDTO)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
