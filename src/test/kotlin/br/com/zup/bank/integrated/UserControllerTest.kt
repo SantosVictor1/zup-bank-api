@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
-import java.lang.RuntimeException
 
 /**
  * Created by Victor Santos on 08/01/2020
@@ -24,7 +23,7 @@ import java.lang.RuntimeException
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerTest() {
+class UserControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
     private val baseUrl: String = "http://localhost:8080/api/users"

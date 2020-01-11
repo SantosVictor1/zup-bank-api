@@ -148,14 +148,14 @@ class AccountServiceTest {
 
     @Test(expected = ResourceNotFoundBankException::class)
     fun getByCpfWithError() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(Optional.empty())
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(null)
 
         accountService.getByAccountNumberOrCpf("", user.cpf)
     }
 
     @Test
     fun getByCpfWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(acc)
 
         val accountResponse = accountService.getByAccountNumberOrCpf("", user.cpf)
 
@@ -166,14 +166,14 @@ class AccountServiceTest {
 
     @Test(expected = ResourceNotFoundBankException::class)
     fun getByAccountNumberWithError() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", acc.accountNumber)).thenReturn(Optional.empty())
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", acc.accountNumber)).thenReturn(null)
 
         accountService.getByAccountNumberOrCpf("", acc.accountNumber)
     }
 
     @Test
     fun getByAccountNumberWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", acc.accountNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", acc.accountNumber)).thenReturn(acc)
 
         val accountResponse = accountService.getByAccountNumberOrCpf(acc.accountNumber, "")
 
@@ -184,7 +184,7 @@ class AccountServiceTest {
 
     @Test(expected = ResourceNotFoundBankException::class)
     fun getAccountBalanceWithErrorTest() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberAndIsActiveTrue(acc.accountNumber)).thenReturn(Optional.empty())
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberAndIsActiveTrue(acc.accountNumber)).thenReturn(null)
 
         accountService.getAccountBalance(acc.accountNumber)
     }
@@ -192,7 +192,7 @@ class AccountServiceTest {
     @Test
     fun getAccountBalanceWithErrorSuccess() {
         val accountBalance = AccountBalanceDTO("7278424688", 0.0)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberAndIsActiveTrue(acc.accountNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberAndIsActiveTrue(acc.accountNumber)).thenReturn(acc)
 
         val accBalance = accountService.getAccountBalance(acc.accountNumber)
 
@@ -203,7 +203,7 @@ class AccountServiceTest {
 
     @Test
     fun deactivateAccountWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
 
         accountService.deactivateAccount(user.cpf)
@@ -216,7 +216,7 @@ class AccountServiceTest {
 
     @Test
     fun reactivateAccountWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
 
         accountService.reactivateAccount(user.cpf)
@@ -237,7 +237,7 @@ class AccountServiceTest {
     @Test(expected = ResourceNotFoundBankException::class)
     fun depositWithAccountNotFound() {
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.empty())
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(null)
 
         accountService.deposit(activityDTO)
     }
@@ -246,7 +246,7 @@ class AccountServiceTest {
     fun depositWithUserCpfAndAccountUserCpfDifferent() {
         user.cpf = "12345678912"
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
 
         accountService.deposit(activityDTO)
     }
@@ -257,7 +257,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
 
         accountService.deposit(activityDTO)
     }
@@ -268,7 +268,7 @@ class AccountServiceTest {
         activityDTO.operation = Operation.DEPOSIT
 
         Mockito.`when`(accountService.userRepository.findByCpf(this.activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
         Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -295,7 +295,7 @@ class AccountServiceTest {
     @Test(expected = ResourceNotFoundBankException::class)
     fun withdrawWithAccountNotFound() {
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.empty())
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(null)
 
         accountService.withdraw(activityDTO)
     }
@@ -303,7 +303,7 @@ class AccountServiceTest {
     @Test(expected = InvalidResourceBankException::class)
     fun withdrawWithUserCpfAndAccountUserCpfDifferent() {
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -314,7 +314,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -325,7 +325,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -338,7 +338,7 @@ class AccountServiceTest {
         acc.balance = 200.0
 
         Mockito.`when`(accountService.userRepository.findByCpf(this.activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
         Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 

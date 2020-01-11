@@ -1,7 +1,6 @@
 package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
-import br.com.zup.bank.dto.request.UserRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 import org.junit.runner.RunWith

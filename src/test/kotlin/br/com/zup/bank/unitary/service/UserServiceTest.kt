@@ -121,7 +121,7 @@ class UserServiceTest {
         user.isActive = false
         Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(user)
         Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(Optional.of(acc))
+        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
 
         userService.deactivateUser(user.cpf)

@@ -12,5 +12,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface ActivityRepository : JpaRepository<Activity, Long> {
 
+    /**
+     * Método responsável por encontrar o histórico de uma conta ativa baseada em seu número
+     *
+     * @param  accNumber  Número de conta que será usado na busca
+     * @param  pageable Pageable usado para paginação do retorno
+     *
+     * @return Histórico paginado
+     */
     fun findAllByAccountAccountNumberOrderByActivityDateDesc(accNumber: String, pageable: Pageable): Page<Activity>
 }

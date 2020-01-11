@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.util.*
 
 /**
  * Created by Victor Santos on 26/12/2019
@@ -29,19 +28,32 @@ interface AccountRepository : JpaRepository<Account, Long> {
      */
     fun existsAccountByAccountNumber(accNumber: String): Boolean
 
-    fun findByUserCpf(cpf: String): Optional<Account>
-
-    fun findByAccountNumberAndIsActiveTrue(accNumber: String): Optional<Account>
+    /**
+     * Método responsável por encontrar uma conta pelo cpf do usuário
+     *
+     * @param  cpf  CPF que será usado na busca
+     * @return Account se encontrar ou null caso contrário
+     */
+    fun findByUserCpf(cpf: String): Account?
 
     /**
-     * Método responsável por encontrar um conta baseado em seu número
+     * Método responsável por encontrar uma conta ativa pelo seu número
      *
-     * @param  accNumber  AccountNumber que será usado na busca
-     * @return Optional
+     * @param  accNumber  Número de conta que será usado na busca
+     * @return Account se encontrar ou null caso contrário
+     */
+    fun findByAccountNumberAndIsActiveTrue(accNumber: String): Account?
+
+    /**
+     * Método responsável por encontrar um conta ativa baseado em seu número ou pelo cpf do usuário
+     *
+     * @param  accNumber  Número de conta que será usado na busca
+     * @param  cpf  CPF que será usado na busca
+     * @return Account se encontrar ou null caso contrário
      */
     @Query(value = "SELECT acc FROM Account acc WHERE acc.isActive = true AND (acc.accountNumber = :accNumber OR acc.user.cpf = :cpf)")
     fun findByAccountNumberOrUserCpf(
         @Param(value = "cpf") cpf: String,
         @Param(value = "accNumber") accNumber: String
-    ): Optional<Account>
+    ): Account?
 }

@@ -71,7 +71,7 @@ class TransferServiceImpl(
     }
 
     private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): NewTransferResponseDTO {
-        return NewTransferResponseDTO(Date(), transferDTO.transferValue , transferDTO.destinyAccount)
+        return NewTransferResponseDTO(Date(), transferDTO.transferValue, transferDTO.destinyAccount)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
@@ -95,11 +95,11 @@ class TransferServiceImpl(
     private fun getAccount(accNumber: String): Account {
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
-        if (!account.isPresent) {
+        if (account == null) {
             resourceNotFoundException(BankErrorCode.BANK022.code, "accNumber", "Account")
         }
 
-        return account.get()
+        return account!!
     }
 
     private fun findAccountByNumber(accNumber: String): Boolean {
