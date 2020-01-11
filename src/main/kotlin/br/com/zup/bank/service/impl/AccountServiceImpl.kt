@@ -66,38 +66,38 @@ class AccountServiceImpl(
     override fun getByAccountNumberOrCpf(accNumber: String, cpf: String): AccountResponseDTO {
         val account = accountRepository.findByAccountNumberOrUserCpf(cpf, accNumber)
 
-        if (!account.isPresent) {
+        if (account == null) {
             resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
-        return AccountResponseDTO.toResponseDto(account.get())
+        return AccountResponseDTO.toResponseDto(account!!)
     }
 
     override fun getAccountBalance(accNumber: String): AccountBalanceDTO {
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
-        if (!account.isPresent) {
+        if (account == null) {
             resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
         }
 
-        return AccountBalanceDTO(accNumber, account.get().balance)
+        return AccountBalanceDTO(accNumber, account?.balance)
     }
 
     override fun deactivateAccount(cpf: String) {
         var account = accountRepository.findByUserCpf(cpf)
 
-        if (account.isPresent) {
-            account.get().isActive = false
-            accountRepository.save(account.get())
+        if (account != null) {
+            account?.isActive = false
+            accountRepository.save(account!!)
         }
     }
 
     override fun reactivateAccount(cpf: String) {
         var account = accountRepository.findByUserCpf(cpf)
 
-        if (account.isPresent) {
-            account.get().isActive = true
-            accountRepository.save(account.get())
+        if (account != null) {
+            account?.isActive = true
+            accountRepository.save(account)
         }
     }
 
