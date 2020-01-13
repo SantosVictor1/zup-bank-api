@@ -14,29 +14,21 @@ class Account(
     @Column(name = "accountId")
     var id: Long? = null,
 
-    @Column(name = "balance")
+    @Column(name = "balance", nullable = false)
     var balance: Double = 0.0,
 
-    @Column(name = "accLimit")
+    @Column(name = "accLimit", nullable = false)
     var limit: Double = 1000.0,
 
-    @Column(name = "number", unique = true)
+    @Column(name = "number", unique = true, nullable = false)
     var accountNumber: String,
 
-    @Column(name = "isActive")
+    @Column(name = "isActive", nullable = false)
     var isActive: Boolean,
 
     @OneToOne
     @JoinColumn
     var user: User? = null
-//
-//    @JsonBackReference
-//    @OneToMany(mappedBy = "account", cascade = [CascadeType.ALL])
-//    var activities: MutableList<Activity>? = null,
-//
-//    @JsonManagedReference
-//    @ManyToMany(mappedBy = "accounts")
-//    var transfers: MutableList<Transfer>? = null
 ) {
     companion object {
         fun toEntity(accountResponseDTO: AccountResponseDTO, user: User): Account {

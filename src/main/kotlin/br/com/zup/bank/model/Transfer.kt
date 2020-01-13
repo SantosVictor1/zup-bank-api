@@ -15,10 +15,10 @@ data class Transfer(
     @Column(name = "transferId")
     val id: Long?,
 
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     val value: Double?,
 
-    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     val transferDate: Date?,
 
     @JsonBackReference

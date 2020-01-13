@@ -17,10 +17,10 @@ data class Activity(
     @Column(name = "activityId")
     val id: Long? = null,
 
-    @Column(name = "activityDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "activityDate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     val activityDate: Date = Date(),
 
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     var value: Double,
 
     @Enumerated(EnumType.STRING)

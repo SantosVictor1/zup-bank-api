@@ -24,7 +24,7 @@ data class User(
     @Column(name = "email", unique = true, nullable = false)
     var email: String,
 
-    @Column(name = "isActive")
+    @Column(name = "isActive", nullable = false)
     var isActive: Boolean = true
 ) {
     companion object {
