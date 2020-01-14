@@ -2,6 +2,7 @@ package br.com.zup.bank.config
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
@@ -11,10 +12,13 @@ import java.util.*
 
 @Configuration
 class KafkaProducerConfig {
+    @Value("\${kafka.bootstrapAddress}")
+    private lateinit var bootstrap: String
+
     @Bean
     fun producerFactory(): ProducerFactory<String, String> {
         val configProps: MutableMap<String, Any> = HashMap()
-        configProps[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:29092"
+        configProps[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrap
         configProps[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
         configProps[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java
 

@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
@@ -20,12 +21,14 @@ import java.util.*
 @EnableKafka
 @Configuration
 class KafkaConsumerConfig {
-    val log: Logger = LoggerFactory.getLogger(KafkaConsumerConfig::class.java)
+    @Value("\${kafka.bootstrapAddress}")
+    private lateinit var bootstrap: String
+    private val log: Logger = LoggerFactory.getLogger(KafkaConsumerConfig::class.java)
 
     @Bean
     fun consumerFactory(): ConsumerFactory<String, String> {
         val props: MutableMap<String, Any> = HashMap()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:29092"
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrap
         props[ConsumerConfig.GROUP_ID_CONFIG] = "group-id"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
