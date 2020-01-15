@@ -10,9 +10,9 @@ import br.com.zup.bank.model.Transfer
  * Created by Victor Santos on 30/12/2019
  */
 interface ITransferService {
-    fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO
+    fun newTransfer(transferRequestDTO: TransferRequestDTO, transfer: Transfer? = null)
 
     fun saveTransfer(transfer: Transfer): Transfer
 
-    fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO)
+    fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO, transfer: Transfer? = null)
 }

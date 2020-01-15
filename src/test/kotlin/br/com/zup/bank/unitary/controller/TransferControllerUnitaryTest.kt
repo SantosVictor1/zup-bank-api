@@ -32,7 +32,7 @@ class TransferControllerUnitaryTest {
         val transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", 100.0, transferId = null)
         val transferResponseDTO = NewTransferResponseDTO(Date(), 100.0, "6584973246")
 
-        Mockito.`when`(transferService.newTransfer(transferRequestDTO)).thenReturn(transferResponseDTO)
+        Mockito.doNothing().`when`(transferService).newTransfer(transferRequestDTO)
 
         val response = transferController.newTransfer(transferRequestDTO)
 
