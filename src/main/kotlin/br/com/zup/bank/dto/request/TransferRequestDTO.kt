@@ -23,5 +23,7 @@ data class TransferRequestDTO(
 
     var transferValue: Double,
 
-    var date: Date = Date()
+    var date: Date = Date(),
+
+    var transferId: Long?
 )

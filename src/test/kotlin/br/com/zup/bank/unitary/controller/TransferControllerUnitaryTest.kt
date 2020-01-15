@@ -9,7 +9,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.http.HttpStatus
-import org.springframework.kafka.core.KafkaTemplate
 import java.util.*
 
 /**
@@ -17,14 +16,11 @@ import java.util.*
  */
 class TransferControllerUnitaryTest {
     private val transferService: ITransferService = Mockito.mock(ITransferService::class.java)
-    private val transferController: TransferController = TransferController(
-        transferService,
-        Mockito.mock(KafkaTemplate::class.java) as KafkaTemplate<String, String>
-    )
+    private val transferController: TransferController = TransferController(transferService)
 
     @Test(expected = InvalidResourceBankException::class)
     fun throwAnExceptionWhenTransferIsInvalid() {
-        val transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", -100.0)
+        val transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", -100.0, transferId = null)
 
         Mockito.`when`(transferService.newTransfer(transferRequestDTO)).thenThrow(InvalidResourceBankException::class.java)
 
@@ -33,7 +29,7 @@ class TransferControllerUnitaryTest {
 
     @Test
     fun makeATransferWithSuccess() {
-        val transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", 100.0)
+        val transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", 100.0, transferId = null)
         val transferResponseDTO = NewTransferResponseDTO(Date(), 100.0, "6584973246")
 
         Mockito.`when`(transferService.newTransfer(transferRequestDTO)).thenReturn(transferResponseDTO)

@@ -3,14 +3,14 @@ package br.com.zup.bank.controller
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
+import br.com.zup.bank.dto.response.success.StatusResponseDTO
+import br.com.zup.bank.service.IKafkaService
 import br.com.zup.bank.service.ITransferService
-import com.google.gson.Gson
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,9 +23,10 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/transfer")
 class TransferController(
-    val transferService: ITransferService,
-    val kafkaTemplate: KafkaTemplate<String, String>
+    val transferService: ITransferService
 ) {
+    @Autowired
+    private lateinit var kafkaService: IKafkaService
 
     @ApiOperation(value = "Realiza uma transferência")
     @ApiResponses(
@@ -33,12 +34,7 @@ class TransferController(
         ApiResponse(code = 400, message = "Algum dado é inválido", response = ObjectErrorResponse::class)
     )
     @PostMapping
-    fun newTransfer(@RequestBody @Valid transferDTO: TransferRequestDTO): ResponseEntity<NewTransferResponseDTO> {
-        return ResponseEntity.ok(transferService.newTransfer(transferDTO))
-    }
-
-    @PostMapping("/kafka")
-    fun message(@RequestBody transferDTO: TransferRequestDTO) {
-        kafkaTemplate.send("bank_api", Gson().toJson(transferDTO))
+    fun newTransfer(@RequestBody @Valid transferDTO: TransferRequestDTO): ResponseEntity<StatusResponseDTO> {
+        return ResponseEntity.ok(kafkaService.newTransferRequest(transferDTO))
     }
 }

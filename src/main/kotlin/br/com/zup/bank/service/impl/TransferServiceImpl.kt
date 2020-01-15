@@ -1,9 +1,12 @@
 package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.common.BankErrorCode
+import br.com.zup.bank.config.KafkaConsumerConfig
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
+import br.com.zup.bank.dto.response.success.StatusResponseDTO
 import br.com.zup.bank.enums.Operation
+import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.InvalidResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
@@ -14,6 +17,10 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.ITransferService
+import com.google.gson.Gson
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
@@ -22,27 +29,34 @@ import javax.transaction.Transactional
  * Created by Victor Santos on 30/12/2019
  */
 @Service
-@Transactional
 class TransferServiceImpl(
     val transferRepository: TransferRepository,
     val accountRepository: AccountRepository,
     val activityRepository: ActivityRepository
 ) : ITransferService {
+    private val log: Logger = LoggerFactory.getLogger(KafkaConsumerConfig::class.java)
+    private lateinit var transfer: Transfer
+
     override fun newTransfer(transferRequestDTO: TransferRequestDTO): NewTransferResponseDTO {
         validateAccounts(transferRequestDTO)
 
         val originAccount = getAccount(transferRequestDTO.originAccount)
         val destinyAccount = getAccount(transferRequestDTO.destinyAccount)
-        var transfer = getTransfer(transferRequestDTO, mutableListOf(originAccount, destinyAccount))
 
         doTransfer(originAccount, destinyAccount, transferRequestDTO)
 
-        transferRepository.save(transfer)
+        this.transfer.transferStatus = Status.COMPLETED
+        transferRepository.save(this.transfer)
 
         return getTransferResponseDTO(transferRequestDTO)
     }
 
-    private fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
+    override fun saveTransfer(transfer: Transfer): Transfer {
+        return transferRepository.save(transfer)
+    }
+
+    @Transactional
+    override fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
         originAccount.balance = originAccount.balance - transferDTO.transferValue
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
@@ -54,7 +68,7 @@ class TransferServiceImpl(
             invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
         }
 
-        var originActivity = getActivity(originAccount, transferDTO)
+        val originActivity = getActivity(originAccount, transferDTO)
         val destinyActivity = getActivity(destinyAccount, transferDTO)
 
         activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))
@@ -62,12 +76,19 @@ class TransferServiceImpl(
         accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))
     }
 
-    private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc)
+    @KafkaListener(topics = ["bank_api"], groupId = "group-id")
+    fun listen(transferDto: String) {
+        val transferRequestDTO = Gson().fromJson(transferDto, TransferRequestDTO::class.java)
+        this.transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
+
+        log.info("#===============> Object <===============#\n\n")
+        log.info(transferRequestDTO.toString())
+
+        newTransfer(transferRequestDTO)
     }
 
-    private fun getTransfer(transferDTO: TransferRequestDTO, accounts: MutableList<Account>): Transfer {
-        return Transfer(null, transferDTO.transferValue, Date(), accounts)
+    private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
+        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc)
     }
 
     private fun getTransferResponseDTO(transferDTO: TransferRequestDTO): NewTransferResponseDTO {
@@ -83,22 +104,6 @@ class TransferServiceImpl(
             invalidResourceException(
                 BankErrorCode.BANK040.code,
                 TransferRequestDTO::transferValue.name,
-                TransferRequestDTO::class.simpleName!!
-            )
-        }
-
-        if (!findAccountByNumber(transferDTO.destinyAccount)) {
-            resourceNotFoundException(
-                BankErrorCode.BANK022.code,
-                TransferRequestDTO::destinyAccount.name,
-                TransferRequestDTO::class.simpleName!!
-            )
-        }
-
-        if (!findAccountByNumber(transferDTO.originAccount)) {
-            resourceNotFoundException(
-                BankErrorCode.BANK022.code,
-                TransferRequestDTO::originAccount.name,
                 TransferRequestDTO::class.simpleName!!
             )
         }
@@ -118,19 +123,24 @@ class TransferServiceImpl(
         return account!!
     }
 
-    private fun findAccountByNumber(accNumber: String): Boolean {
-        return accountRepository.existsAccountByAccountNumber(accNumber)
-    }
-
     private fun resourceNotFoundException(errorCode: String, field: String, objectName: String) {
+        transfer.transferStatus = Status.FAILED
+        transferRepository.save(transfer)
+
         throw ResourceNotFoundBankException(errorCode, field, objectName)
     }
 
     private fun duplicatedResourceException(errorCode: String, field: String, objectName: String) {
+        transfer.transferStatus = Status.FAILED
+        transferRepository.save(transfer)
+
         throw DuplicatedResourceBankException(errorCode, field, objectName)
     }
 
     private fun invalidResourceException(errorCode: String, field: String, objectName: String) {
+        transfer.transferStatus = Status.FAILED
+        transferRepository.save(transfer)
+
         throw InvalidResourceBankException(errorCode, field, objectName)
     }
 }

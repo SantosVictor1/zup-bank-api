@@ -1,6 +1,7 @@
 package br.com.zup.bank.model
 
-import com.fasterxml.jackson.annotation.JsonBackReference
+import br.com.zup.bank.dto.request.TransferRequestDTO
+import br.com.zup.bank.enums.Status
 import java.util.*
 import javax.persistence.*
 
@@ -15,17 +16,31 @@ data class Transfer(
     @Column(name = "transferId")
     val id: Long?,
 
+    @ManyToOne
+    val originAccount: Account,
+
+    @ManyToOne
+    val destinyAccount: Account,
+
     @Column(name = "value", nullable = false)
     val value: Double?,
 
     @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     val transferDate: Date?,
 
-    @JsonBackReference
-    @ManyToMany
-    @JoinTable(name = "transfer_account",
-        joinColumns = [JoinColumn(name = "transferId")],
-        inverseJoinColumns = [JoinColumn(name = "accountId")]
-    )
-    var accounts: MutableList<Account>
-)
+    @Enumerated(value = EnumType.STRING)
+    var transferStatus: Status
+) {
+    companion object {
+        fun toEntity(transferRequestDTO: TransferRequestDTO, originAccount: Account, destinyAccount: Account): Transfer {
+            return Transfer(
+                null,
+                originAccount,
+                destinyAccount,
+                transferRequestDTO.transferValue,
+                transferRequestDTO.date,
+                Status.IN_PROCESS
+            )
+        }
+    }
+}

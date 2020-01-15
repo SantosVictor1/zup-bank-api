@@ -33,7 +33,7 @@ class TransferControllerTest {
     fun throwAnExceptionWhenReceiveARequestWithInvalidFields() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonString(TransferRequestDTO("", "", "", 100.0)))
+            .content(asJsonString(TransferRequestDTO("", "", "", 100.0, transferId = null)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -53,7 +53,8 @@ class TransferControllerTest {
             "6548732156",
             "6548732157",
             "42511229846",
-            100.0
+            100.0,
+            transferId = null
         )
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)

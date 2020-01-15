@@ -30,13 +30,11 @@ CREATE TABLE IF NOT EXISTS activity (
 
 CREATE TABLE IF NOT EXISTS transfer (
     transfer_id bigint NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    origin_account_account_id bigint NOT NULL,
+    destiny_account_account_id bigint NOT NULL,
     value double NOT NULL,
-    date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
-CREATE TABLE IF NOT EXISTS transfer_account (
-    transfer_id bigint NOT NULL,
-    account_id bigint NOT NULL,
-    FOREIGN KEY (transfer_id) REFERENCES transfer(transfer_id),
-    FOREIGN KEY (account_id) REFERENCES account(account_id)
+    date timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    transfer_status varchar(20) NOT NULL,
+    FOREIGN KEY (destiny_account_account_id) references account(account_id),
+    FOREIGN KEY (origin_account_account_id) references account(account_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

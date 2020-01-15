@@ -33,7 +33,7 @@ class TransferServiceTest {
 
     @Before
     fun setMocks() {
-        transferDTO = TransferRequestDTO("7894561231", "1234567891", "50359879063", 150.0)
+        transferDTO = TransferRequestDTO("7894561231", "1234567891", "50359879063", 150.0, transferId = null)
     }
 
     @Test(expected = DuplicatedResourceBankException::class)
