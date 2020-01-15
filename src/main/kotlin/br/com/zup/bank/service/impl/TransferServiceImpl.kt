@@ -76,19 +76,31 @@ class TransferServiceImpl(
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
         if (transferDTO.originAccount == transferDTO.destinyAccount) {
-            duplicatedResourceException(BankErrorCode.BANK032.code, "", "transferDTO")
+            duplicatedResourceException(BankErrorCode.BANK032.code, "", TransferRequestDTO::class.simpleName!!)
         }
 
         if (transferDTO.transferValue <= 0) {
-            invalidResourceException(BankErrorCode.BANK040.code, "transferValue", "transferDTO")
+            invalidResourceException(
+                BankErrorCode.BANK040.code,
+                TransferRequestDTO::transferValue.name,
+                TransferRequestDTO::class.simpleName!!
+            )
         }
 
         if (!findAccountByNumber(transferDTO.destinyAccount)) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "destintyAccount", "transferDTO")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                TransferRequestDTO::destinyAccount.name,
+                TransferRequestDTO::class.simpleName!!
+            )
         }
 
         if (!findAccountByNumber(transferDTO.originAccount)) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "originAccount", "transferDTO")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                TransferRequestDTO::originAccount.name,
+                TransferRequestDTO::class.simpleName!!
+            )
         }
     }
 
@@ -96,7 +108,11 @@ class TransferServiceImpl(
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (account == null) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "accNumber", "Account")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                Account::accountNumber.name,
+                Account::class.simpleName!!
+            )
         }
 
         return account!!

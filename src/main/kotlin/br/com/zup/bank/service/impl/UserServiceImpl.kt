@@ -45,7 +45,11 @@ class UserServiceImpl(
         val user = userRepository.findById(id)
 
         if (!user.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "id", "User")
+            resourceNotFoundException(
+                BankErrorCode.BANK018.code,
+                User::id.name,
+                User::class.simpleName!!
+            )
         }
 
         return UserResponseDTO.toResponseDto(user.get())
@@ -55,7 +59,11 @@ class UserServiceImpl(
         val user = userRepository.findByCpf(cpf, isActive)
 
         if (user == null) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "cpf", "User")
+            resourceNotFoundException(
+                BankErrorCode.BANK018.code,
+                User::cpf.name,
+                User::class.simpleName!!
+            )
         }
 
         return UserResponseDTO.toResponseDto(user!!)
@@ -85,11 +93,19 @@ class UserServiceImpl(
 
     private fun validateFields(user: UserRequestDTO) {
         if (existsByCpf(user.cpf)) {
-            duplicatedResourceException(BankErrorCode.BANK016.code, "cpf", "UserRequestDTO")
+            duplicatedResourceException(
+                BankErrorCode.BANK016.code,
+                UserRequestDTO::cpf.name,
+                UserRequestDTO::class.simpleName!!
+            )
         }
 
         if (existsByEmail(user.email)) {
-            duplicatedResourceException(BankErrorCode.BANK017.code, "email", "UserRequestDTO")
+            duplicatedResourceException(
+                BankErrorCode.BANK017.code,
+                UserRequestDTO::email.name,
+                UserRequestDTO::class.simpleName!!
+            )
         }
     }
 

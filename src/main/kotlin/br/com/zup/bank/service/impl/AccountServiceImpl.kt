@@ -57,7 +57,11 @@ class AccountServiceImpl(
         val account = accountRepository.findById(id)
 
         if (!account.isPresent) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                Account::id.name,
+                Account::class.simpleName!!
+            )
         }
 
         return AccountResponseDTO.toResponseDto(account.get())
@@ -67,7 +71,11 @@ class AccountServiceImpl(
         val account = accountRepository.findByAccountNumberOrUserCpf(cpf, accNumber)
 
         if (account == null) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                Account::accountNumber.name,
+                Account::class.simpleName!!
+            )
         }
 
         return AccountResponseDTO.toResponseDto(account!!)
@@ -77,7 +85,11 @@ class AccountServiceImpl(
         val account = accountRepository.findByAccountNumberAndIsActiveTrue(accNumber)
 
         if (account == null) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                Account::accountNumber.name,
+                Account::class.simpleName!!
+            )
         }
 
         return AccountBalanceDTO(accNumber, account?.balance)
@@ -125,7 +137,11 @@ class AccountServiceImpl(
         account.balance -= activityRequestDTO.value
 
         if (account.balance < 0.0) {
-            invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
+            invalidResourceException(
+                BankErrorCode.BANK024.code,
+                Account::balance.name,
+                Account::class.simpleName!!
+            )
         }
 
         accountRepository.save(account)
@@ -143,17 +159,29 @@ class AccountServiceImpl(
 
     private fun validateOperation(account: Account, activityRequestDTO: ActivityRequestDTO) {
         if (account.user?.cpf != activityRequestDTO.cpf) {
-            invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
+            invalidResourceException(
+                BankErrorCode.BANK014.code,
+                ActivityRequestDTO::cpf.name,
+                ActivityRequestDTO::class.simpleName!!
+            )
         }
 
         if (activityRequestDTO.value <= 0.0) {
-            invalidResourceException(BankErrorCode.BANK040.code, "value", "activityRequestDTO")
+            invalidResourceException(
+                BankErrorCode.BANK040.code,
+                ActivityRequestDTO::value.name,
+                ActivityRequestDTO::class.simpleName!!
+            )
         }
     }
 
     private fun existsByNumber(accNumber: String) {
         if (!accountRepository.existsAccountByAccountNumber(accNumber)) {
-            resourceNotFoundException(BankErrorCode.BANK022.code, "", "Account")
+            resourceNotFoundException(
+                BankErrorCode.BANK022.code,
+                Account::accountNumber.name,
+                Account::class.simpleName!!
+            )
         }
     }
 
@@ -161,7 +189,11 @@ class AccountServiceImpl(
         val user = userRepository.findByCpf(cpf, true)
 
         if (user == null) {
-            resourceNotFoundException(BankErrorCode.BANK018.code, "", "User")
+            resourceNotFoundException(
+                BankErrorCode.BANK018.code,
+                User::cpf.name,
+                User::class.simpleName!!
+            )
         }
 
         return user!!
@@ -169,7 +201,11 @@ class AccountServiceImpl(
 
     private fun findAccountByUser(cpf: String) {
         if (accountRepository.existsAccountByUserCpf(cpf)) {
-            duplicatedResourceException(BankErrorCode.BANK023.code, "", "Account")
+            duplicatedResourceException(
+                BankErrorCode.BANK023.code,
+                "",
+                Account::class.simpleName!!
+            )
         }
     }
 

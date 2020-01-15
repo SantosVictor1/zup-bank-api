@@ -9,6 +9,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.http.HttpStatus
+import org.springframework.kafka.core.KafkaTemplate
 import java.util.*
 
 /**
@@ -16,7 +17,10 @@ import java.util.*
  */
 class TransferControllerUnitaryTest {
     private val transferService: ITransferService = Mockito.mock(ITransferService::class.java)
-    private val transferController: TransferController = TransferController(transferService)
+    private val transferController: TransferController = TransferController(
+        transferService,
+        Mockito.mock(KafkaTemplate::class.java) as KafkaTemplate<String, String>
+    )
 
     @Test(expected = InvalidResourceBankException::class)
     fun throwAnExceptionWhenTransferIsInvalid() {

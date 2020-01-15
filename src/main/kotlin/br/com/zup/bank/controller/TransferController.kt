@@ -4,7 +4,6 @@ import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.service.ITransferService
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -24,12 +23,11 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/transfer")
 class TransferController(
-    val transferService: ITransferService
+    val transferService: ITransferService,
+    val kafkaTemplate: KafkaTemplate<String, String>
 ) {
-    @Autowired
-    private lateinit var kafkaTemplate: KafkaTemplate<String, String>
 
-    @ApiOperation(value = "Realiza uma trasnferência")
+    @ApiOperation(value = "Realiza uma transferência")
     @ApiResponses(
         ApiResponse(code = 200, message = "Requisição feita com sucesso!", response = NewTransferResponseDTO::class),
         ApiResponse(code = 400, message = "Algum dado é inválido", response = ObjectErrorResponse::class)

@@ -24,28 +24,28 @@ class ExceptionHandlerController(
     @ExceptionHandler(ResourceNotFoundBankException::class)
     fun handleResourceNotFoundException(e: ResourceNotFoundBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
-        val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
+        val fields = mutableListOf(FieldError(e.errorCode, e.field, errorMessage))
 
-        val objectErrorResponse = getObjectErrorResponse(HttpStatus.NOT_FOUND, e.objectName, fields)
+        val objectErrorResponse = getObjectErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.objectName, fields)
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectErrorResponse)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(objectErrorResponse)
     }
 
     @ExceptionHandler(DuplicatedResourceBankException::class)
     fun handleDuplicatedResourceException(e: DuplicatedResourceBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
-        val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
+        val fields = mutableListOf(FieldError(e.errorCode, e.field, errorMessage))
 
-        val objectErrorResponse = getObjectErrorResponse(HttpStatus.BAD_REQUEST, e.objectName, fields)
+        val objectErrorResponse = getObjectErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.objectName, fields)
 
-        return ResponseEntity.badRequest().body(objectErrorResponse)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(objectErrorResponse)
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
     fun handleMissingArgumentException(e: MissingServletRequestParameterException): ResponseEntity<ObjectErrorResponse> {
         val errorCode = BankErrorCode.BANK001.code
         val errorMessage = message.getMessage(errorCode)
-        val fields = mutableListOf<FieldError>(FieldError(errorCode, e.parameterName, errorMessage))
+        val fields = mutableListOf(FieldError(errorCode, e.parameterName, errorMessage))
 
         val objectErrorResponse = getObjectErrorResponse(HttpStatus.BAD_REQUEST, "", fields)
 
@@ -69,11 +69,11 @@ class ExceptionHandlerController(
     @ExceptionHandler(InvalidResourceBankException::class)
     fun handleInvalidResourceException(e: InvalidResourceBankException): ResponseEntity<ObjectErrorResponse> {
         val errorMessage = message.getMessage(e.errorCode)
-        val fields = mutableListOf<FieldError>(FieldError(e.errorCode, e.field, errorMessage))
+        val fields = mutableListOf(FieldError(e.errorCode, e.field, errorMessage))
 
-        val objectErrorResponse = getObjectErrorResponse(HttpStatus.BAD_REQUEST, e.objectName, fields)
+        val objectErrorResponse = getObjectErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.objectName, fields)
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(objectErrorResponse)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(objectErrorResponse)
     }
 
     private fun getObjectErrorResponse(
