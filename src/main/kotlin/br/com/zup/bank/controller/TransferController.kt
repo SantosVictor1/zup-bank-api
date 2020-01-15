@@ -5,6 +5,7 @@ import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.service.ITransferService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
@@ -40,6 +41,6 @@ class TransferController(
 
     @PostMapping("/kafka")
     fun message(@RequestBody transferDTO: TransferRequestDTO) {
-        kafkaTemplate.send("bank_api", ObjectMapper().writeValueAsString(transferDTO))
+        kafkaTemplate.send("bank_api", Gson().toJson(transferDTO))
     }
 }

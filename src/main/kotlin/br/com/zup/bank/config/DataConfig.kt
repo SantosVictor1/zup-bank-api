@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Profile
  * Created by Victor Santos on 03/01/2020
  */
 @Configuration
-@Profile("prod")
+@Profile("test")
 class DataConfig {
     @Autowired
     private lateinit var userRepository: UserRepository

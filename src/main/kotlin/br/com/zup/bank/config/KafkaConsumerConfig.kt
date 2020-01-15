@@ -1,8 +1,7 @@
 package br.com.zup.bank.config
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.gson.Gson
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.slf4j.Logger
@@ -46,7 +45,8 @@ class KafkaConsumerConfig {
 
     @KafkaListener(topics = ["bank_api"], groupId = "group-id")
     fun listen(transferDto: String) {
-        log.info("#===============> Object <===============#")
-        log.info(transferDto)
+        val transfer = Gson().fromJson(transferDto, TransferRequestDTO::class.java)
+        log.info("#===============> Object <===============#\n\n")
+        log.info(transfer.toString())
     }
 }

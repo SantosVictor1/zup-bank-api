@@ -8,25 +8,20 @@ import javax.validation.constraints.Size
 /**
  * Created by Victor Santos on 30/12/2019
  */
-class TransferRequestDTO(
-    originAccount: String,
-    destinyAccount: String,
-    recipientsCpf: String,
-    transferValue: Double
-) {
-    @NotBlank(message = "origin.account.required")
-    @Size(min = 10, max = 10, message = "account.number.size.invalid")
-    var originAccount: String = originAccount
+data class TransferRequestDTO(
+    @field:[NotBlank(message = "origin.account.required")]
+    @field:[Size(min = 10, max = 10, message = "account.number.size.invalid")]
+    var originAccount: String,
 
-    @NotBlank(message = "destiny.account.required")
-    @Size(min = 10, max = 10, message = "account.number.size.invalid")
-    var destinyAccount: String = destinyAccount
+    @field:[NotBlank(message = "destiny.account.required")]
+    @field:[Size(min = 10, max = 10, message = "account.number.size.invalid")]
+    var destinyAccount: String,
 
-    @NotBlank(message = "cpf.required")
-    @CPF(message = "cpf.invalid")
-    var recipientsCpf: String = recipientsCpf
+    @field:[NotBlank(message = "cpf.required")]
+    @field:[CPF(message = "cpf.invalid")]
+    var recipientsCpf: String,
 
-    var transferValue: Double = transferValue
+    var transferValue: Double,
 
     var date: Date = Date()
-}
+)
