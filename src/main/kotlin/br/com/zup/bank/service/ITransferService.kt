@@ -16,4 +16,6 @@ interface ITransferService {
     fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO)
 
     fun getTransferStatus(id: Long): StatusResponseDTO
+
+    fun listen(transferDTO: String)
 }

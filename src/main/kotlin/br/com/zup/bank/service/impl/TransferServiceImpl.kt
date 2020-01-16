@@ -20,8 +20,10 @@ import br.com.zup.bank.service.ITransferService
 import com.google.gson.Gson
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.jpa.repository.Lock
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
+import javax.persistence.LockModeType
 import javax.transaction.Transactional
 
 /**
@@ -33,8 +35,6 @@ class TransferServiceImpl(
     val accountRepository: AccountRepository,
     val activityRepository: ActivityRepository
 ) : ITransferService {
-    private val log: Logger = LoggerFactory.getLogger(KafkaConsumerConfig::class.java)
-
     override fun newTransfer(transferRequestDTO: TransferRequestDTO, transfer: Transfer) {
         validateAccounts(transferRequestDTO)
 
@@ -52,6 +52,7 @@ class TransferServiceImpl(
     }
 
     @Transactional
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     override fun doTransfer(originAccount: Account, destinyAccount: Account, transferDTO: TransferRequestDTO) {
         originAccount.balance = originAccount.balance - transferDTO.transferValue
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
@@ -87,12 +88,9 @@ class TransferServiceImpl(
     }
 
     @KafkaListener(topics = ["bank_api"], groupId = "group-id")
-    fun listen(transferDto: String) {
-        val transferRequestDTO = Gson().fromJson(transferDto, TransferRequestDTO::class.java)
+    override fun listen(transferDTO: String) {
+        val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
         val transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
-
-        log.info("#===============> Object <===============#\n\n")
-        log.info(transferRequestDTO.toString())
 
         try {
             newTransfer(transferRequestDTO, transfer)
