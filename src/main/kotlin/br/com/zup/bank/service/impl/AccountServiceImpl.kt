@@ -67,8 +67,8 @@ class AccountServiceImpl(
         return AccountResponseDTO.toResponseDto(account.get())
     }
 
-    override fun getByAccountNumberOrCpf(accNumber: String, cpf: String): AccountResponseDTO {
-        val account = accountRepository.findByAccountNumberOrUserCpf(cpf, accNumber)
+    override fun getByAccountNumberOrCpf(accNumber: String, cpf: String?): AccountResponseDTO {
+        val account = accountRepository.findByAccountNumberOrUserCpf(cpf!!, accNumber)
 
         if (account == null) {
             resourceNotFoundException(

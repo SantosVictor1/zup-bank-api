@@ -18,7 +18,7 @@ interface IAccountService {
 
     fun getById(id: Long): AccountResponseDTO
 
-    fun getByAccountNumberOrCpf(accNumber: String, cpf: String): AccountResponseDTO
+    fun getByAccountNumberOrCpf(accNumber: String, cpf: String? = ""): AccountResponseDTO
 
     fun getAccountBalance(accNumber: String): AccountBalanceDTO
 

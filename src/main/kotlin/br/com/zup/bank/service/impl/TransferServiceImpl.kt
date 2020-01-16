@@ -16,6 +16,7 @@ import br.com.zup.bank.model.Transfer
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
+import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.ITransferService
 import com.google.gson.Gson
 import org.slf4j.Logger
@@ -36,6 +37,19 @@ class TransferServiceImpl(
     val accountRepository: AccountRepository,
     val activityRepository: ActivityRepository
 ) : ITransferService {
+    @KafkaListener(topics = ["bank_api"], groupId = "group-id")
+    override fun listen(transferDTO: String) {
+        val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
+        val transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
+
+        try {
+            newTransfer(transferRequestDTO, transfer)
+        } catch (ex: BankException) {
+            transfer.transferStatus = Status.FAILED
+            transferRepository.save(transfer)
+        }
+    }
+
     override fun newTransfer(transferRequestDTO: TransferRequestDTO, transfer: Transfer) {
         validateAccounts(transferRequestDTO)
 
@@ -45,7 +59,7 @@ class TransferServiceImpl(
         doTransfer(originAccount, destinyAccount, transferRequestDTO)
 
         transfer.transferStatus = Status.COMPLETED
-        transferRepository.save(transfer)
+        saveTransfer(transfer)
     }
 
     override fun saveTransfer(transfer: Transfer): Transfer {
@@ -58,7 +72,7 @@ class TransferServiceImpl(
         originAccount.balance = originAccount.balance - transferDTO.transferValue
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
-        if (originAccount.balance < 0) {
+        if (originAccount.balance - transferDTO.transferValue < 0) {
             invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
         }
 
@@ -86,19 +100,6 @@ class TransferServiceImpl(
         }
 
         return StatusResponseDTO(transfer.get().id!!, transfer.get().transferStatus)
-    }
-
-    @KafkaListener(topics = ["bank_api"], groupId = "group-id")
-    override fun listen(transferDTO: String) {
-        val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
-        val transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
-
-        try {
-            newTransfer(transferRequestDTO, transfer)
-        } catch (ex: BankException) {
-            transfer.transferStatus = Status.FAILED
-            transferRepository.save(transfer)
-        }
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
