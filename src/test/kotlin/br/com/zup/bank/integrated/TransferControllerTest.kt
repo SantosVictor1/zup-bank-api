@@ -1,6 +1,7 @@
 package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
+import br.com.zup.bank.enums.Status
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,8 +63,44 @@ class TransferControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferValue").value(transferRequestDTO.transferValue))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.destinyAccount").value(transferRequestDTO.destinyAccount))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.transferId").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value(Status.IN_PROCESS.toString()))
+    }
+
+    @Transactional
+    @SqlGroup(
+        Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        Sql("/scripts/TransferSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    )
+    @Test
+    fun throwAnExceptionWhenNotFindById() {
+        mvc.perform(MockMvcRequestBuilders
+            .get("$baseUrl/{id}", 2)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(404))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("Transfer"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode")
+                .value("transfer.not.found"))
+    }
+
+    @Transactional
+    @SqlGroup(
+        Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        Sql("/scripts/TransferSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    )
+    @Test
+    fun getTransferStatusWithSuccess() {
+        mvc.perform(MockMvcRequestBuilders
+            .get("$baseUrl/{id}", 1)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.transferId").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value("IN_PROCESS"))
     }
 
     private fun asJsonString(transferRequestDTO: TransferRequestDTO): String {
