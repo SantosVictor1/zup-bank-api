@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
+import java.util.*
 import javax.persistence.LockModeType
 import javax.transaction.Transactional
 
@@ -101,7 +102,7 @@ class TransferServiceImpl(
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, transferDTO.date, transferDTO.transferValue, Operation.TRANSFER, acc)
+        return Activity(null, Date(), transferDTO.transferValue, Operation.TRANSFER, acc)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {

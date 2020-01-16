@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class KafkaServiceImpl(
-    val kafkaTemplate: KafkaTemplate<String, String>,
-    val transferService: ITransferService,
-    val accountRepository: AccountRepository
+    private val kafkaTemplate: KafkaTemplate<String, String>,
+    private val transferService: ITransferService,
+    private val accountRepository: AccountRepository
 ) : IKafkaService {
     override fun newTransferRequest(transferRequestDTO: TransferRequestDTO): StatusResponseDTO {
         val originAccount = getAccount(transferRequestDTO.originAccount)

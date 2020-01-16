@@ -53,7 +53,7 @@ interface AccountRepository : JpaRepository<Account, Long> {
      */
     @Query(value = "SELECT acc FROM Account acc WHERE acc.isActive = true AND (acc.accountNumber = :accNumber OR acc.user.cpf = :cpf)")
     fun findByAccountNumberOrUserCpf(
-        @Param(value = "cpf") cpf: String,
-        @Param(value = "accNumber") accNumber: String
+        @Param(value = "accNumber") accNumber: String,
+        @Param(value = "cpf") cpf: String = ""
     ): Account?
 }

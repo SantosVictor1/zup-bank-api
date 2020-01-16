@@ -25,20 +25,19 @@ data class Transfer(
     @Column(name = "value", nullable = false)
     val value: Double?,
 
-    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    val transferDate: Date?,
-
     @Enumerated(value = EnumType.STRING)
-    var transferStatus: Status
+    var transferStatus: Status,
+
+    @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
+    val transferDate: Date = Date()
 ) {
     companion object {
         fun toEntity(transferRequestDTO: TransferRequestDTO, originAccount: Account, destinyAccount: Account): Transfer {
             return Transfer(
-                null,
+                transferRequestDTO.transferId,
                 originAccount,
                 destinyAccount,
                 transferRequestDTO.transferValue,
-                transferRequestDTO.date,
                 Status.IN_PROCESS
             )
         }
