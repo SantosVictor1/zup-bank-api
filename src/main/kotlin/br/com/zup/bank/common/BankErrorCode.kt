@@ -36,6 +36,7 @@ class BankErrorCode {
         val BANK030: BankErrorCode = BankErrorCode("origin.account.required")
         val BANK031: BankErrorCode = BankErrorCode("destiny.account.required")
         val BANK032: BankErrorCode = BankErrorCode("equal.accounts")
+        val BANK033: BankErrorCode = BankErrorCode("transfer.not.found")
 
         //Operation errors
         val BANK040: BankErrorCode = BankErrorCode("value.invalid")

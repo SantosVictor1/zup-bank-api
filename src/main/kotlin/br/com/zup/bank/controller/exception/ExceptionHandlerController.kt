@@ -26,9 +26,9 @@ class ExceptionHandlerController(
         val errorMessage = message.getMessage(e.errorCode)
         val fields = mutableListOf(FieldError(e.errorCode, e.field, errorMessage))
 
-        val objectErrorResponse = getObjectErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.objectName, fields)
+        val objectErrorResponse = getObjectErrorResponse(HttpStatus.NOT_FOUND, e.objectName, fields)
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(objectErrorResponse)
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(objectErrorResponse)
     }
 
     @ExceptionHandler(DuplicatedResourceBankException::class)
