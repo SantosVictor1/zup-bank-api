@@ -36,7 +36,7 @@ class KafkaServiceTest {
 
     @Before
     fun setMocks() {
-        user = User(1, "Victor", "50359879062", "victor@gmail.com", true)
+        user = User(1, "Victor", "50359879063", "victor@gmail.com", true)
         destinyAccount = Account(1, 0.0, 1000.0, "1234568977", true, user)
         originAccount = Account(2, 200.0, 1000.0, "7894561231", true, user)
         transferRequestDTO = TransferRequestDTO(
