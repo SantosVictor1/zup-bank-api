@@ -34,7 +34,7 @@ class DataConfig {
                 )
             )
 
-            accountRepository.save(Account(accountNumber = "5146789132", user = user, isActive = true))
+            accountRepository.save(Account(accountNumber = "5146789132", user = user, isActive = true, balance = 1000.0))
         }
     }
 }

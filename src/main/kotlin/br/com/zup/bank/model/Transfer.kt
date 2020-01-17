@@ -28,6 +28,9 @@ data class Transfer(
     @Enumerated(value = EnumType.STRING)
     var transferStatus: Status,
 
+    @Column(name = "error_code", nullable = true)
+    var errorCode: String? = "",
+
     @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)
     val transferDate: Date = Date()
 ) {
@@ -38,7 +41,8 @@ data class Transfer(
                 originAccount,
                 destinyAccount,
                 transferRequestDTO.transferValue,
-                Status.IN_PROCESS
+                Status.IN_PROCESS,
+                ""
             )
         }
     }

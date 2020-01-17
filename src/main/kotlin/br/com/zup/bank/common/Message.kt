@@ -21,6 +21,10 @@ class Message(
     }
 
     fun getMessage(code: String): String {
+        if (code.isNullOrEmpty()) {
+            return ""
+        }
+
         return acessor.getMessage(code, LocaleContextHolder.getLocale())
     }
 }

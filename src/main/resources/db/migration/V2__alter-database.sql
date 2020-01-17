@@ -1,0 +1,1 @@
+ALTER TABLE transfer ADD error_code varchar(50) AFTER transfer_status;

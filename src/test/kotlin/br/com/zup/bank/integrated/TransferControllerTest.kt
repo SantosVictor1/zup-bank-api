@@ -100,7 +100,7 @@ class TransferControllerTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.transferId").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value("IN_PROCESS"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value("COMPLETED"))
     }
 
     private fun asJsonString(transferRequestDTO: TransferRequestDTO): String {

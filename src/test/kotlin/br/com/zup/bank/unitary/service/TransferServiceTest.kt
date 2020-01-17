@@ -1,5 +1,6 @@
 package br.com.zup.bank.unitary.service
 
+import br.com.zup.bank.common.Message
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
@@ -32,10 +33,12 @@ class TransferServiceTest {
     private val transferRepository = Mockito.mock(TransferRepository::class.java)
     private val accountRepository = Mockito.mock(AccountRepository::class.java)
     private val activityRepository = Mockito.mock(ActivityRepository::class.java)
+    private val messageResource = Mockito.mock(Message::class.java)
     private val transferService: TransferServiceImpl = TransferServiceImpl(
         transferRepository,
         accountRepository,
-        activityRepository
+        activityRepository,
+        messageResource
     )
     private lateinit var user: User
     private lateinit var transfer: Transfer
@@ -63,7 +66,8 @@ class TransferServiceTest {
             originAccount,
             destinyAccount,
             transferRequestDTO.transferValue,
-            transferStatus = Status.IN_PROCESS
+            transferStatus = Status.IN_PROCESS,
+            errorCode = "transfer.completed"
         )
         originActivity = Activity(
             null,
@@ -99,43 +103,57 @@ class TransferServiceTest {
 
     @Test
     fun doTransferWithSuccessTest() {
-        Mockito.`when`(transferService.activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
-        Mockito.`when`(transferService.accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
+        Mockito.`when`(activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
+        Mockito.`when`(accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
 
         transferService.doTransfer(originAccount, destinyAccount, transferRequestDTO)
 
         val activityCaptor = argumentCaptor<MutableList<Activity>>()
 
-        Mockito.verify(transferService.accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
-        Mockito.verify(transferService.activityRepository, Mockito.times(1)).saveAll(activityCaptor.capture())
+        Mockito.verify(accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
+        Mockito.verify(activityRepository, Mockito.times(1)).saveAll(activityCaptor.capture())
 
         isSame(activityCaptor.firstValue[0], originActivity)
         isSame(activityCaptor.firstValue[1], destinyActivity)
     }
 
+    @Test(expected = DuplicatedResourceBankException::class)
+    fun duplicatedAccountsThrowAnException() {
+        transferRequestDTO.originAccount = transferRequestDTO.destinyAccount
+
+        transferService.newTransfer(transferRequestDTO, transfer)
+    }
+
+    @Test(expected = InvalidResourceBankException::class)
+    fun invalidTransferValue() {
+        transferRequestDTO.transferValue = 0.0
+
+        transferService.newTransfer(transferRequestDTO, transfer)
+    }
+
     @Test(expected = ResourceNotFoundBankException::class)
     fun originAccountNotFoundTest() {
 
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(null)
 
         transferService.newTransfer(transferRequestDTO, transfer)
     }
 
     @Test(expected = ResourceNotFoundBankException::class)
     fun destinyAccountNotFoundTest() {
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(null)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
 
         transferService.newTransfer(transferRequestDTO, transfer)
     }
 
     @Test
     fun newTransferWithSuccess() {
-        Mockito.`when`(transferService.activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
-        Mockito.`when`(transferService.accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
+        Mockito.`when`(activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
+        Mockito.`when`(accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
         Mockito.`when`(transferRepository.save(transfer)).thenReturn(transfer)
 
         transferService.newTransfer(transferRequestDTO, transfer)
@@ -164,10 +182,10 @@ class TransferServiceTest {
     @Test
     fun successfullyTransferTest() {
         Mockito.`when`(transferRepository.findById(1)).thenReturn(Optional.of(transfer))
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
-        Mockito.`when`(transferService.accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
-        Mockito.`when`(transferService.activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
-        Mockito.`when`(transferService.accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
+        Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
+        Mockito.`when`(activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))).thenReturn(mutableListOf(originActivity, destinyActivity))
+        Mockito.`when`(accountRepository.saveAll(mutableListOf(originAccount, destinyAccount))).thenReturn(mutableListOf(originAccount, destinyAccount))
         Mockito.`when`(transferRepository.save(transfer)).thenReturn(transfer)
 
         transferService.listen(jsonTransferRequestDTO)
@@ -186,6 +204,7 @@ class TransferServiceTest {
     @Test
     fun getTransferWithSuccess() {
         Mockito.`when`(transferRepository.findById(1)).thenReturn(Optional.of(transfer))
+        Mockito.`when`(messageResource.getMessage("transfer.completed")).thenReturn("Transferência realizada com sucesso")
 
         val response = transferService.getTransferStatus(1)
 

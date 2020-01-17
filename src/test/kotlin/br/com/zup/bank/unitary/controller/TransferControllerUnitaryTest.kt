@@ -29,7 +29,7 @@ class TransferControllerUnitaryTest {
 
     @Before
     fun setMocks() {
-        this.statusResponseDTO = StatusResponseDTO(1, Status.COMPLETED)
+        this.statusResponseDTO = StatusResponseDTO(1, Status.COMPLETED, "")
         this.transferRequestDTO = TransferRequestDTO("4657891235", "6584973246", "02160795607", 100.0, transferId = null)
         this.transferResponseDTO = NewTransferResponseDTO(Date(), 100.0, "6584973246")
     }

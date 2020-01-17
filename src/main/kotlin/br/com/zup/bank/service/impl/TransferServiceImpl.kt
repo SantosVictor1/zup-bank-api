@@ -1,6 +1,7 @@
 package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.common.BankErrorCode
+import br.com.zup.bank.common.Message
 import br.com.zup.bank.config.KafkaConsumerConfig
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.StatusResponseDTO
@@ -33,9 +34,10 @@ import javax.transaction.Transactional
  */
 @Service
 class TransferServiceImpl(
-    val transferRepository: TransferRepository,
-    val accountRepository: AccountRepository,
-    val activityRepository: ActivityRepository
+    private val transferRepository: TransferRepository,
+    private val accountRepository: AccountRepository,
+    private val activityRepository: ActivityRepository,
+    private val messageResource: Message
 ) : ITransferService {
     @KafkaListener(topics = ["bank_api"], groupId = "group-id")
     override fun listen(transferDTO: String) {
@@ -45,6 +47,7 @@ class TransferServiceImpl(
         try {
             newTransfer(transferRequestDTO, transfer)
         } catch (ex: BankException) {
+            transfer.errorCode = ex.errorCode
             transfer.transferStatus = Status.FAILED
             transferRepository.save(transfer)
         }
@@ -72,7 +75,7 @@ class TransferServiceImpl(
         originAccount.balance = originAccount.balance - transferDTO.transferValue
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
-        if (originAccount.balance - transferDTO.transferValue < 0) {
+        if (originAccount.balance < 0) {
             invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
         }
 
@@ -99,7 +102,9 @@ class TransferServiceImpl(
             )
         }
 
-        return StatusResponseDTO(transfer.get().id!!, transfer.get().transferStatus)
+        val message = messageResource.getMessage(transfer.get().errorCode!!)
+
+        return StatusResponseDTO(transfer.get().id!!, transfer.get().transferStatus, message)
     }
 
     private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
@@ -108,7 +113,11 @@ class TransferServiceImpl(
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
         if (transferDTO.originAccount == transferDTO.destinyAccount) {
-            duplicatedResourceException(BankErrorCode.BANK032.code, "", TransferRequestDTO::class.simpleName!!)
+            duplicatedResourceException(
+                BankErrorCode.BANK032.code,
+                Account::accountNumber.name,
+                TransferRequestDTO::class.simpleName!!
+            )
         }
 
         if (transferDTO.transferValue <= 0) {
