@@ -155,13 +155,13 @@ class AccountServiceTest {
 
     @Test
     fun getByCpfWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf( "", user.cpf)).thenReturn(acc)
 
         val accountResponse = accountService.getByAccountNumberOrCpf("", user.cpf)
 
         Assert.assertEquals(accountResponse, accResponse)
 
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(user.cpf, "")
+        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf( "", user.cpf)
     }
 
     @Test(expected = ResourceNotFoundBankException::class)
@@ -173,13 +173,13 @@ class AccountServiceTest {
 
     @Test
     fun getByAccountNumberWithSuccess() {
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", acc.accountNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(acc.accountNumber, "")).thenReturn(acc)
 
         val accountResponse = accountService.getByAccountNumberOrCpf(acc.accountNumber, "")
 
         Assert.assertEquals(accountResponse, accResponse)
 
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf("", acc.accountNumber)
+        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(acc.accountNumber, "")
     }
 
     @Test(expected = ResourceNotFoundBankException::class)
@@ -246,7 +246,7 @@ class AccountServiceTest {
     fun depositWithUserCpfAndAccountUserCpfDifferent() {
         user.cpf = "12345678912"
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber, "")).thenReturn(acc)
 
         accountService.deposit(activityDTO)
     }
@@ -257,7 +257,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber, "")).thenReturn(acc)
 
         accountService.deposit(activityDTO)
     }
@@ -268,7 +268,7 @@ class AccountServiceTest {
         activityDTO.operation = Operation.DEPOSIT
 
         Mockito.`when`(accountService.userRepository.findByCpf(this.activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(this.activityDTO.accNumber, "")).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
         Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -280,7 +280,7 @@ class AccountServiceTest {
         Assert.assertEquals(activityDTO.operation, this.activityDTO.operation.toString())
 
         Mockito.verify(accountService.userRepository, Mockito.times(1)).findByCpf(this.activityDTO.cpf, true)
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)
+        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(this.activityDTO.accNumber,"")
         Mockito.verify(accountService.accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
         Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
@@ -303,7 +303,7 @@ class AccountServiceTest {
     @Test(expected = InvalidResourceBankException::class)
     fun withdrawWithUserCpfAndAccountUserCpfDifferent() {
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber, "")).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -314,7 +314,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber, "")).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -325,7 +325,7 @@ class AccountServiceTest {
         user.cpf = activityDTO.cpf
 
         Mockito.`when`(accountService.userRepository.findByCpf(activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(activityDTO.accNumber, "")).thenReturn(acc)
 
         accountService.withdraw(activityDTO)
     }
@@ -338,7 +338,7 @@ class AccountServiceTest {
         acc.balance = 200.0
 
         Mockito.`when`(accountService.userRepository.findByCpf(this.activityDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)).thenReturn(acc)
+        Mockito.`when`(accountService.accountRepository.findByAccountNumberOrUserCpf(this.activityDTO.accNumber, "")).thenReturn(acc)
         Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
         Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
 
@@ -350,7 +350,7 @@ class AccountServiceTest {
         Assert.assertEquals(activityDTO.operation, this.activityDTO.operation.toString())
 
         Mockito.verify(accountService.userRepository, Mockito.times(1)).findByCpf(this.activityDTO.cpf, true)
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf("", this.activityDTO.accNumber)
+        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(this.activityDTO.accNumber, "")
         Mockito.verify(accountService.accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
         Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
     }
