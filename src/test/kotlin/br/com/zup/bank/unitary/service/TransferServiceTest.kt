@@ -2,7 +2,6 @@ package br.com.zup.bank.unitary.service
 
 import br.com.zup.bank.common.Message
 import br.com.zup.bank.dto.request.TransferRequestDTO
-import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.enums.Operation
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
@@ -217,7 +216,7 @@ class TransferServiceTest {
 
 
     private fun isSame(argument: Activity?, activity: Activity): Boolean {
-        return if(argument == null) {
+        return if (argument == null) {
             false
         } else {
             Assert.assertEquals(activity, argument.copy(activityDate = activity.activityDate))

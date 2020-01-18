@@ -5,7 +5,6 @@ import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.NewTransferResponseDTO
 import br.com.zup.bank.dto.response.success.StatusResponseDTO
 import br.com.zup.bank.enums.Status
-import br.com.zup.bank.exception.InvalidResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.service.IKafkaService
 import br.com.zup.bank.service.ITransferService

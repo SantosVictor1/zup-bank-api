@@ -2,7 +2,6 @@ package br.com.zup.bank.dto.response.success
 
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.model.Transfer
-import com.fasterxml.jackson.annotation.JsonIgnore
 
 data class StatusResponseDTO(
     val transferId: Long,

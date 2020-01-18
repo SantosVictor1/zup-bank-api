@@ -7,7 +7,6 @@ import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Transfer
 import br.com.zup.bank.repository.AccountRepository
-import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.IKafkaService
 import br.com.zup.bank.service.ITransferService
 import com.google.gson.Gson

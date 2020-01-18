@@ -2,7 +2,6 @@ package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.common.Message
-import br.com.zup.bank.config.KafkaConsumerConfig
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.StatusResponseDTO
 import br.com.zup.bank.enums.Operation
@@ -17,11 +16,8 @@ import br.com.zup.bank.model.Transfer
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
-import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.ITransferService
 import com.google.gson.Gson
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service

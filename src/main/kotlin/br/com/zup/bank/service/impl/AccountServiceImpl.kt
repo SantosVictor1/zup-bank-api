@@ -25,9 +25,9 @@ import org.springframework.transaction.annotation.Transactional
  */
 @Service
 class AccountServiceImpl(
-    val accountRepository: AccountRepository,
-    val userRepository: UserRepository,
-    val activityService: IActivityService
+    private val accountRepository: AccountRepository,
+    private val userRepository: UserRepository,
+    private val activityService: IActivityService
 ) : IAccountService {
     override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account

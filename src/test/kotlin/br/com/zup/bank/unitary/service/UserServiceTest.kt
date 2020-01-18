@@ -6,10 +6,8 @@ import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
-import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.UserRepository
-import br.com.zup.bank.service.IActivityService
-import br.com.zup.bank.service.impl.AccountServiceImpl
+import br.com.zup.bank.service.IAccountService
 import br.com.zup.bank.service.impl.UserServiceImpl
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -23,11 +21,7 @@ import java.util.*
  */
 class UserServiceTest {
     private val userRepository = Mockito.mock(UserRepository::class.java)
-    private val accountService: AccountServiceImpl = AccountServiceImpl(
-        Mockito.mock(AccountRepository::class.java),
-        userRepository,
-        Mockito.mock(IActivityService::class.java)
-    )
+    private val accountService = Mockito.mock(IAccountService::class.java)
     private val userService: UserServiceImpl = UserServiceImpl(
         userRepository,
         accountService
@@ -121,17 +115,14 @@ class UserServiceTest {
         user.isActive = false
         Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(user)
         Mockito.`when`(userRepository.save(user)).thenReturn(user)
-        Mockito.`when`(accountService.accountRepository.findByUserCpf(user.cpf)).thenReturn(acc)
-        Mockito.`when`(accountService.accountRepository.save(acc)).thenReturn(acc)
+        Mockito.doNothing().`when`(accountService).deactivateAccount(user.cpf)
 
         userService.deactivateUser(user.cpf)
         Assert.assertThat(user.isActive, CoreMatchers.`is`(false))
-        Assert.assertThat(acc.isActive, CoreMatchers.`is`(false))
 
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
         Mockito.verify(userRepository, Mockito.times(1)).save(user)
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).findByUserCpf(user.cpf)
-        Mockito.verify(accountService.accountRepository, Mockito.times(1)).save(acc)
+        Mockito.verify(accountService, Mockito.times(1)).deactivateAccount(user.cpf)
     }
 
     @Test(expected = ResourceNotFoundBankException::class)

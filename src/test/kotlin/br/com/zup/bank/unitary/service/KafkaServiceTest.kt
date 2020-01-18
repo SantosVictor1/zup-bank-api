@@ -65,18 +65,17 @@ class KafkaServiceTest {
     @Test
     fun sendTransferWithSuccess() {
         val newTransfer = Transfer(
-            1,originAccount,
+            1, originAccount,
             destinyAccount,
             transferRequestDTO.transferValue,
             transferStatus = Status.IN_PROCESS
         )
 
-        Mockito.`when`(transferService.saveTransfer(any())).thenAnswer{
+        Mockito.`when`(transferService.saveTransfer(any())).thenAnswer {
             val argument = it.getArgument<Transfer>(0)
             if (isSame(argument, transfer)) {
                 newTransfer
-            }
-            else {
+            } else {
                 null
             }
         }
@@ -102,8 +101,8 @@ class KafkaServiceTest {
         isSame(transferCaptor.firstValue, transfer, true)
     }
 
-    private fun isSame(argument: Transfer?, transfer: Transfer, withAssert:Boolean = false): Boolean {
-        if(argument == null) return  false
+    private fun isSame(argument: Transfer?, transfer: Transfer, withAssert: Boolean = false): Boolean {
+        if (argument == null) return false
         return if (withAssert) {
             Assert.assertEquals(transfer, argument.copy(transferDate = transfer.transferDate))
             true
