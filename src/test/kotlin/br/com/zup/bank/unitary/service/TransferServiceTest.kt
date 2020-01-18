@@ -72,13 +72,13 @@ class TransferServiceTest {
         originActivity = Activity(
             null,
             value = transferRequestDTO.transferValue,
-            operation = Operation.TRANSFER,
+            operation = Operation.NEGATIVE_TRANSFER,
             account = originAccount
         )
         destinyActivity = Activity(
             null,
             value = transferRequestDTO.transferValue,
-            operation = Operation.TRANSFER,
+            operation = Operation.POSITIVE_TRANSFER,
             account = destinyAccount
         )
         jsonTransferRequestDTO = IOUtils.toString(
