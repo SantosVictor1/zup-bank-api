@@ -113,6 +113,7 @@ class TransferServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).saveAll(mutableListOf(originAccount, destinyAccount))
         Mockito.verify(activityRepository, Mockito.times(1)).saveAll(activityCaptor.capture())
 
+        Assert.assertThat(activityCaptor.firstValue.size, CoreMatchers.`is`(2))
         isSame(activityCaptor.firstValue[0], originActivity)
         isSame(activityCaptor.firstValue[1], destinyActivity)
     }

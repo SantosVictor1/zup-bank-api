@@ -21,7 +21,7 @@ class Message(
     }
 
     fun getMessage(code: String): String {
-        if (code.isNullOrEmpty()) {
+        if (code.isEmpty()) {
             return ""
         }
 
