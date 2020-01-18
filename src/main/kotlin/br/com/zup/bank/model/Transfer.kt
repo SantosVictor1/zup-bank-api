@@ -17,9 +17,11 @@ data class Transfer(
     val id: Long?,
 
     @ManyToOne
+    @JoinColumn(name = "originAccountId")
     val originAccount: Account,
 
     @ManyToOne
+    @JoinColumn(name = "destinyAccountId")
     val destinyAccount: Account,
 
     @Column(name = "value", nullable = false)
@@ -28,7 +30,7 @@ data class Transfer(
     @Enumerated(value = EnumType.STRING)
     var transferStatus: Status,
 
-    @Column(name = "error_code", nullable = true)
+    @Column(name = "errorCode", nullable = true)
     var errorCode: String? = "",
 
     @Column(name = "date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", nullable = false)

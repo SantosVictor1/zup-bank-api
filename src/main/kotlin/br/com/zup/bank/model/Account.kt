@@ -27,7 +27,7 @@ class Account(
     var isActive: Boolean,
 
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "userId")
     var user: User? = null
 ) {
     companion object {

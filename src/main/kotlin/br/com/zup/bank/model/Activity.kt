@@ -28,6 +28,7 @@ data class Activity(
 
     @JsonManagedReference
     @ManyToOne
+    @JoinColumn(name = "accountId")
     val account: Account
 ) {
     companion object {
