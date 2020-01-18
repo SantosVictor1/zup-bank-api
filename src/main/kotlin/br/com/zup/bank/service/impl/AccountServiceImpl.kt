@@ -152,7 +152,7 @@ class AccountServiceImpl(
     override fun extract(accNumber: String, page: Int, size: Int): ExtractResponseDTO {
         existsByNumber(accNumber)
 
-        var pageRequest = PageRequest.of(page, size)
+        val pageRequest = PageRequest.of(page, size)
 
         return activityService.extract(accNumber, pageRequest)
     }

@@ -6,5 +6,6 @@ package br.com.zup.bank.enums
 enum class Operation {
     DEPOSIT,
     WITHDRAW,
-    TRANSFER
+    NEGATIVE_TRANSFER,
+    POSITIVE_TRANSFER
 }

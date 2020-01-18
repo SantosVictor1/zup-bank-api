@@ -83,8 +83,8 @@ class TransferServiceImpl(
             invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
         }
 
-        val originActivity = getActivity(originAccount, transferDTO)
-        val destinyActivity = getActivity(destinyAccount, transferDTO)
+        val originActivity = getActivity(originAccount, transferDTO, Operation.NEGATIVE_TRANSFER)
+        val destinyActivity = getActivity(destinyAccount, transferDTO, Operation.POSITIVE_TRANSFER)
 
         activityRepository.saveAll(mutableListOf(originActivity, destinyActivity))
 
@@ -107,8 +107,8 @@ class TransferServiceImpl(
         return StatusResponseDTO(transfer.get().id!!, transfer.get().transferStatus, message)
     }
 
-    private fun getActivity(acc: Account, transferDTO: TransferRequestDTO): Activity {
-        return Activity(null, Date(), transferDTO.transferValue, Operation.TRANSFER, acc)
+    private fun getActivity(acc: Account, transferDTO: TransferRequestDTO, operation: Operation): Activity {
+        return Activity(null, Date(), transferDTO.transferValue, operation, acc)
     }
 
     private fun validateAccounts(transferDTO: TransferRequestDTO) {
