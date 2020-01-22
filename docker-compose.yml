@@ -1,6 +1,7 @@
 version: '3.3'
 services:
-  db:
+  db_prod:
+    container_name: bank_db_prod
     image: mysql
     environment:
       MYSQL_DATABASE: 'zup_bank_db'
@@ -13,6 +14,7 @@ services:
     expose:
       - '3306'
   db_test:
+    container_name: bank_db_test
     image: mysql
     environment:
       MYSQL_DATABASE: 'zup_bank_db_test'
@@ -24,20 +26,22 @@ services:
       - '3307:3306'
     expose:
       - '3307'
-  zookeeper:
+  bank_zookeeper:
+    container_name: bank_zookeeper
     image: confluentinc/cp-zookeeper:latest
     network_mode: host
     environment:
-      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_CLIENT_PORT: 2180
       ZOOKEEPER_TICK_TIME: 2000
 
-  kafka:
+  bank_kafka:
+    container_name: bank_kafka
     image: confluentinc/cp-kafka:latest
     network_mode: host
     depends_on:
-      - zookeeper
+      - bank_zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: localhost:32181
+      KAFKA_ZOOKEEPER_CONNECT: localhost:2180
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
