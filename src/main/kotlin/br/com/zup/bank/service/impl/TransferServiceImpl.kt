@@ -35,7 +35,7 @@ class TransferServiceImpl(
     private val activityRepository: ActivityRepository,
     private val messageResource: Message
 ) : ITransferService {
-    @KafkaListener(topics = ["bank_api"], groupId = "group-id")
+    @KafkaListener(topics = ["bank_api"], groupId = "bank_id")
     override fun listen(transferDTO: String) {
         val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
         val transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()

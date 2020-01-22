@@ -22,7 +22,7 @@ class KafkaConsumerConfig {
     fun consumerFactory(): ConsumerFactory<String, String> {
         val props: MutableMap<String, Any> = HashMap()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrap
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "group-id"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "bank_id"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
 
