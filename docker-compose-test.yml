@@ -1,18 +1,5 @@
 version: '3.3'
 services:
-  db_prod:
-    container_name: bank_db_prod
-    image: mysql
-    environment:
-      MYSQL_DATABASE: 'zup_bank_db'
-      MYSQL_USER: 'zup_bank_db'
-      MYSQL_PASSWORD: 'zup_bank_db'
-      MYSQL_ROOT_PASSWORD: 'zup_bank_db'
-      SPRING_PROFILES_ACTIVE: 'prod'
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
   db_test:
     container_name: bank_db_test
     image: mysql

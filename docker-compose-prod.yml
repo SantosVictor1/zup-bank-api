@@ -1,0 +1,34 @@
+version: '3.3'
+services:
+  db_prod:
+    container_name: bank_db_prod
+    image: mysql
+    environment:
+      MYSQL_DATABASE: 'zup_bank_db'
+      MYSQL_USER: 'zup_bank_db'
+      MYSQL_PASSWORD: 'zup_bank_db'
+      MYSQL_ROOT_PASSWORD: 'zup_bank_db'
+      SPRING_PROFILES_ACTIVE: 'prod'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+  bank_zookeeper:
+    container_name: bank_zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    network_mode: host
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2180
+      ZOOKEEPER_TICK_TIME: 2000
+
+  bank_kafka:
+    container_name: bank_kafka
+    image: confluentinc/cp-kafka:latest
+    network_mode: host
+    depends_on:
+      - bank_zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: localhost:2180
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
