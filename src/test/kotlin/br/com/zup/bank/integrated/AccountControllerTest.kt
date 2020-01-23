@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 class AccountControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc

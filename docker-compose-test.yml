@@ -1,18 +1,5 @@
 version: '3.3'
 services:
-  db_test:
-    container_name: bank_db_test
-    image: mysql
-    environment:
-      MYSQL_DATABASE: 'zup_bank_db_test'
-      MYSQL_USER: 'zup_bank_db_test'
-      MYSQL_PASSWORD: 'zup_bank_db_test'
-      MYSQL_ROOT_PASSWORD: 'zup_bank_db_test'
-      SPRING_PROFILES_ACTIVE: 'test'
-    ports:
-      - '3307:3306'
-    expose:
-      - '3307'
   bank_zookeeper:
     container_name: bank_zookeeper
     image: confluentinc/cp-zookeeper:latest
