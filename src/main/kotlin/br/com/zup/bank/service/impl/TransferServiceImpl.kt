@@ -2,6 +2,7 @@ package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.common.Message
+import br.com.zup.bank.dto.request.ActivityRequestDTO
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.dto.response.success.StatusResponseDTO
 import br.com.zup.bank.enums.Operation
@@ -13,6 +14,7 @@ import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Activity
 import br.com.zup.bank.model.Transfer
+import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
@@ -72,11 +74,19 @@ class TransferServiceImpl(
         destinyAccount.balance = transferDTO.transferValue + destinyAccount.balance
 
         if (originAccount.balance < 0) {
-            invalidResourceException(BankErrorCode.BANK024.code, "balance", "activityRequestDTO")
+            invalidResourceException(
+                BankErrorCode.BANK024.code,
+                Account::balance.name,
+                ActivityRequestDTO::class.simpleName!!
+            )
         }
 
         if (destinyAccount.user?.cpf != transferDTO.recipientsCpf) {
-            invalidResourceException(BankErrorCode.BANK014.code, "cpf", "activityRequestDTO")
+            invalidResourceException(
+                BankErrorCode.BANK014.code,
+                User::cpf.name,
+                ActivityRequestDTO::class.simpleName!!
+            )
         }
 
         val originActivity = getActivity(originAccount, transferDTO, Operation.NEGATIVE_TRANSFER)
