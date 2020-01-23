@@ -89,6 +89,9 @@ class UserControllerTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[2].id").value(3))
     }
 
     @Transactional
