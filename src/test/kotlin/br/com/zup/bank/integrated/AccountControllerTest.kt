@@ -3,6 +3,7 @@ package br.com.zup.bank.integrated
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,7 +34,7 @@ class AccountControllerTest {
     fun throwExceptionWhenCreateUserWithInvalidFields() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonStringAccountRequest(AccountRequestDTO("")))
+            .content(toJson(AccountRequestDTO("")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -49,7 +50,7 @@ class AccountControllerTest {
     fun createAccountWithValidCpf() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonStringAccountRequest(AccountRequestDTO("02160795607")))
+            .content(toJson(AccountRequestDTO("02160795607")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -194,7 +195,7 @@ class AccountControllerTest {
     fun throwAnExceptionWithInvalidFieldsOnDeposit() {
         mvc.perform(MockMvcRequestBuilders
             .post("$baseUrl/deposit")
-            .content(asJsonStringActivityRequest(ActivityRequestDTO("", "", 0.0)))
+            .content(toJson(ActivityRequestDTO("", "", 0.0)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -213,7 +214,7 @@ class AccountControllerTest {
     fun doADepositWithSuccess() {
         mvc.perform(MockMvcRequestBuilders
             .post("$baseUrl/deposit")
-            .content(asJsonStringActivityRequest(ActivityRequestDTO("02160795607", "6548732156", 100.0)))
+            .content(toJson(ActivityRequestDTO("02160795607", "6548732156", 100.0)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -227,7 +228,7 @@ class AccountControllerTest {
     fun throwAnExceptionWithInvalidFieldsOnWithdraw() {
         mvc.perform(MockMvcRequestBuilders
             .post("$baseUrl/deposit")
-            .content(asJsonStringActivityRequest(ActivityRequestDTO("", "", 0.0)))
+            .content(toJson(ActivityRequestDTO("", "", 0.0)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -246,7 +247,7 @@ class AccountControllerTest {
     fun doAWithdrawWithSuccess() {
         mvc.perform(MockMvcRequestBuilders
             .post("$baseUrl/withdraw")
-            .content(asJsonStringActivityRequest(ActivityRequestDTO("02160795607", "6548732156", 100.0)))
+            .content(toJson(ActivityRequestDTO("02160795607", "6548732156", 100.0)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -288,19 +289,7 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.pagination").value(CoreMatchers.notNullValue()))
     }
 
-    private fun asJsonStringAccountRequest(accountRequestDTO: AccountRequestDTO): String {
-        try {
-            return ObjectMapper().writeValueAsString(accountRequestDTO)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
-
-    private fun asJsonStringActivityRequest(activityRequestDTO: ActivityRequestDTO): String {
-        try {
-            return ObjectMapper().writeValueAsString(activityRequestDTO)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
+    private fun toJson(anyObject: Any): String {
+        return Gson().toJson(anyObject)
     }
 }

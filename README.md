@@ -32,3 +32,8 @@ Para a execução dos testes, utilize:
 ```
 mvn test
 ```
+
+Para execução da aplicação, utilize:
+```
+mvn spring-boot:run -Dspring.profiles.active=prod
+```

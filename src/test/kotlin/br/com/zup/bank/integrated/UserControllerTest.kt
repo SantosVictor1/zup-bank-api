@@ -2,6 +2,7 @@ package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +31,7 @@ class UserControllerTest {
     fun throwExceptionWhenCreateUserWithInvalidFields() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonString(UserRequestDTO("", "", "")))
+            .content(toJson(UserRequestDTO("", "", "")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -44,7 +45,7 @@ class UserControllerTest {
     fun createUserWithValidFields() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonString(UserRequestDTO("Pedro", "42511229846", "pedro@gmail.com")))
+            .content(toJson(UserRequestDTO("Pedro", "42511229846", "pedro@gmail.com")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated)
@@ -153,11 +154,7 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
     }
 
-    private fun asJsonString(userRequestDTO: UserRequestDTO): String {
-        try {
-            return ObjectMapper().writeValueAsString(userRequestDTO)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
+    private fun toJson(anyObject: Any): String {
+        return Gson().toJson(anyObject)
     }
 }

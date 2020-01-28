@@ -3,6 +3,7 @@ package br.com.zup.bank.integrated
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.enums.Status
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +33,7 @@ class TransferControllerTest {
     fun throwAnExceptionWhenReceiveARequestWithInvalidFields() {
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonString(TransferRequestDTO("", "", "", 100.0, transferId = null)))
+            .content(toJson(TransferRequestDTO("", "", "", 100.0, transferId = null)))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -57,7 +58,7 @@ class TransferControllerTest {
         )
         mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
-            .content(asJsonString(transferRequestDTO))
+            .content(toJson(transferRequestDTO))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -101,11 +102,7 @@ class TransferControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value("COMPLETED"))
     }
 
-    private fun asJsonString(transferRequestDTO: TransferRequestDTO): String {
-        try {
-            return ObjectMapper().writeValueAsString(transferRequestDTO)
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
+    private fun toJson(anyObject: Any): String {
+        return Gson().toJson(anyObject)
     }
 }
