@@ -3,6 +3,7 @@ package br.com.zup.bank.integrated
 import br.com.zup.bank.dto.request.UserRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import org.hamcrest.CoreMatchers
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,9 +36,9 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("userRequestDTO"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
     @Transactional
@@ -75,9 +76,9 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value(""))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
     @Transactional
@@ -120,9 +121,9 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(404))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("User"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("user.not.found"))
     }
 
     @Transactional
@@ -149,9 +150,9 @@ class UserControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value(""))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
     private fun toJson(anyObject: Any): String {

@@ -4,6 +4,7 @@ import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.enums.Status
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import org.hamcrest.CoreMatchers
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,9 +38,9 @@ class TransferControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("transferRequestDTO"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
     @Transactional

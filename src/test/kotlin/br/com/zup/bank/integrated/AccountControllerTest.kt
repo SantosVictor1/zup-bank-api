@@ -38,7 +38,6 @@ class AccountControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").isNumber)
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
             .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("accountRequestDTO"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
@@ -55,8 +54,8 @@ class AccountControllerTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").isNotEmpty)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(CoreMatchers.notNullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").value(CoreMatchers.notNullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("02160795607"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
     }
 
@@ -73,6 +72,9 @@ class AccountControllerTest {
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[0].accountNumber").value("6548732156"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[1].accountNumber").value("6548732157"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.[2].accountNumber").value("6548732158"))
     }
 
     @Transactional
@@ -91,7 +93,7 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(3))
             .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").value("6548732158"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(CoreMatchers.notNullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("14292133611"))
     }
 
 
@@ -109,8 +111,8 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value(""))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
     @Transactional
@@ -131,7 +133,7 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
             .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").value("6548732157"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(CoreMatchers.notNullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("42511229846"))
     }
 
     @Transactional
@@ -152,7 +154,7 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
             .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber").value("6548732157"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(CoreMatchers.notNullValue()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("42511229846"))
     }
 
     @Transactional
@@ -169,8 +171,8 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value(""))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
     @Transactional
@@ -201,8 +203,8 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("activityRequestDTO"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
     @Transactional
@@ -234,8 +236,8 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value("activityRequestDTO"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
     @Transactional
@@ -266,8 +268,8 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.statusHttp").value(400))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.objectName").value(""))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
     @Transactional
