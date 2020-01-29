@@ -21,6 +21,8 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import java.nio.charset.Charset
 import java.util.*
@@ -86,18 +88,26 @@ class TransferServiceTest {
         )
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun insufficientFundsTest() {
         originAccount.balance = 0.0
 
-        transferService.doTransfer(originAccount, destinyAccount, transferRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { transferService.doTransfer(originAccount, destinyAccount, transferRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("negative.balance"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("balance"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("ActivityRequestDTO"))
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun differentCpfTest() {
         transferRequestDTO.recipientsCpf = "45698712354"
 
-        transferService.doTransfer(originAccount, destinyAccount, transferRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { transferService.doTransfer(originAccount, destinyAccount, transferRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("cpf.invalid"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("ActivityRequestDTO"))
     }
 
     @Test
@@ -117,35 +127,55 @@ class TransferServiceTest {
         isSame(activityCaptor.firstValue[1], destinyActivity)
     }
 
-    @Test(expected = DuplicatedResourceBankException::class)
+    @Test
     fun duplicatedAccountsThrowAnException() {
         transferRequestDTO.originAccount = transferRequestDTO.destinyAccount
 
-        transferService.newTransfer(transferRequestDTO, transfer)
+        val exception = assertThrows<DuplicatedResourceBankException> { transferService.newTransfer(transferRequestDTO, transfer) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("equal.accounts"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("TransferRequestDTO"))
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun invalidTransferValue() {
         transferRequestDTO.transferValue = 0.0
 
-        transferService.newTransfer(transferRequestDTO, transfer)
+        val exception = assertThrows<InvalidResourceBankException> { transferService.newTransfer(transferRequestDTO, transfer) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("value.invalid"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("transferValue"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("TransferRequestDTO"))
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun originAccountNotFoundTest() {
-
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(destinyAccount)
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(null)
 
-        transferService.newTransfer(transferRequestDTO, transfer)
+        val exception = assertThrows<ResourceNotFoundBankException> { transferService.newTransfer(transferRequestDTO, transfer) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun destinyAccountNotFoundTest() {
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)).thenReturn(null)
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)).thenReturn(originAccount)
 
-        transferService.newTransfer(transferRequestDTO, transfer)
+        val exception = assertThrows<ResourceNotFoundBankException> { transferService.newTransfer(transferRequestDTO, transfer) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberAndIsActiveTrue(transferRequestDTO.destinyAccount)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberAndIsActiveTrue(transferRequestDTO.originAccount)
     }
 
     @Test
@@ -169,7 +199,6 @@ class TransferServiceTest {
     }
 
     @Test
-    @Throws(DuplicatedResourceBankException::class)
     fun throwAnExceptionWhenSomeFieldIsInvalid() {
         Mockito.`when`(transferRepository.findById(1)).thenReturn(Optional.of(transfer))
         Mockito.`when`(transferRepository.save(transfer)).thenReturn(transfer)
@@ -177,6 +206,13 @@ class TransferServiceTest {
         transferRequestDTO.originAccount = transferRequestDTO.destinyAccount
 
         transferService.listen(jsonTransferRequestDTO)
+
+        val argument: ArgumentCaptor<Transfer> = ArgumentCaptor.forClass(Transfer::class.java)
+
+        Mockito.verify(transferRepository, Mockito.times(1)).findById(1)
+        Mockito.verify(transferRepository, Mockito.times(1)).save(argument.capture())
+
+        Assert.assertThat(transfer, CoreMatchers.`is`(argument.value))
     }
 
     @Test
@@ -194,11 +230,17 @@ class TransferServiceTest {
 
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun throwAnExceptionWhenNotFindTransfer() {
         Mockito.`when`(transferRepository.findById(1)).thenReturn(Optional.empty())
 
-        transferService.getTransferStatus(1)
+        val exception = assertThrows<ResourceNotFoundBankException> { transferService.getTransferStatus(1) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("transfer.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("id"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Transfer"))
+
+        Mockito.verify(transferRepository, Mockito.times(1)).findById(1)
     }
 
     @Test

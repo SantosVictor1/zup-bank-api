@@ -12,9 +12,11 @@ import br.com.zup.bank.service.impl.KafkaServiceImpl
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.argumentCaptor
 import org.apache.commons.io.IOUtils
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.springframework.kafka.core.KafkaTemplate
 import java.nio.charset.Charset
@@ -55,11 +57,17 @@ class KafkaServiceTest {
         )
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun throwAnExceptionWhenNotFindAccount() {
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(originAccount.accountNumber)).thenReturn(null)
 
-        kafkaService.newTransferRequest(transferRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException> { kafkaService.newTransferRequest(transferRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberAndIsActiveTrue(originAccount.accountNumber)
     }
 
     @Test

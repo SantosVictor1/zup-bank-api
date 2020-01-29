@@ -13,6 +13,7 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import java.util.*
 
@@ -48,11 +49,17 @@ class UserServiceTest {
 
     }
 
-    @Test(expected = DuplicatedResourceBankException::class)
+    @Test
     fun existsByCpfTest() {
         Mockito.`when`(userRepository.existsByCpf(userRequestDTO.cpf)).thenReturn(true)
 
-        userService.createUser(userRequestDTO)
+        val exception = assertThrows<DuplicatedResourceBankException> { userService.createUser(userRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("cpf.duplicated"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("UserRequestDTO"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsByCpf(userRequestDTO.cpf)
     }
 
     @Test
@@ -67,11 +74,17 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
-    @Test(expected = DuplicatedResourceBankException::class)
+    @Test
     fun existsByEmailTest() {
         Mockito.`when`(userRepository.existsByEmail(userRequestDTO.email)).thenReturn(true)
 
-        userService.createUser(userRequestDTO)
+        val exception = assertThrows<DuplicatedResourceBankException> { userService.createUser(userRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("email.duplicated"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("email"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("UserRequestDTO"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsByEmail(userRequestDTO.email)
     }
 
     @Test
@@ -86,11 +99,17 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User::class.java))
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun getByIdWithErrorTest() {
         Mockito.`when`(userRepository.findById(user.id!!)).thenReturn(Optional.empty())
 
-        userService.getById(user.id!!)
+        val exception = assertThrows<ResourceNotFoundBankException> { userService.getById(user.id!!) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("id"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
     }
 
     @Test
@@ -103,11 +122,17 @@ class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findById(user.id!!)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun deleteWithErrorTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
+        Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(null)
 
-        userService.deactivateUser(user.cpf)
+        val exception = assertThrows<ResourceNotFoundBankException> { userService.deactivateUser(user.cpf) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
     }
 
     @Test
@@ -125,11 +150,17 @@ class UserServiceTest {
         Mockito.verify(accountService, Mockito.times(1)).deactivateAccount(user.cpf)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun reactivateWithErrorTest() {
         Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
 
-        userService.reactivateUser(user.cpf)
+        val exception = assertThrows<ResourceNotFoundBankException> { userService.reactivateUser(user.cpf) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, false)
     }
 
     @Test

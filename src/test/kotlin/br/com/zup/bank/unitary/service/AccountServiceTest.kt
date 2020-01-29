@@ -19,6 +19,7 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.springframework.data.domain.PageRequest
 import java.util.*
@@ -64,11 +65,17 @@ class AccountServiceTest {
         activityResponseDTO = ActivityResponseDTO(account.balance, account.accountNumber, activity.activityDate, activity.operation.toString())
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun userDontExistsTest() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
+        Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(null)
 
-        accountService.createAccount(accountRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException>{ accountService.createAccount(accountRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
     }
 
     @Test
@@ -90,12 +97,19 @@ class AccountServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
     }
 
-    @Test(expected = DuplicatedResourceBankException::class)
+    @Test
     fun existAccountWithCpf() {
         Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.existsAccountByUserCpf(user.cpf)).thenReturn(true)
 
-        accountService.createAccount(accountRequestDTO)
+        val exception = assertThrows<DuplicatedResourceBankException> { accountService.createAccount(accountRequestDTO) }
+
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("double.account.not.allowed"))
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`(""))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByUserCpf(user.cpf)
     }
 
     @Test
@@ -128,11 +142,17 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findAll()
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun getByIdWithError() {
         Mockito.`when`(accountRepository.findById(account.id!!)).thenReturn(Optional.empty())
 
-        accountService.getById(account.id!!)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.getById(account.id!!) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("id"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findById(account.id!!)
     }
 
     @Test
@@ -146,11 +166,17 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findById(account.id!!)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun getByCpfWithError() {
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(user.cpf, "")).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf("", user.cpf)).thenReturn(null)
 
-        accountService.getByAccountNumberOrCpf("", user.cpf)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.getByAccountNumberOrCpf("", user.cpf) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf("", user.cpf)
     }
 
     @Test
@@ -164,11 +190,17 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf("", user.cpf)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun getByAccountNumberWithError() {
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf("", account.accountNumber)).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(account.accountNumber, "")).thenReturn(null)
 
-        accountService.getByAccountNumberOrCpf("", account.accountNumber)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.getByAccountNumberOrCpf(account.accountNumber, "") }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(account.accountNumber, "")
     }
 
     @Test
@@ -182,11 +214,17 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(account.accountNumber, "")
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun getAccountBalanceWithErrorTest() {
         Mockito.`when`(accountRepository.findByAccountNumberAndIsActiveTrue(account.accountNumber)).thenReturn(null)
 
-        accountService.getAccountBalance(account.accountNumber)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.getAccountBalance(account.accountNumber) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberAndIsActiveTrue(account.accountNumber)
     }
 
     @Test
@@ -227,31 +265,51 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).save(account)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun depositWithUserNotFound() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
+        Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(null)
 
-        accountService.deposit(activityRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.deposit(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun depositWithAccountNotFound() {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf("", activityRequestDTO.accNumber)).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber,"")).thenReturn(null)
 
-        accountService.deposit(activityRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.deposit(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun depositWithUserCpfAndAccountUserCpfDifferent() {
         user.cpf = "12345678912"
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(account)
 
-        accountService.deposit(activityRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { accountService.deposit(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("ActivityRequestDTO"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("cpf.invalid"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun depositWithValueSmallerThanZero() {
         activityRequestDTO.value = -50.0
         user.cpf = activityRequestDTO.cpf
@@ -259,7 +317,14 @@ class AccountServiceTest {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(account)
 
-        accountService.deposit(activityRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { accountService.deposit(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("ActivityRequestDTO"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("value"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("value.invalid"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
     @Test
@@ -285,30 +350,50 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun withdrawWithUserNotFound() {
-        Mockito.`when`(userRepository.findByCpf(user.cpf, false)).thenReturn(null)
+        Mockito.`when`(userRepository.findByCpf(user.cpf, true)).thenReturn(null)
 
-        accountService.withdraw(activityRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.withdraw(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("User"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("cpf"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("user.not.found"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(user.cpf, true)
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun withdrawWithAccountNotFound() {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
-        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf("", activityRequestDTO.accNumber)).thenReturn(null)
+        Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(null)
 
-        accountService.withdraw(activityRequestDTO)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.withdraw(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun withdrawWithUserCpfAndAccountUserCpfDifferent() {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(account)
 
-        accountService.withdraw(activityRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { accountService.withdraw(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("balance"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("negative.balance"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun withdrawWithValueSmallerThanZero() {
         activityRequestDTO.value = -50.0
         user.cpf = activityRequestDTO.cpf
@@ -316,10 +401,17 @@ class AccountServiceTest {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(account)
 
-        accountService.withdraw(activityRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { accountService.withdraw(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("ActivityRequestDTO"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("value"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("value.invalid"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
-    @Test(expected = InvalidResourceBankException::class)
+    @Test
     fun withdrawWithBalanceBelowZero() {
         activityRequestDTO.value = 300.0
         user.cpf = activityRequestDTO.cpf
@@ -327,7 +419,14 @@ class AccountServiceTest {
         Mockito.`when`(userRepository.findByCpf(activityRequestDTO.cpf, true)).thenReturn(user)
         Mockito.`when`(accountRepository.findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")).thenReturn(account)
 
-        accountService.withdraw(activityRequestDTO)
+        val exception = assertThrows<InvalidResourceBankException> { accountService.withdraw(activityRequestDTO) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("balance"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("negative.balance"))
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByCpf(activityRequestDTO.cpf, true)
+        Mockito.verify(accountRepository, Mockito.times(1)).findByAccountNumberOrUserCpf(activityRequestDTO.accNumber, "")
     }
 
     @Test
@@ -356,11 +455,17 @@ class AccountServiceTest {
         Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account::class.java))
     }
 
-    @Test(expected = ResourceNotFoundBankException::class)
+    @Test
     fun extractWithAccountNotFound() {
         Mockito.`when`(accountRepository.existsAccountByAccountNumber(account.accountNumber)).thenReturn(false)
 
-        accountService.extract(account.accountNumber, 0, 10)
+        val exception = assertThrows<ResourceNotFoundBankException> { accountService.extract(account.accountNumber, 0, 10) }
+
+        Assert.assertThat(exception.objectName, CoreMatchers.`is`("Account"))
+        Assert.assertThat(exception.field, CoreMatchers.`is`("accountNumber"))
+        Assert.assertThat(exception.errorCode, CoreMatchers.`is`("account.not.found"))
+
+        Mockito.verify(accountRepository, Mockito.times(1)).existsAccountByAccountNumber(account.accountNumber)
     }
 
     @Test
