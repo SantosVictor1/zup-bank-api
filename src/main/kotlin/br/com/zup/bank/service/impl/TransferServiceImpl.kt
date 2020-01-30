@@ -19,6 +19,7 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.ITransferService
+import com.fasterxml.jackson.databind.JsonNode
 import com.google.gson.Gson
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.kafka.annotation.KafkaListener
@@ -39,13 +40,18 @@ class TransferServiceImpl(
 ) : ITransferService {
     @KafkaListener(topics = ["bank_api"], groupId = "bank_id")
     override fun listen(transferDTO: String) {
-        val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
-        val transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
-
+        lateinit var transfer: Transfer
         try {
+            val transferRequestDTO = Gson().fromJson(transferDTO, TransferRequestDTO::class.java)
+            transfer = transferRepository.findById(transferRequestDTO.transferId!!).get()
+
             newTransfer(transferRequestDTO, transfer)
         } catch (ex: BankException) {
             transfer.errorCode = ex.errorCode
+            transfer.transferStatus = Status.FAILED
+            transferRepository.save(transfer)
+        } catch (ex: Exception) {
+            transfer.errorCode = BankErrorCode.BANK050.code
             transfer.transferStatus = Status.FAILED
             transferRepository.save(transfer)
         }

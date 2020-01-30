@@ -40,5 +40,8 @@ class BankErrorCode {
 
         //Operation errors
         val BANK040: BankErrorCode = BankErrorCode("value.invalid")
+
+        //Kafka errors
+        val BANK050: BankErrorCode = BankErrorCode("processing.error")
     }
 }
