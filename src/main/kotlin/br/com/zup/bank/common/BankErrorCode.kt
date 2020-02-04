@@ -3,12 +3,9 @@ package br.com.zup.bank.common
 /**
  * Created by Victor Santos on 08/01/2020
  */
-class BankErrorCode {
-    var code: String
-
-    private constructor(code: String) {
-        this.code = code
-    }
+class BankErrorCode(
+    val code: String
+) {
 
     companion object {
         //System errors
@@ -43,5 +40,8 @@ class BankErrorCode {
 
         //Kafka errors
         val BANK050: BankErrorCode = BankErrorCode("processing.error")
+
+        //Blacklist errors
+        val BANK060: BankErrorCode = BankErrorCode("cpf.not.found")
     }
 }
