@@ -1,8 +1,10 @@
 package br.com.zup.bank.controller
 
+import br.com.zup.bank.camunda.workflow.WorkflowManager
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.service.IUserService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -14,11 +16,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/users")
 class UserController(
-    private val userService: IUserService
+    private val userService: IUserService,
+    private val workflowManager: WorkflowManager
 ) {
     @PostMapping
-    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserResponseDTO> {
-        return ResponseEntity(userService.createUser(userRequestDTO), HttpStatus.CREATED)
+    fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<Any> {
+//        workflowManager.start(userRequestDTO)
+        return ResponseEntity.ok().build()
     }
 
     @PatchMapping("/reactivate")

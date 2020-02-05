@@ -16,12 +16,12 @@ import org.springframework.http.HttpStatus
  * Created by Victor Santos on 10/01/2020
  */
 class UserControllerUnitaryTest {
-    private val userService: IUserService = Mockito.mock(IUserService::class.java)
-    private val userController: UserController = UserController(
-        userService
-    )
-    private lateinit var userRequestDTO: UserRequestDTO
-    private lateinit var userResponseDTO: UserResponseDTO
+//    private val userService: IUserService = Mockito.mock(IUserService::class.java)
+//    private val userController: UserController = UserController(
+//        userService
+//    )
+//    private lateinit var userRequestDTO: UserRequestDTO
+//    private lateinit var userResponseDTO: UserResponseDTO
 
 //    @Before
 //    fun setMocks() {

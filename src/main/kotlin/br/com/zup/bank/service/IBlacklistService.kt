@@ -6,4 +6,5 @@ import br.com.zup.bank.dto.response.success.BlacklistResponseDTO
 interface IBlacklistService {
     fun saveNewCpf(blacklistRequestDTO: BlacklistRequestDTO): BlacklistResponseDTO
     fun findByCpf(cpf: String): BlacklistResponseDTO
+    fun existsByCpf(cpf: String): Boolean
 }

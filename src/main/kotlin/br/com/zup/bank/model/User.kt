@@ -32,7 +32,7 @@ data class User(
     var status: Status? = null
 ) {
     companion object {
-        fun toEntity(userRequestDTO: UserRequestDTO, status: Status) = User(
+        fun toEntity(userRequestDTO: UserRequestDTO, status: Status = Status.IN_PROCESS) = User(
             name = userRequestDTO.name,
             cpf = userRequestDTO.cpf,
             email = userRequestDTO.email,

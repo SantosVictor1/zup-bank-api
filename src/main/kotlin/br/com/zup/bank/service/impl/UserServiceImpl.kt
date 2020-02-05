@@ -3,7 +3,6 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.User
@@ -25,14 +24,14 @@ class UserServiceImpl(
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
-        var user: User = User.toEntity(userRequestDTO, Status.IN_PROCESS)
+        var user: User = User.toEntity(userRequestDTO)
         user = userRepository.save(user)
 
         return UserResponseDTO.toDto(user)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {
-        var userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf<UserResponseDTO>()
+        val userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf()
         val response = userRepository.findAll()
 
         response.forEach {
@@ -72,7 +71,7 @@ class UserServiceImpl(
 
     @Transactional
     override fun deactivateUser(cpf: String) {
-        var user = User.toEntity(getByCpf(cpf, true))
+        val user = User.toEntity(getByCpf(cpf, true))
 
         user.isActive = false
         accountService.deactivateAccount(cpf)
@@ -82,7 +81,7 @@ class UserServiceImpl(
 
     @Transactional
     override fun reactivateUser(cpf: String): UserResponseDTO {
-        var user = User.toEntity(getByCpf(cpf, false))
+        val user = User.toEntity(getByCpf(cpf, false))
 
         user.isActive = true
 
