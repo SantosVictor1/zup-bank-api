@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS blacklist
     UNIQUE KEY UK_user_cpf (user_cpf)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = UTF8MB4;
+
+ALTER TABLE user ADD status varchar(50) AFTER is_active;

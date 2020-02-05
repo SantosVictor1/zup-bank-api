@@ -1,5 +1,6 @@
 package br.com.zup.bank.dto.response.success
 
+import br.com.zup.bank.enums.Status
 import br.com.zup.bank.model.User
 
 /**
@@ -13,8 +14,6 @@ data class UserResponseDTO(
     val isActive: Boolean
 ) {
     companion object {
-        fun toResponseDto(user: User): UserResponseDTO {
-            return UserResponseDTO(user.id!!, user.name, user.cpf, user.email, user.isActive)
-        }
+        fun toDto(user: User) = UserResponseDTO(user.id!!, user.name, user.cpf, user.email, user.isActive)
     }
 }

@@ -31,7 +31,7 @@ class KafkaServiceImpl(
 
         kafkaTemplate.send("bank_api", Gson().toJson(transferRequestDTO))
 
-        return StatusResponseDTO(transfer.id!!, transfer.transferStatus, transfer.errorCode!!)
+        return StatusResponseDTO.toDto(transfer)
     }
 
     private fun getAccount(accNumber: String): Account {

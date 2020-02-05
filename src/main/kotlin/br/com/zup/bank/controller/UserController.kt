@@ -14,7 +14,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/users")
 class UserController(
-    val userService: IUserService
+    private val userService: IUserService
 ) {
     @PostMapping
     fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserResponseDTO> {

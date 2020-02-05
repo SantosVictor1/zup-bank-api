@@ -2,6 +2,7 @@ package br.com.zup.bank.model
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.enums.Status
 import javax.persistence.*
 
 /**
@@ -25,21 +26,26 @@ data class User(
     var email: String,
 
     @Column(name = "isActive", nullable = false)
-    var isActive: Boolean = true
+    var isActive: Boolean = true,
+
+    @Enumerated(value = EnumType.STRING)
+    var status: Status? = null
 ) {
     companion object {
-        fun fromUserRequestToEntity(userRequestDTO: UserRequestDTO): User {
-            return User(null, userRequestDTO.name, userRequestDTO.cpf, userRequestDTO.email, true)
-        }
+        fun toEntity(userRequestDTO: UserRequestDTO, status: Status) = User(
+            name = userRequestDTO.name,
+            cpf = userRequestDTO.cpf,
+            email = userRequestDTO.email,
+            isActive = true,
+            status = status
+        )
 
-        fun fromUserResponseToEntity(userResponseDTO: UserResponseDTO): User {
-            return User(
-                userResponseDTO.id,
-                userResponseDTO.name,
-                userResponseDTO.cpf,
-                userResponseDTO.email,
-                userResponseDTO.isActive
-            )
-        }
+        fun toEntity(userResponseDTO: UserResponseDTO) = User(
+            userResponseDTO.id,
+            userResponseDTO.name,
+            userResponseDTO.cpf,
+            userResponseDTO.email,
+            userResponseDTO.isActive
+        )
     }
 }

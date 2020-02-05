@@ -3,6 +3,7 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.User
@@ -24,10 +25,10 @@ class UserServiceImpl(
     override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         validateFields(userRequestDTO)
 
-        var user: User = User.fromUserRequestToEntity(userRequestDTO)
+        var user: User = User.toEntity(userRequestDTO, Status.IN_PROCESS)
         user = userRepository.save(user)
 
-        return UserResponseDTO.toResponseDto(user)
+        return UserResponseDTO.toDto(user)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {
@@ -35,7 +36,7 @@ class UserServiceImpl(
         val response = userRepository.findAll()
 
         response.forEach {
-            userResponseDTOList.add(UserResponseDTO.toResponseDto(it))
+            userResponseDTOList.add(UserResponseDTO.toDto(it))
         }
 
         return userResponseDTOList
@@ -52,7 +53,7 @@ class UserServiceImpl(
             )
         }
 
-        return UserResponseDTO.toResponseDto(user.get())
+        return UserResponseDTO.toDto(user.get())
     }
 
     override fun getByCpf(cpf: String, isActive: Boolean): UserResponseDTO {
@@ -66,12 +67,12 @@ class UserServiceImpl(
             )
         }
 
-        return UserResponseDTO.toResponseDto(user!!)
+        return UserResponseDTO.toDto(user!!)
     }
 
     @Transactional
     override fun deactivateUser(cpf: String) {
-        var user = User.fromUserResponseToEntity(getByCpf(cpf, true))
+        var user = User.toEntity(getByCpf(cpf, true))
 
         user.isActive = false
         accountService.deactivateAccount(cpf)
@@ -81,14 +82,14 @@ class UserServiceImpl(
 
     @Transactional
     override fun reactivateUser(cpf: String): UserResponseDTO {
-        var user = User.fromUserResponseToEntity(getByCpf(cpf, false))
+        var user = User.toEntity(getByCpf(cpf, false))
 
         user.isActive = true
 
         accountService.reactivateAccount(cpf)
         userRepository.save(user)
 
-        return UserResponseDTO.toResponseDto(user)
+        return UserResponseDTO.toDto(user)
     }
 
     private fun validateFields(user: UserRequestDTO) {

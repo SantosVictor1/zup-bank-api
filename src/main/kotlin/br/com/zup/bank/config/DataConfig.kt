@@ -1,5 +1,6 @@
 package br.com.zup.bank.config
 
+import br.com.zup.bank.enums.Status
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
@@ -25,12 +26,12 @@ class DataConfig {
     fun databaseInitializer(userRepository: UserRepository, accountRepository: AccountRepository) = ApplicationRunner {
         if (!userRepository.existsByCpf(cpf = "02160795607")) {
             val user = userRepository.save(
-                User
-                (null,
-                    "Victor Santos",
-                    "02160795607",
-                    "victor@gmail.com",
-                    true
+                User(
+                    name = "Victor Santos",
+                    cpf = "02160795607",
+                    email = "victor@gmail.com",
+                    isActive = true,
+                    status = Status.COMPLETED
                 )
             )
 

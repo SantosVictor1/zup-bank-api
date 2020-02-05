@@ -28,48 +28,48 @@ class ActivityServiceTest {
     private lateinit var activity: Activity
     private lateinit var activityDTO: ActivityRequestDTO
 
-    @Before
-    fun setObjects() {
-        activityDTO = ActivityRequestDTO("50359879063", "6085506328", 100.0)
-        activityDTO.operation = Operation.DEPOSIT
-
-        user = User(
-            id = 1,
-            name = "Victor",
-            cpf = "50359879063",
-            email = "teste@gmail.com",
-            isActive = true
-        )
-
-        account = Account(1, 1000.0, 1000.0, "7278424688", true, user)
-        activity = Activity(id = 1, value = 100.0, operation = Operation.DEPOSIT, account = account)
-    }
-
-    @Test
-    fun extractWithSuccess() {
-        val paginationDTO = PaginationResponseDTO(0, 10)
-        var pageRequest = PageRequest.of(0, 10)
-
-        Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
-        ).thenReturn((Page.empty(pageRequest)))
-
-        val extracts = activityService.extract(account.accountNumber, pageRequest)
-
-        Assert.assertEquals(extracts, ExtractResponseDTO(mutableListOf(), paginationDTO))
-
-        Mockito.verify(activityService.activityRepository, Mockito.times(1))
-            .findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
-    }
-
-    @Test
-    fun createActivityWithSuccess() {
-        Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
-
-        val activityResponse = activityService.createActivity(account, activityDTO)
-
-        Assert.assertEquals(activityResponse.accNumber, account.accountNumber)
-        Assert.assertEquals(activityResponse.operation, activity.operation.toString())
-
-        Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
-    }
+//    @Before
+//    fun setObjects() {
+//        activityDTO = ActivityRequestDTO("50359879063", "6085506328", 100.0)
+//        activityDTO.operation = Operation.DEPOSIT
+//
+//        user = User(
+//            id = 1,
+//            name = "Victor",
+//            cpf = "50359879063",
+//            email = "teste@gmail.com",
+//            isActive = true
+//        )
+//
+//        account = Account(1, 1000.0, 1000.0, "7278424688", true, user)
+//        activity = Activity(id = 1, value = 100.0, operation = Operation.DEPOSIT, account = account)
+//    }
+//
+//    @Test
+//    fun extractWithSuccess() {
+//        val paginationDTO = PaginationResponseDTO(0, 10)
+//        var pageRequest = PageRequest.of(0, 10)
+//
+//        Mockito.`when`(activityService.activityRepository.findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
+//        ).thenReturn((Page.empty(pageRequest)))
+//
+//        val extracts = activityService.extract(account.accountNumber, pageRequest)
+//
+//        Assert.assertEquals(extracts, ExtractResponseDTO(mutableListOf(), paginationDTO))
+//
+//        Mockito.verify(activityService.activityRepository, Mockito.times(1))
+//            .findAllByAccountAccountNumberOrderByActivityDateDesc(account.accountNumber, pageRequest)
+//    }
+//
+//    @Test
+//    fun createActivityWithSuccess() {
+//        Mockito.`when`(activityService.activityRepository.save(Mockito.any(Activity::class.java))).thenReturn(activity)
+//
+//        val activityResponse = activityService.createActivity(account, activityDTO)
+//
+//        Assert.assertEquals(activityResponse.accNumber, account.accountNumber)
+//        Assert.assertEquals(activityResponse.operation, activity.operation.toString())
+//
+//        Mockito.verify(activityService.activityRepository, Mockito.times(1)).save(Mockito.any(Activity::class.java))
+//    }
 }
