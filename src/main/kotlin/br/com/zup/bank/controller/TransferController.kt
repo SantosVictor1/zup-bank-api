@@ -12,7 +12,7 @@ import javax.validation.Valid
  * Created by Victor Santos on 30/12/2019
  */
 @RestController
-@RequestMapping("/api/transfer")
+@RequestMapping("/transfer")
 class TransferController(
     val kafkaService: IKafkaService,
     val transferService: ITransferService

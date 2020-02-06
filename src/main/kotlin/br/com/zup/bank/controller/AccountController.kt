@@ -18,7 +18,7 @@ import javax.validation.Valid
  * Created by Victor Santos on 26/12/2019
  */
 @RestController
-@RequestMapping("api/account")
+@RequestMapping("/account")
 class AccountController(
     val accountService: IAccountService
 ) {
