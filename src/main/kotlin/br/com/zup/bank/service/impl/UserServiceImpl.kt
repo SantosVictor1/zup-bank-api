@@ -3,6 +3,7 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import br.com.zup.bank.model.User
@@ -21,13 +22,18 @@ class UserServiceImpl(
     val accountService: IAccountService
 ) : IUserService {
 
-    override fun createUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
-        validateFields(userRequestDTO)
-
+    override fun saveUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
         var user: User = User.toEntity(userRequestDTO)
         user = userRepository.save(user)
 
         return UserResponseDTO.toDto(user)
+    }
+
+    override fun registerUser(userRequestDTO: UserRequestDTO, id: Long) {
+        var user: User = User.toEntity(userRequestDTO, Status.COMPLETED)
+        user.id = id
+
+        userRepository.save(user)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {
@@ -91,8 +97,8 @@ class UserServiceImpl(
         return UserResponseDTO.toDto(user)
     }
 
-    private fun validateFields(user: UserRequestDTO) {
-        if (existsByCpf(user.cpf)) {
+    override fun validateFields(userRequestDTO: UserRequestDTO) {
+        if (existsByCpf(userRequestDTO.cpf)) {
             duplicatedResourceException(
                 BankErrorCode.BANK016.code,
                 UserRequestDTO::cpf.name,
@@ -100,7 +106,7 @@ class UserServiceImpl(
             )
         }
 
-        if (existsByEmail(user.email)) {
+        if (existsByEmail(userRequestDTO.email)) {
             duplicatedResourceException(
                 BankErrorCode.BANK017.code,
                 UserRequestDTO::email.name,

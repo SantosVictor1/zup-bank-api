@@ -47,7 +47,7 @@
       <bpmn:incoming>SequenceFlow_13wbexs</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1yns8vm</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Task_0lubrpz" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="">
+    <bpmn:serviceTask id="Task_0lubrpz" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserTask}">
       <bpmn:incoming>SequenceFlow_1tvotvv</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1ezq2pm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10roqqj</bpmn:outgoing>
