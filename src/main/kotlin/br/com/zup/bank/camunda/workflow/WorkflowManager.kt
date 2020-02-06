@@ -20,6 +20,6 @@ class WorkflowManager (
 
         runtimeService.startProcessInstanceByKey("userRegister", variables)
 
-        return UserStatusDTO(userRequestDTO.cpf, Status.IN_PROCESS)
+        return UserStatusDTO.toDto(userRequestDTO.cpf, Status.IN_PROCESS)
     }
 }

@@ -5,6 +5,7 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.dto.response.success.UserStatusDTO
 import br.com.zup.bank.service.IUserService
+import br.com.zup.bank.service.IWaitListService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -16,6 +17,7 @@ import javax.validation.Valid
 @RequestMapping("/users")
 class UserController(
     private val userService: IUserService,
+    private val waitListService: IWaitListService,
     private val workflowManager: WorkflowManager
 ) {
 
@@ -32,8 +34,8 @@ class UserController(
     @GetMapping
     fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> = ResponseEntity.ok(userService.getAll())
 
-//    @GetMapping("/status")
-//    fun getUserStatus(@RequestParam cpf: String) = ResponseEntity.ok(userService.getUserStatus(cpf))
+    @GetMapping("/status")
+    fun getUserStatus(@RequestParam cpf: String) = ResponseEntity.ok(waitListService.getStatus(cpf))
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ResponseEntity<UserResponseDTO> = ResponseEntity.ok(userService.getById(id))

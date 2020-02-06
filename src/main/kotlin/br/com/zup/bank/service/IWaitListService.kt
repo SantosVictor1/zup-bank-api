@@ -8,4 +8,6 @@ interface IWaitListService {
     fun disapproveRegister(cpf: String)
 
     fun removeFromList(cpf: String)
+
+    fun getStatus(cpf: String): UserStatusDTO
 }
