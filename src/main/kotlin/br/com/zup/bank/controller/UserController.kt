@@ -5,8 +5,6 @@ import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.dto.response.success.UserStatusDTO
 import br.com.zup.bank.service.IUserService
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -23,23 +21,22 @@ class UserController(
 
     @PostMapping
     fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserStatusDTO> {
+        userService.validateFields(userRequestDTO)
+
         return ResponseEntity.ok(workflowManager.start(userRequestDTO))
     }
 
     @PatchMapping("/reactivate")
-    fun reactivateUser(@RequestParam cpf: String): ResponseEntity<UserResponseDTO> {
-        return ResponseEntity.ok(userService.reactivateUser(cpf))
-    }
+    fun reactivateUser(@RequestParam cpf: String) = ResponseEntity.ok(userService.reactivateUser(cpf))
 
     @GetMapping
-    fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> {
-        return ResponseEntity.ok().body(userService.getAll())
-    }
+    fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> = ResponseEntity.ok(userService.getAll())
+
+    @GetMapping("/status")
+    fun getUserStatus(@RequestParam cpf: String) = ResponseEntity.ok(userService.getUserStatus(cpf))
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: Long): ResponseEntity<UserResponseDTO> {
-        return ResponseEntity.ok().body(userService.getById(id))
-    }
+    fun getById(@PathVariable id: Long): ResponseEntity<UserResponseDTO> = ResponseEntity.ok(userService.getById(id))
 
     @DeleteMapping("/deactivate")
     fun deactivateUser(@RequestParam cpf: String): ResponseEntity<Any> {

@@ -2,6 +2,7 @@ package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.dto.response.success.UserStatusDTO
 import br.com.zup.bank.enums.Status
 
 /**
@@ -11,7 +12,9 @@ interface IUserService {
 
     fun saveUser(userRequestDTO: UserRequestDTO): UserResponseDTO
 
-    fun registerUser(userRequestDTO: UserRequestDTO, id: Long)
+    fun registerUser(userRequestDTO: UserRequestDTO, id: Long, status: Status)
+
+    fun getUserStatus(cpf: String): UserStatusDTO
 
     fun getAll(): MutableList<UserResponseDTO>
 

@@ -3,6 +3,7 @@ package br.com.zup.bank.service.impl
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
+import br.com.zup.bank.dto.response.success.UserStatusDTO
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
@@ -29,11 +30,17 @@ class UserServiceImpl(
         return UserResponseDTO.toDto(user)
     }
 
-    override fun registerUser(userRequestDTO: UserRequestDTO, id: Long) {
-        var user: User = User.toEntity(userRequestDTO, Status.COMPLETED)
+    override fun registerUser(userRequestDTO: UserRequestDTO, id: Long, status: Status) {
+        val user: User = User.toEntity(userRequestDTO, status)
         user.id = id
 
         userRepository.save(user)
+    }
+
+    override fun getUserStatus(cpf: String): UserStatusDTO {
+        val user = User.toEntity(getByCpf(cpf, true))
+
+        return UserStatusDTO(user.cpf, user.status!!)
     }
 
     override fun getAll(): MutableList<UserResponseDTO> {

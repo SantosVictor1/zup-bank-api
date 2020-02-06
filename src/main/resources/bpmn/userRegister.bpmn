@@ -38,12 +38,12 @@
       <bpmn:incoming>SequenceFlow_14kinr6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1pswc6o</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_0lubrpz" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserTask}">
+    <bpmn:serviceTask id="Task_0lubrpz" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserSuccessTask}">
       <bpmn:incoming>SequenceFlow_1tvotvv</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1ezq2pm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10roqqj</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_1yt5qox" name="Register with error" camunda:asyncBefore="true" camunda:delegateExpression="">
+    <bpmn:serviceTask id="Task_1yt5qox" name="Register with error" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserErrorTask}">
       <bpmn:incoming>SequenceFlow_1ycvxyg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1xccdmb</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -53,7 +53,7 @@
     <bpmn:userTask id="Task_0c1o5ls" name="Validation and manual callback" camunda:asyncBefore="true" camunda:assignee="victorsantos">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="callbackResponse" label="approve?" type="boolean" />
+          <camunda:formField id="callbackResponse" label="Approve?" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_13wbexs</bpmn:incoming>

@@ -10,16 +10,13 @@ import org.springframework.stereotype.Service
 
 @Component
 class WorkflowManager (
-    private val runtimeService: RuntimeService,
-    private val userService: IUserService
+    private val runtimeService: RuntimeService
 ){
     fun start(userRequestDTO: UserRequestDTO): UserStatusDTO {
         val variables: MutableMap<String, Any> = mutableMapOf()
         variables["name"] = userRequestDTO.name
         variables["email"] = userRequestDTO.email
         variables["cpf"] = userRequestDTO.cpf
-
-        userService.validateFields(userRequestDTO)
 
         runtimeService.startProcessInstanceByKey("userRegister", variables)
 

@@ -45,7 +45,8 @@ data class User(
             userResponseDTO.name,
             userResponseDTO.cpf,
             userResponseDTO.email,
-            userResponseDTO.isActive
+            userResponseDTO.isActive,
+            userResponseDTO.status
         )
     }
 }
