@@ -21,6 +21,7 @@ class BankErrorCode(
         val BANK016: BankErrorCode = BankErrorCode("cpf.duplicated")
         val BANK017: BankErrorCode = BankErrorCode("email.duplicated")
         val BANK018: BankErrorCode = BankErrorCode("user.not.found")
+        val BANK019: BankErrorCode = BankErrorCode("register.reproved")
 
         //Account errors
         val BANK020: BankErrorCode = BankErrorCode("account.number.required")

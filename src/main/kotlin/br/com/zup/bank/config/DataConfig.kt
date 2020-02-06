@@ -16,12 +16,10 @@ import org.springframework.context.annotation.Profile
  */
 @Configuration
 @Profile("prod")
-class DataConfig {
-    @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
-    private lateinit var accountRepository: AccountRepository
-
+class DataConfig(
+    private val userRepository: UserRepository,
+    private val accountRepository: AccountRepository
+) {
     @Bean
     fun databaseInitializer(userRepository: UserRepository, accountRepository: AccountRepository) = ApplicationRunner {
         if (!userRepository.existsByCpf(cpf = "02160795607")) {
@@ -30,8 +28,7 @@ class DataConfig {
                     name = "Victor Santos",
                     cpf = "02160795607",
                     email = "victor@gmail.com",
-                    isActive = true,
-                    status = Status.COMPLETED
+                    isActive = true
                 )
             )
 

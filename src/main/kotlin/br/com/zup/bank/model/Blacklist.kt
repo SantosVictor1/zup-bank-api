@@ -9,15 +9,12 @@ data class Blacklist(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blacklist_id")
-    val id: Long?,
+    val id: Long? = null,
 
     @Column(name = "user_cpf", nullable = false, unique = true)
-    val cpf: String,
-
-    @Column(name = "is_approved")
-    val isApproved: Boolean = false
+    val cpf: String
 ) {
     companion object {
-        fun toEntity(blacklistRequestDTO: BlacklistRequestDTO): Blacklist = Blacklist(null, blacklistRequestDTO.cpf)
+        fun toEntity(blacklistRequestDTO: BlacklistRequestDTO): Blacklist = Blacklist(cpf = blacklistRequestDTO.cpf)
     }
 }

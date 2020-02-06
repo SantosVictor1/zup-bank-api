@@ -10,11 +10,9 @@ import br.com.zup.bank.enums.Status
  */
 interface IUserService {
 
-    fun saveUser(userRequestDTO: UserRequestDTO): UserResponseDTO
+    fun saveUser(userRequestDTO: UserRequestDTO)
 
-    fun registerUser(userRequestDTO: UserRequestDTO, id: Long, status: Status)
-
-    fun getUserStatus(cpf: String): UserStatusDTO
+//    fun getUserStatus(cpf: String): UserStatusDTO
 
     fun getAll(): MutableList<UserResponseDTO>
 

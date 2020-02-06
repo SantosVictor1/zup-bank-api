@@ -4,10 +4,9 @@ import br.com.zup.bank.model.Blacklist
 
 data class BlacklistResponseDTO(
     val id: Long,
-    val cpf: String,
-    val isApproved: Boolean
+    val cpf: String
 ) {
     companion object {
-        fun toDto(blacklist: Blacklist) = BlacklistResponseDTO(blacklist.id!!, blacklist.cpf, blacklist.isApproved)
+        fun toDto(blacklist: Blacklist) = BlacklistResponseDTO(blacklist.id!!, blacklist.cpf)
     }
 }

@@ -11,10 +11,9 @@ data class UserResponseDTO(
     val name: String,
     val cpf: String,
     val email: String,
-    val isActive: Boolean,
-    val status: Status
+    val isActive: Boolean
 ) {
     companion object {
-        fun toDto(user: User) = UserResponseDTO(user.id!!, user.name, user.cpf, user.email, user.isActive, user.status!!)
+        fun toDto(user: User) = UserResponseDTO(user.id!!, user.name, user.cpf, user.email, user.isActive)
     }
 }

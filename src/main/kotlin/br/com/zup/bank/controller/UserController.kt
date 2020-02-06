@@ -32,8 +32,8 @@ class UserController(
     @GetMapping
     fun getAll(): ResponseEntity<MutableList<UserResponseDTO>> = ResponseEntity.ok(userService.getAll())
 
-    @GetMapping("/status")
-    fun getUserStatus(@RequestParam cpf: String) = ResponseEntity.ok(userService.getUserStatus(cpf))
+//    @GetMapping("/status")
+//    fun getUserStatus(@RequestParam cpf: String) = ResponseEntity.ok(userService.getUserStatus(cpf))
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ResponseEntity<UserResponseDTO> = ResponseEntity.ok(userService.getById(id))

@@ -23,25 +23,17 @@ class UserServiceImpl(
     val accountService: IAccountService
 ) : IUserService {
 
-    override fun saveUser(userRequestDTO: UserRequestDTO): UserResponseDTO {
-        var user: User = User.toEntity(userRequestDTO)
-        user = userRepository.save(user)
-
-        return UserResponseDTO.toDto(user)
-    }
-
-    override fun registerUser(userRequestDTO: UserRequestDTO, id: Long, status: Status) {
-        val user: User = User.toEntity(userRequestDTO, status)
-        user.id = id
+    override fun saveUser(userRequestDTO: UserRequestDTO) {
+        val user: User = User.toEntity(userRequestDTO)
 
         userRepository.save(user)
     }
 
-    override fun getUserStatus(cpf: String): UserStatusDTO {
-        val user = User.toEntity(getByCpf(cpf, true))
-
-        return UserStatusDTO(user.cpf, user.status!!)
-    }
+//    override fun getUserStatus(cpf: String): UserStatusDTO {
+//        val user = User.toEntity(getByCpf(cpf, true))
+//
+//        return UserStatusDTO(user.cpf)
+//    }
 
     override fun getAll(): MutableList<UserResponseDTO> {
         val userResponseDTOList: MutableList<UserResponseDTO> = mutableListOf()

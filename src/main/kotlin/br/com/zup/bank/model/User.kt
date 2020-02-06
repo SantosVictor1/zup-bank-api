@@ -26,18 +26,14 @@ data class User(
     var email: String,
 
     @Column(name = "isActive", nullable = false)
-    var isActive: Boolean = true,
-
-    @Enumerated(value = EnumType.STRING)
-    var status: Status? = null
+    var isActive: Boolean = true
 ) {
     companion object {
-        fun toEntity(userRequestDTO: UserRequestDTO, status: Status = Status.IN_PROCESS) = User(
+        fun toEntity(userRequestDTO: UserRequestDTO) = User(
             name = userRequestDTO.name,
             cpf = userRequestDTO.cpf,
             email = userRequestDTO.email,
-            isActive = true,
-            status = status
+            isActive = true
         )
 
         fun toEntity(userResponseDTO: UserResponseDTO) = User(
@@ -45,8 +41,7 @@ data class User(
             userResponseDTO.name,
             userResponseDTO.cpf,
             userResponseDTO.email,
-            userResponseDTO.isActive,
-            userResponseDTO.status
+            userResponseDTO.isActive
         )
     }
 }

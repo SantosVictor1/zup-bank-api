@@ -11,7 +11,5 @@ data class StatusResponseDTO(
 ) {
     companion object {
         fun toDto(transfer: Transfer, message: String = "") = StatusResponseDTO(transfer.id!!, transfer.transferStatus, message)
-
-        fun toDto(user: User, message: String = "") = StatusResponseDTO(user.id!!, user.status!!, message)
     }
 }
