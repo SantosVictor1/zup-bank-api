@@ -5,7 +5,7 @@ import br.com.zup.bank.common.Message
 import br.com.zup.bank.dto.response.success.UserStatusDTO
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.MultipleRegisterBankException
-import br.com.zup.bank.model.Waitlist
+import br.com.zup.bank.model.WaitList
 import br.com.zup.bank.repository.WaitListRepository
 import br.com.zup.bank.service.IWaitListService
 import org.springframework.stereotype.Service
@@ -19,17 +19,11 @@ class WaitListServiceImpl(
         var waitList = findByCpf(cpf)
 
         if (waitList != null) {
-            if (waitList.status == Status.IN_PROCESS) {
-                throw MultipleRegisterBankException(
-                    BankErrorCode.BANK071.code,
-                    "",
-                    Waitlist::class.simpleName!!
-                )
-            }
             waitList.status = Status.IN_PROCESS
+            waitList.message = ""
             waitListRepository.save(waitList)
         } else {
-            waitList = waitListRepository.save(Waitlist.toEntity(cpf))
+            waitList = waitListRepository.save(WaitList.toEntity(cpf))
         }
 
         return UserStatusDTO.toDto(waitList.cpf, waitList.status)
@@ -48,13 +42,30 @@ class WaitListServiceImpl(
     }
 
     override fun getStatus(cpf: String): UserStatusDTO {
-        val waitList = findByCpf(cpf)!!
-        val message = message.getMessage(waitList.message)
+        val waitList = findByCpf(cpf)
 
-        return UserStatusDTO.toDto(waitList.cpf, waitList.status, message)
+        return if (waitList == null) {
+            val message = message.getMessage(BankErrorCode.BANK072.code)
+            UserStatusDTO.toDto(cpf, Status.COMPLETED, message)
+        } else {
+            val message = message.getMessage(waitList.message)
+            UserStatusDTO.toDto(cpf, waitList.status, message)
+        }
     }
 
-    private fun findByCpf(cpf: String): Waitlist? {
+    override fun validateRequest(cpf: String) {
+        val waitList = findByCpf(cpf)
+
+        if (waitList?.status == Status.IN_PROCESS) {
+            throw MultipleRegisterBankException(
+                BankErrorCode.BANK071.code,
+                "",
+                WaitList::class.simpleName!!
+            )
+        }
+    }
+
+    private fun findByCpf(cpf: String): WaitList? {
         return waitListRepository.findByCpf(cpf)
     }
 }

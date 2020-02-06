@@ -50,10 +50,10 @@
     <bpmn:endEvent id="EndEvent_00wm1np">
       <bpmn:incoming>SequenceFlow_1xccdmb</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Task_0c1o5ls" name="Validation and manual callback" camunda:asyncBefore="true" camunda:assignee="victorsantos">
+    <bpmn:userTask id="Task_0c1o5ls" name="Validation and manual callback" camunda:asyncBefore="true" camunda:assignee="victorsantos" camunda:candidateGroups="bank">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="callbackResponse" label="Approve?" type="boolean" />
+          <camunda:formField id="callbackResponse" label="Approve? cpf = ${cpf}" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_13wbexs</bpmn:incoming>

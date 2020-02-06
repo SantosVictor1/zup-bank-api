@@ -10,4 +10,6 @@ interface IWaitListService {
     fun removeFromList(cpf: String)
 
     fun getStatus(cpf: String): UserStatusDTO
+
+    fun validateRequest(cpf: String)
 }

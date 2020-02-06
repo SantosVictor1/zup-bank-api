@@ -1,12 +1,12 @@
 package br.com.zup.bank.repository
 
-import br.com.zup.bank.model.Waitlist
+import br.com.zup.bank.model.WaitList
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface WaitListRepository : JpaRepository<Waitlist, Long> {
+interface WaitListRepository : JpaRepository<WaitList, Long> {
     fun existsByCpf(cpf: String): Boolean
 
-    fun findByCpf(cpf: String): Waitlist?
+    fun findByCpf(cpf: String): WaitList?
 
     fun deleteByCpf(cpf: String)
 }

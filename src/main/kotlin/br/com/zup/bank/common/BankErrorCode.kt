@@ -47,5 +47,6 @@ class BankErrorCode(
         //WaitList messages
         val BANK070: BankErrorCode = BankErrorCode("register.reproved")
         val BANK071: BankErrorCode = BankErrorCode("register.in.process")
+        val BANK072: BankErrorCode = BankErrorCode("register.approved")
     }
 }

@@ -9,4 +9,6 @@ interface BlacklistRepository : JpaRepository<Blacklist, Long> {
     fun existsByCpf(cpf: String): Boolean
 
     fun findByCpf(cpf: String): Blacklist?
+
+    fun deleteByCpf(cpf: String)
 }

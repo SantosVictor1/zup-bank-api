@@ -24,6 +24,7 @@ class UserController(
     @PostMapping
     fun createUser(@RequestBody @Valid userRequestDTO: UserRequestDTO): ResponseEntity<UserStatusDTO> {
         userService.validateFields(userRequestDTO)
+        waitListService.validateRequest(userRequestDTO.cpf)
 
         return ResponseEntity.ok(workflowManager.start(userRequestDTO))
     }

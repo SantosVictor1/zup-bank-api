@@ -6,6 +6,7 @@ import br.com.zup.bank.dto.response.error.FieldError
 import br.com.zup.bank.dto.response.error.ObjectErrorResponse
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.InvalidResourceBankException
+import br.com.zup.bank.exception.MultipleRegisterBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -69,6 +70,15 @@ class ExceptionHandlerController(
         val objectErrorResponse = getObjectErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, e.objectName, fields)
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(objectErrorResponse)
+    }
+
+    @ExceptionHandler(MultipleRegisterBankException::class)
+    fun handleMultipleRegisterBankException(e: MultipleRegisterBankException): ResponseEntity<ObjectErrorResponse> {
+        val fields = mutableListOf(FieldError(e.errorCode, e.field, message.getMessage(e.errorCode)))
+
+        val objectErrorResponse = getObjectErrorResponse(HttpStatus.BAD_REQUEST, e.objectName, fields)
+
+        return ResponseEntity.badRequest().body(objectErrorResponse)
     }
 
     private fun getObjectErrorResponse(

@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "waitlist")
-data class Waitlist(
+data class WaitList(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "waitlist_id")
@@ -21,6 +21,6 @@ data class Waitlist(
     var message: String = ""
 ) {
     companion object {
-        fun toEntity(cpf: String): Waitlist = Waitlist(cpf = cpf)
+        fun toEntity(cpf: String): WaitList = WaitList(cpf = cpf)
     }
 }

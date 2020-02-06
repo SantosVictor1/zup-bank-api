@@ -7,4 +7,5 @@ interface IBlacklistService {
     fun saveNewCpf(blacklistRequestDTO: BlacklistRequestDTO): BlacklistResponseDTO
     fun findByCpf(cpf: String): BlacklistResponseDTO
     fun existsByCpf(cpf: String): Boolean
+    fun removeFromList(cpf: String)
 }

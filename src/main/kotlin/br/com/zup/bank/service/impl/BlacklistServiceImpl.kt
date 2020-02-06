@@ -33,14 +33,12 @@ class BlacklistServiceImpl(
     }
 
     override fun existsByCpf(cpf: String): Boolean {
-//        if (blacklistRepository.existsByCpf(cpf)) {
-//            throw DuplicatedResourceBankException(
-//                BankErrorCode.BANK016.code,
-//                BlacklistRequestDTO::cpf.name,
-//                Blacklist::class.simpleName!!
-//            )
-//        }
-
         return blacklistRepository.existsByCpf(cpf)
+    }
+
+    override fun removeFromList(cpf: String) {
+        if (existsByCpf(cpf)) {
+            blacklistRepository.deleteByCpf(cpf)
+        }
     }
 }
