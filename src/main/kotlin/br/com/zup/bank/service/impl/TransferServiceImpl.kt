@@ -19,7 +19,6 @@ import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.ActivityRepository
 import br.com.zup.bank.repository.TransferRepository
 import br.com.zup.bank.service.ITransferService
-import com.fasterxml.jackson.databind.JsonNode
 import com.google.gson.Gson
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.kafka.annotation.KafkaListener
