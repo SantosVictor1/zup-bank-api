@@ -2,7 +2,6 @@ package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.enums.Status
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 class TransferControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
-    private val baseUrl: String = "http://localhost:8080/api/transfer"
+    private val baseUrl: String = "http://localhost:8080/transfer"
 
     @Test
     fun throwAnExceptionWhenReceiveARequestWithInvalidFields() {
@@ -63,8 +62,8 @@ class TransferControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferId").value(2))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value(Status.IN_PROCESS.toString()))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
     @Transactional
@@ -99,8 +98,8 @@ class TransferControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferId").value(1))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.transferStatus").value("COMPLETED"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("COMPLETED"))
     }
 
     private fun toJson(anyObject: Any): String {

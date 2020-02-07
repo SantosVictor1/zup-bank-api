@@ -1,6 +1,7 @@
 package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.UserRequestDTO
+import br.com.zup.bank.enums.Status
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
@@ -25,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
-    private val baseUrl: String = "http://localhost:8080/api/users"
+    private val baseUrl: String = "http://localhost:8080/users"
 
     @Test
     fun throwExceptionWhenCreateUserWithInvalidFields() {
@@ -48,12 +49,9 @@ class UserControllerTest {
             .content(toJson(UserRequestDTO("Pedro", "42511229846", "pedro@gmail.com")))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isCreated)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(4))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Pedro"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("42511229846"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("pedro@gmail.com"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
     @Transactional
@@ -93,6 +91,20 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.[0].id").value(1))
             .andExpect(MockMvcResultMatchers.jsonPath("$.[1].id").value(2))
             .andExpect(MockMvcResultMatchers.jsonPath("$.[2].id").value(3))
+    }
+
+    @Transactional
+    @Sql("/scripts/WaitlistSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Test
+    fun getRegisterStatusWithSuccess() {
+        mvc.perform(MockMvcRequestBuilders
+            .get("$baseUrl/status").param("cpf", "16950459041")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.cpf").value("16950459041"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
     @Transactional

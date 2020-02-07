@@ -2,7 +2,6 @@ package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
@@ -28,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 class AccountControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
-    private val baseUrl: String = "http://localhost:8080/api/account"
+    private val baseUrl: String = "http://localhost:8080/account"
 
     @Test
     fun throwExceptionWhenCreateUserWithInvalidFields() {
