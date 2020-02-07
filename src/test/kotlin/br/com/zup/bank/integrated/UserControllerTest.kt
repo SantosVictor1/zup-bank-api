@@ -1,7 +1,6 @@
 package br.com.zup.bank.integrated
 
 import br.com.zup.bank.dto.request.UserRequestDTO
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test

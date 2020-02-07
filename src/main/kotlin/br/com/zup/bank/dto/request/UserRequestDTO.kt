@@ -9,19 +9,15 @@ import javax.validation.constraints.Size
  * Created by Victor Santos on 23/12/2019
  */
 class UserRequestDTO(
-    name: String,
-    cpf: String,
-    email: String
-) {
-    @NotBlank(message = "name.required")
-    @Size(min = 3, max = 80, message = "name.size.invalid")
-    var name: String = name
+    @field:[NotBlank(message = "name.required")]
+    @field:[Size(min = 3, max = 80, message = "name.size.invalid")]
+    var name: String,
 
-    @NotBlank(message = "cpf.required")
-    @CPF(message = "cpf.invalid")
-    var cpf: String = cpf
+    @field:[NotBlank(message = "cpf.required")]
+    @field:[CPF(message = "cpf.invalid")]
+    var cpf: String,
 
-    @NotBlank(message = "email.required")
-    @Email(message = "email.invalid")
-    var email: String = email
-}
+    @field:[NotBlank(message = "email.required")]
+    @field:[Email(message = "email.invalid")]
+    var email: String
+)
