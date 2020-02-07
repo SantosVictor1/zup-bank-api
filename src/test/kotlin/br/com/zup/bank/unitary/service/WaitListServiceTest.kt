@@ -2,10 +2,12 @@ package br.com.zup.bank.unitary.service
 
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.common.Message
+import br.com.zup.bank.dto.response.success.UserResponseDTO
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.MultipleRegisterBankException
 import br.com.zup.bank.model.WaitList
 import br.com.zup.bank.repository.WaitListRepository
+import br.com.zup.bank.service.IUserService
 import br.com.zup.bank.service.impl.WaitListServiceImpl
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
@@ -16,7 +18,8 @@ import org.mockito.Mockito
 class WaitListServiceTest {
     private val messageSource = Mockito.mock(Message::class.java)
     private val waitListRepository = Mockito.mock(WaitListRepository::class.java)
-    private val waitListService = WaitListServiceImpl(waitListRepository, messageSource)
+    private val userService = Mockito.mock(IUserService::class.java)
+    private val waitListService = WaitListServiceImpl(waitListRepository, userService, messageSource)
 
     @Test
     fun testWaitListNotNull() {
@@ -84,9 +87,11 @@ class WaitListServiceTest {
     @Test
     fun testWaitListStatusNull() {
         val cpf = "02160795607"
+        val userResponseDTO = UserResponseDTO(1, "Victor Santos", cpf, "victor@gmail.com", true)
 
         Mockito.`when`(waitListRepository.findByCpf(cpf)).thenReturn(null)
         Mockito.`when`(messageSource.getMessage(BankErrorCode.BANK072.code)).thenReturn("Cadastro aprovado")
+        Mockito.`when`(userService.getByCpf(cpf, true)).thenReturn(userResponseDTO)
 
         val response = waitListService.getStatus(cpf)
 

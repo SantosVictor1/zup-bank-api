@@ -7,12 +7,14 @@ import br.com.zup.bank.enums.Status
 import br.com.zup.bank.exception.MultipleRegisterBankException
 import br.com.zup.bank.model.WaitList
 import br.com.zup.bank.repository.WaitListRepository
+import br.com.zup.bank.service.IUserService
 import br.com.zup.bank.service.IWaitListService
 import org.springframework.stereotype.Service
 
 @Service
 class WaitListServiceImpl(
     private val waitListRepository: WaitListRepository,
+    private val userService: IUserService,
     private val message: Message
 ) : IWaitListService {
     override fun saveOnWait(cpf: String): UserStatusDTO {
@@ -45,6 +47,7 @@ class WaitListServiceImpl(
         val waitList = findByCpf(cpf)
 
         return if (waitList == null) {
+            userService.getByCpf(cpf, true)
             val message = message.getMessage(BankErrorCode.BANK072.code)
             UserStatusDTO.toDto(cpf, Status.COMPLETED, message)
         } else {
