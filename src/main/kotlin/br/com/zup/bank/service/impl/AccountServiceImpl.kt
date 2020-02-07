@@ -31,7 +31,7 @@ class AccountServiceImpl(
 ) : IAccountService {
     override fun createAccount(accountRequestDTO: AccountRequestDTO): AccountResponseDTO {
         lateinit var acc: Account
-        var user = getUser(accountRequestDTO.cpf)
+        val user = getUser(accountRequestDTO.cpf)
 
         findAccountByUser(user.cpf)
 
@@ -96,7 +96,7 @@ class AccountServiceImpl(
     }
 
     override fun deactivateAccount(cpf: String) {
-        var account = accountRepository.findByUserCpf(cpf)
+        val account = accountRepository.findByUserCpf(cpf)
 
         if (account != null) {
             account.isActive = false
@@ -105,7 +105,7 @@ class AccountServiceImpl(
     }
 
     override fun reactivateAccount(cpf: String) {
-        var account = accountRepository.findByUserCpf(cpf)
+        val account = accountRepository.findByUserCpf(cpf)
 
         if (account != null) {
             account.isActive = true
