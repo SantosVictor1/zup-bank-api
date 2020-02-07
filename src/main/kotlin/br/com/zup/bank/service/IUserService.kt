@@ -12,8 +12,6 @@ interface IUserService {
 
     fun saveUser(userRequestDTO: UserRequestDTO)
 
-//    fun getUserStatus(cpf: String): UserStatusDTO
-
     fun getAll(): MutableList<UserResponseDTO>
 
     fun getById(id: Long): UserResponseDTO
