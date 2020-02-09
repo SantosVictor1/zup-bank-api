@@ -6,5 +6,5 @@ package br.com.zup.bank.dto.response.error
 class FieldError(
     val errorCode: String,
     val field: String,
-    val messsage: String
+    val message: String
 )
