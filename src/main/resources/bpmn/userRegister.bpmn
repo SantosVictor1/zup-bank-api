@@ -4,17 +4,17 @@
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>SequenceFlow_14kinr6</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_14kinr6" sourceRef="StartEvent_1" targetRef="Task_05szt9u" />
+    <bpmn:sequenceFlow id="SequenceFlow_14kinr6" sourceRef="StartEvent_1" targetRef="CHANGE_CUSTOMER_STATUS" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_0xcvave">
       <bpmn:incoming>SequenceFlow_1pswc6o</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_13wbexs</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1tvotvv</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_1pswc6o" sourceRef="Task_05szt9u" targetRef="ExclusiveGateway_0xcvave" />
-    <bpmn:sequenceFlow id="SequenceFlow_13wbexs" name="if CPF is on blacklist" sourceRef="ExclusiveGateway_0xcvave" targetRef="Task_0c1o5ls">
+    <bpmn:sequenceFlow id="SequenceFlow_1pswc6o" sourceRef="CHANGE_CUSTOMER_STATUS" targetRef="ExclusiveGateway_0xcvave" />
+    <bpmn:sequenceFlow id="SequenceFlow_13wbexs" name="if CPF is on blacklist" sourceRef="ExclusiveGateway_0xcvave" targetRef="MANUAL_CALLBACK">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${existsInBlackList}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1tvotvv" name="if CPF isn&#39;t on blacklist" sourceRef="ExclusiveGateway_0xcvave" targetRef="Task_0lubrpz">
+    <bpmn:sequenceFlow id="SequenceFlow_1tvotvv" name="if CPF isn&#39;t on blacklist" sourceRef="ExclusiveGateway_0xcvave" targetRef="REGISTER_SUCCESS">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!existsInBlackList}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1sq1h75">
@@ -22,35 +22,35 @@
       <bpmn:outgoing>SequenceFlow_1ezq2pm</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_1ycvxyg</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_1yns8vm" sourceRef="Task_0c1o5ls" targetRef="ExclusiveGateway_1sq1h75" />
-    <bpmn:sequenceFlow id="SequenceFlow_1ezq2pm" name="CPF approved" sourceRef="ExclusiveGateway_1sq1h75" targetRef="Task_0lubrpz">
+    <bpmn:sequenceFlow id="SequenceFlow_1yns8vm" sourceRef="MANUAL_CALLBACK" targetRef="ExclusiveGateway_1sq1h75" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ezq2pm" name="CPF approved" sourceRef="ExclusiveGateway_1sq1h75" targetRef="REGISTER_SUCCESS">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${callbackResponse}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1ycvxyg" name="CPF repproved" sourceRef="ExclusiveGateway_1sq1h75" targetRef="Task_1yt5qox">
+    <bpmn:sequenceFlow id="SequenceFlow_1ycvxyg" name="CPF repproved" sourceRef="ExclusiveGateway_1sq1h75" targetRef="REGISTER_ERROR">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!callbackResponse}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1xccdmb" sourceRef="Task_1yt5qox" targetRef="EndEvent_00wm1np" />
-    <bpmn:endEvent id="EndEvent_1jau02h">
+    <bpmn:sequenceFlow id="SequenceFlow_1xccdmb" sourceRef="REGISTER_ERROR" targetRef="EndEventError" />
+    <bpmn:endEvent id="EndEventSuccess">
       <bpmn:incoming>SequenceFlow_10roqqj</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_10roqqj" sourceRef="Task_0lubrpz" targetRef="EndEvent_1jau02h" />
-    <bpmn:serviceTask id="Task_05szt9u" name="Change customer status" camunda:asyncBefore="true" camunda:delegateExpression="${updateUserStatusTask}">
+    <bpmn:sequenceFlow id="SequenceFlow_10roqqj" sourceRef="REGISTER_SUCCESS" targetRef="EndEventSuccess" />
+    <bpmn:serviceTask id="CHANGE_CUSTOMER_STATUS" name="Change customer status" camunda:asyncBefore="true" camunda:delegateExpression="${updateUserStatusTask}">
       <bpmn:incoming>SequenceFlow_14kinr6</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1pswc6o</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_0lubrpz" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserSuccessTask}">
+    <bpmn:serviceTask id="REGISTER_SUCCESS" name="Register with success" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserSuccessTask}">
       <bpmn:incoming>SequenceFlow_1tvotvv</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1ezq2pm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_10roqqj</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_1yt5qox" name="Register with error" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserErrorTask}">
+    <bpmn:serviceTask id="REGISTER_ERROR" name="Register with error" camunda:asyncBefore="true" camunda:delegateExpression="${registerUserErrorTask}">
       <bpmn:incoming>SequenceFlow_1ycvxyg</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1xccdmb</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="EndEvent_00wm1np">
+    <bpmn:endEvent id="EndEventError">
       <bpmn:incoming>SequenceFlow_1xccdmb</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Task_0c1o5ls" name="Validation and manual callback" camunda:asyncBefore="true" camunda:assignee="victorsantos" camunda:candidateGroups="bank">
+    <bpmn:userTask id="MANUAL_CALLBACK" name="Validation and manual callback" camunda:asyncBefore="true" camunda:assignee="victorsantos" camunda:candidateGroups="bank">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="callbackResponse" label="Approve? cpf = ${cpf}" type="boolean" />
@@ -119,26 +119,26 @@
         <di:waypoint x="1000" y="177" />
         <di:waypoint x="1082" y="177" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_1jau02h_di" bpmnElement="EndEvent_1jau02h">
+      <bpmndi:BPMNShape id="EndEvent_1jau02h_di" bpmnElement="EndEventSuccess">
         <dc:Bounds x="612" y="382" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_10roqqj_di" bpmnElement="SequenceFlow_10roqqj">
         <di:waypoint x="630" y="320" />
         <di:waypoint x="630" y="382" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1oruqbj_di" bpmnElement="Task_05szt9u">
+      <bpmndi:BPMNShape id="ServiceTask_1oruqbj_di" bpmnElement="CHANGE_CUSTOMER_STATUS">
         <dc:Bounds x="270" y="137" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_03qxyoj_di" bpmnElement="Task_0lubrpz">
+      <bpmndi:BPMNShape id="ServiceTask_03qxyoj_di" bpmnElement="REGISTER_SUCCESS">
         <dc:Bounds x="580" y="240" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1wb2oqk_di" bpmnElement="Task_1yt5qox">
+      <bpmndi:BPMNShape id="ServiceTask_1wb2oqk_di" bpmnElement="REGISTER_ERROR">
         <dc:Bounds x="900" y="137" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0ch1lxi_di" bpmnElement="EndEvent_00wm1np">
+      <bpmndi:BPMNShape id="EndEvent_0ch1lxi_di" bpmnElement="EndEventError">
         <dc:Bounds x="1082" y="159" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0zc3tjy_di" bpmnElement="Task_0c1o5ls">
+      <bpmndi:BPMNShape id="UserTask_0zc3tjy_di" bpmnElement="MANUAL_CALLBACK">
         <dc:Bounds x="580" y="40" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
