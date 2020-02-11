@@ -1,13 +1,11 @@
 package br.com.zup.bank.config
 
-import br.com.zup.bank.enums.Status
 import br.com.zup.bank.model.Account
 import br.com.zup.bank.model.Blacklist
 import br.com.zup.bank.model.User
 import br.com.zup.bank.repository.AccountRepository
 import br.com.zup.bank.repository.BlacklistRepository
 import br.com.zup.bank.repository.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -2,8 +2,6 @@ package br.com.zup.bank.service
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.dto.response.success.UserStatusDTO
-import br.com.zup.bank.enums.Status
 
 /**
  * Created by Victor Santos on 26/12/2019

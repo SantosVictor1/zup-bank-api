@@ -2,7 +2,6 @@ package br.com.zup.bank.service.impl
 
 import br.com.zup.bank.common.BankErrorCode
 import br.com.zup.bank.dto.request.BlacklistRequestDTO
-import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.BlacklistResponseDTO
 import br.com.zup.bank.exception.DuplicatedResourceBankException
 import br.com.zup.bank.exception.ResourceNotFoundBankException

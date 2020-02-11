@@ -2,7 +2,6 @@ package br.com.zup.bank.model
 
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.dto.response.success.UserResponseDTO
-import br.com.zup.bank.enums.Status
 import javax.persistence.*
 
 /**
