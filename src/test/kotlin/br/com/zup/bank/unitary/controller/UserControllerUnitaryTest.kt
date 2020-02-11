@@ -16,7 +16,6 @@ import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.springframework.http.HttpStatus
 

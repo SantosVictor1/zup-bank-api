@@ -1,5 +1,6 @@
 package br.com.zup.bank.workflow
 
+import br.com.zup.bank.AbstractTestConfig
 import br.com.zup.bank.dto.request.BlacklistRequestDTO
 import br.com.zup.bank.enums.Status
 import br.com.zup.bank.service.IBlacklistService
@@ -8,25 +9,22 @@ import br.com.zup.bank.service.IWaitListService
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import org.camunda.bpm.engine.test.Deployment
+import org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests
 import org.camunda.bpm.scenario.ProcessScenario
 import org.camunda.bpm.scenario.Scenario
 import org.camunda.bpm.scenario.act.UserTaskAction
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.transaction.annotation.Transactional
 
-@WebAppConfiguration
-@SpringBootTest
-@RunWith(SpringRunner::class)
+
+@Transactional
 @Deployment(resources = ["userRegister.bpmn"])
-class UserRegisterWorkflowTest {
+class UserRegisterWorkflowTest : AbstractTestConfig() {
     @Autowired
     private lateinit var waitListService: IWaitListService
     @Autowired
@@ -37,35 +35,63 @@ class UserRegisterWorkflowTest {
     private lateinit var registerProcess: ProcessScenario
 
     @Test
-    @Transactional
     fun testRegisterWithCpfOutOfBlacklist() {
         val variables = setVariables()
 
         Scenario.run(registerProcess).startByKey("userRegister", variables).execute()
         verify(registerProcess, (times(1))).hasFinished("EndEventSuccess")
 
-        val user = waitListService.getStatus("42511229846")
-        Assert.assertEquals(user.status, Status.COMPLETED)
+        val userStatus = waitListService.getStatus("42511229846")
+        val user = userService.getByCpf("42511229846", true)
+
+        Assert.assertEquals(userStatus.status, Status.COMPLETED)
+        Assert.assertThat(user.email, CoreMatchers.`is`(variables["email"]))
+        Assert.assertThat(user.name, CoreMatchers.`is`(variables["name"]))
     }
 
     @Test
-    @Transactional
-    fun testRegisterWithCpfInBlacklist() {
+    fun testRegisterWithCpfInBlacklistAndApproved() {
         val variables = setVariables()
         val blacklistRequestDTO = buildBlacklistRequest()
 
         Mockito.`when`(registerProcess.waitsAtUserTask("MANUAL_CALLBACK")).thenReturn(
             UserTaskAction {
-                variables["callbackResponse"] = true
+                BpmnAwareTests.runtimeService().setVariable(it.executionId, "callbackResponse", true)
+                it.complete()
             }
         )
 
         blacklistService.saveNewCpf(blacklistRequestDTO)
         Scenario.run(registerProcess).startByKey("userRegister", variables).execute()
-//        verify(registerProcess, (times(1))).hasFinished("EndEventSuccess")
+        verify(registerProcess, (times(1))).hasFinished("EndEventSuccess")
 
-        val user = waitListService.getStatus("42511229846")
-        Assert.assertEquals(user.status, Status.COMPLETED)
+        val userStatus = waitListService.getStatus("42511229846")
+        val user = userService.getByCpf("42511229846", true)
+
+        Assert.assertEquals(userStatus.status, Status.COMPLETED)
+        Assert.assertThat(user.email, CoreMatchers.`is`(variables["email"]))
+        Assert.assertThat(user.name, CoreMatchers.`is`(variables["name"]))
+    }
+
+    @Test
+    fun testRegisterWithCpfInBlacklistAndReproved() {
+        val variables = setVariables()
+        val blacklistRequestDTO = buildBlacklistRequest()
+
+        Mockito.`when`(registerProcess.waitsAtUserTask("MANUAL_CALLBACK")).thenReturn(
+            UserTaskAction {
+                BpmnAwareTests.runtimeService().setVariable(it.executionId, "callbackResponse", false)
+                it.complete()
+            }
+        )
+
+        blacklistService.saveNewCpf(blacklistRequestDTO)
+        Scenario.run(registerProcess).startByKey("userRegister", variables).execute()
+        verify(registerProcess, (times(1))).hasFinished("EndEventError")
+
+        val userStatus = waitListService.getStatus("42511229846")
+        Assert.assertEquals(userStatus.status, Status.FAILED)
+        Assert.assertEquals(userStatus.message, "Cadastro reprovado")
     }
 
     private fun buildBlacklistRequest() = BlacklistRequestDTO("42511229846")

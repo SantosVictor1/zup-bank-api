@@ -1,18 +1,13 @@
 package br.com.zup.bank.integrated
 
+import br.com.zup.bank.AbstractTestConfig
 import br.com.zup.bank.dto.request.UserRequestDTO
 import br.com.zup.bank.enums.Status
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
@@ -20,17 +15,13 @@ import org.springframework.transaction.annotation.Transactional
 /**
  * Created by Victor Santos on 08/01/2020
  */
-@RunWith(SpringRunner::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class UserControllerTest {
-    @Autowired
-    private lateinit var mvc: MockMvc
+@Transactional
+class UserControllerTest : AbstractTestConfig() {
     private val baseUrl: String = "http://localhost:8080/users"
 
     @Test
     fun throwExceptionWhenCreateUserWithInvalidFields() {
-        mvc.perform(MockMvcRequestBuilders
+        this.mvc.perform(MockMvcRequestBuilders
             .post(baseUrl)
             .content(toJson(UserRequestDTO("", "", "")))
             .contentType(MediaType.APPLICATION_JSON)
@@ -41,7 +32,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
-    @Transactional
     @Test
     fun createUserWithValidFields() {
         mvc.perform(MockMvcRequestBuilders
@@ -54,7 +44,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun deactivateUserWithSuccess() {
@@ -65,7 +54,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.status().isNoContent)
     }
 
-    @Transactional
     @Test
     fun throwExceptionWhenRequestIsMadeWithoutQueryParam() {
         mvc.perform(MockMvcRequestBuilders
@@ -78,7 +66,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql")
     @Test
     fun getAllAndReturnAllUsers() {
@@ -93,7 +80,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.[2].id").value(3))
     }
 
-    @Transactional
     @Sql("/scripts/WaitlistSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun getRegisterStatusWithSuccess() {
@@ -107,7 +93,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun getByIdAndReturnTheUser() {
@@ -123,7 +108,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("victor@gmail.com"))
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun throwExceptionWhenRequestUserNotFound() {
@@ -137,7 +121,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("user.not.found"))
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql")
     @Test
     fun reactivateUserWithSuccess() {
@@ -153,7 +136,6 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
     }
 
-    @Transactional
     @Test
     fun throwExceptionWhenRequestIsMadeWithoutQueryParamInReactivate() {
         mvc.perform(MockMvcRequestBuilders

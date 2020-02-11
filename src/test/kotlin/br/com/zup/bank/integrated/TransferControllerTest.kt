@@ -1,19 +1,14 @@
 package br.com.zup.bank.integrated
 
+import br.com.zup.bank.AbstractTestConfig
 import br.com.zup.bank.dto.request.TransferRequestDTO
 import br.com.zup.bank.enums.Status
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlGroup
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
@@ -21,12 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 /**
  * Created by Victor Santos on 10/01/2020
  */
-@RunWith(SpringRunner::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class TransferControllerTest {
-    @Autowired
-    private lateinit var mvc: MockMvc
+@Transactional
+class TransferControllerTest : AbstractTestConfig() {
     private val baseUrl: String = "http://localhost:8080/transfer"
 
     @Test
@@ -42,7 +33,6 @@ class TransferControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -66,7 +56,6 @@ class TransferControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(Status.IN_PROCESS.toString()))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
@@ -85,7 +74,6 @@ class TransferControllerTest {
                 .value("transfer.not.found"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),

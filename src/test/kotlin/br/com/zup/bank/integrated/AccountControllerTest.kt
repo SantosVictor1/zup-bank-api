@@ -1,19 +1,14 @@
 package br.com.zup.bank.integrated
 
+import br.com.zup.bank.AbstractTestConfig
 import br.com.zup.bank.dto.request.AccountRequestDTO
 import br.com.zup.bank.dto.request.ActivityRequestDTO
 import com.google.gson.Gson
 import org.hamcrest.CoreMatchers
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.SqlGroup
-import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.transaction.annotation.Transactional
@@ -21,12 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 /**
  * Created by Victor Santos on 09/01/2020
  */
-@RunWith(SpringRunner::class)
-@SpringBootTest
-@AutoConfigureMockMvc
-class AccountControllerTest {
-    @Autowired
-    private lateinit var mvc: MockMvc
+@Transactional
+class AccountControllerTest : AbstractTestConfig() {
     private val baseUrl: String = "http://localhost:8080/account"
 
     @Test
@@ -42,7 +33,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").isNotEmpty)
     }
 
-    @Transactional
     @Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     fun createAccountWithValidCpf() {
@@ -58,7 +48,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.isActive").value(true))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -76,7 +65,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.[2].accountNumber").value("6548732158"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -96,7 +84,6 @@ class AccountControllerTest {
     }
 
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -114,7 +101,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -135,7 +121,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("42511229846"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -156,7 +141,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.user.cpf").value("42511229846"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -174,7 +158,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -206,7 +189,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -239,7 +221,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields").value(CoreMatchers.notNullValue()))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -271,7 +252,6 @@ class AccountControllerTest {
             .andExpect(MockMvcResultMatchers.jsonPath("$.fields[0].errorCode").value("missing.query.parameter"))
     }
 
-    @Transactional
     @SqlGroup(
         Sql("/scripts/UserSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         Sql("/scripts/AccountSQL.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
