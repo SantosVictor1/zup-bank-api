@@ -40,6 +40,7 @@ class UserRegisterWorkflowTest : AbstractTestConfig() {
 
         Scenario.run(registerProcess).startByKey("userRegister", variables).execute()
         verify(registerProcess, (times(1))).hasFinished("EndEventSuccess")
+        verify(registerProcess, (times(0))).waitsAtUserTask("MANUAL_CALLBACK")
 
         val userStatus = waitListService.getStatus("42511229846")
         val user = userService.getByCpf("42511229846", true)
